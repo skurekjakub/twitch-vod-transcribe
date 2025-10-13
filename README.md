@@ -12,8 +12,6 @@ The search.py script then performs a fuzzy search on these subtitle files, looki
 3. Populate `urls.txt` file (refer `urls.example.txt`).
 4. Download [vosk-transcriber models](https://alphacephei.com/vosk/models), if necessary edit the transcribe.sh
 5. Run `./transcribe.sh` or `./transcribe.sh --download-only`
-6. Edit terms in search.py 
-7. Run `python search.py` to search in subtitles.
 
 ## Key Components
 - `requirements.txt`: Python dependencies.

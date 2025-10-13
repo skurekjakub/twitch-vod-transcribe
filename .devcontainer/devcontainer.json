@@ -1,0 +1,35 @@
+{
+  "name": "Twitch VOD Transcribe (CUDA)",
+  "image": "nvidia/cuda:12.3.2-cudnn9-runtime-ubuntu22.04",
+  
+  "runArgs": [
+    "--gpus=all",
+    "--ipc=host"
+  ],
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  
+  "postCreateCommand": "apt-get update && apt-get install -y python3-pip ffmpeg git curl && pip3 install --no-cache-dir -r requirements.txt && pip3 install --no-cache-dir faster-whisper && echo '\\n🚀 Container ready! Run \"nvidia-smi\" to check GPU access.' && echo 'If GPU not available, faster-whisper will automatically use CPU mode.'",
+  
+  "remoteUser": "root",
+  
+  "mounts": [
+    "source=${localEnv:HOME}/.cache/huggingface,target=/root/.cache/huggingface,type=bind,consistency=cached"
+  ],
+  
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000"
+    }
+  }
+}
