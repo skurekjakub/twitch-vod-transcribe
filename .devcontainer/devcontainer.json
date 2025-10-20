@@ -16,7 +16,7 @@
     }
   },
   
-  "postCreateCommand": "apt-get update && apt-get install -y python3-pip ffmpeg git curl && pip3 install --no-cache-dir -r requirements.txt && pip3 install --no-cache-dir faster-whisper && echo '\\n🚀 Container ready! Run \"nvidia-smi\" to check GPU access.' && echo 'If GPU not available, faster-whisper will automatically use CPU mode.'",
+  "postCreateCommand": "chmod +x .devcontainer/post-setup.sh && .devcontainer/post-setup.sh",
   
   "remoteUser": "root",
   
