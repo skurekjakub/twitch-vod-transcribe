@@ -93,7 +93,7 @@ echo "$VOD_ID - $timestamp - Starting download ($QUALITY quality)" | tee -a "${l
 trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred during download. Cleaning up..."; rm -f *"${VOD_ID}"*.mp4' EXIT
 
 # Download at specified quality to current directory
-twitch-dl download -q "$QUALITY" "$VOD_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
+twitch-dl download -q "$QUALITY" "$VOD_URL" --max-workers 3 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Wait a moment for file system to sync
 sleep 2
