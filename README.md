@@ -1,20 +1,21 @@
-# Twitch VOD Transcriber and Searcher
+# Twitch VOD Transcriber
 
-This repository contains two scripts that facilitate transcription and keyword searching in Twitch VODs.
-
-The transcribe.sh script downloads Twitch VODs, extracts the audio, and uses Vosk-Transcriber, an offline speech-to-text toolkit, to generate subtitles in both English and German.
-
-The search.py script then performs a fuzzy search on these subtitle files, looking for specific words (applying stemming/fuzzing) defined within the script.
+Download and transcribe Twitch VODs using OpenAI's Whisper model (via `faster-whisper`).
 
 ## Quick Start
 1. Clone this repo.
 2. `pip install -r requirements.txt`
-3. Populate `urls.txt` file (refer `urls.example.txt`).
-4. Download [vosk-transcriber models](https://alphacephei.com/vosk/models), if necessary edit the transcribe.sh
-5. Run `./transcribe.sh` or `./transcribe.sh --download-only`
+3. Run: `./vod-transcribe.sh https://www.twitch.tv/videos/YOUR_VOD_ID`
+
+See [USAGE.md](USAGE.md) for detailed instructions and options.
 
 ## Key Components
-- `requirements.txt`: Python dependencies.
-- `transcribe.sh`: Bash script to download VODs, extract audio, and transcribe to subtitles.
-- `search.py`: Python script to search specific words in subtitles.
-- `urls.example.txt`: Example input format for `transcribe.sh`.
+- `vod-transcribe.sh`: Main script - downloads VOD, extracts audio, and transcribes to SRT subtitles
+- `download_vod.py`: Standalone VOD downloader
+- `requirements.txt`: Python dependencies (`faster-whisper`, `twitch-dl`)
+
+## Features
+- ✅ High-quality transcription using Whisper large-v3 model
+- ✅ CUDA GPU acceleration support
+- ✅ Organized output by channel and date
+- ✅ Automatic subtitle generation

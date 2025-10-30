@@ -40,39 +40,9 @@ This will download the video with the VOD ID as the filename (e.g., `2588036186.
 
 ### Step 2: Transcribe the Downloaded Video
 
-Use the `transcribe.sh` script to process the video:
+Once downloaded, you can use the main `vod-transcribe.sh` script with `--download-only` flag omitted, or process the file directly using the Python transcription code embedded in `vod-transcribe.sh`.
 
-#### English only transcription:
-```bash
-./transcribe.sh 2588036186.mp4 --english-only
-```
-
-#### Both English and German transcription:
-```bash
-./transcribe.sh 2588036186.mp4
-```
-
----
-
-## Batch Processing
-
-### Original Batch Mode
-
-If you have multiple videos in `urls.txt`:
-```bash
-./transcribe.sh
-```
-
-Or to only download without transcribing:
-```bash
-./transcribe.sh --download-only
-```
-
-Format for `urls.txt`:
-```
-VOD_ID;DIRECT_VIDEO_URL
-738103227;https://di2joen6szy7h.cloudfront.net/738103227/chunked/index-dvr.m3u8
-```
+For most use cases, it's recommended to use the one-step process described at the top of this guide.
 
 ---
 
@@ -98,8 +68,7 @@ VOD_ID;DIRECT_VIDEO_URL
 
 ### Whisper Models:
 The script uses **OpenAI Whisper large-v3** model which provides:
-- ✅ Superior accuracy compared to Vosk
-- ✅ Proper punctuation and capitalization
+- ✅ High-quality transcription with proper punctuation and capitalization
 - ✅ Better handling of gaming/streaming terminology
 - ✅ Automatic language detection
 - ✅ Models download automatically on first run (~3GB)
@@ -141,13 +110,12 @@ After running the scripts, your directory will look like:
 twitch-vod-transcribe/
 ├── vod-transcribe.sh          # One-step download + transcribe script
 ├── download_vod.py            # Standalone download script
-├── transcribe.sh              # Standalone transcribe script (legacy Vosk)
 ├── requirements.txt           # Python dependencies
-├── 2588036186.mp4             # Downloaded video
-├── 2588036186.aac             # Extracted audio
-└── transcripts/               # All transcripts organized here
-    └── 2588036186/
-        └── 2588036186-en.srt  # English subtitles
+├── vods/                      # Downloaded videos organized by channel
+│   └── {channel}/
+│       ├── {channel}-{date}-{title}.mp4
+│       └── {channel}-{date}-{title}.aac
+└── transcripts/               # All transcripts organized by channel
+    └── {channel}/
+        └── {channel}-{date}-{title}-en.srt
 ```
-
-**Note**: The old Vosk models (`vosk-model-en-us-0.22/`) are no longer needed and can be removed.
