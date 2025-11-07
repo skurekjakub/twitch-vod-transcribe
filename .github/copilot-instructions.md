@@ -95,9 +95,16 @@ Valid values: `160p`, `360p`, `480p`, `720p`, `720p60`, `1080p`, `1080p60`, `sou
 - `urls.txt` batch mode: Legacy format, not actively used (main workflow uses direct URL arguments)
 
 ## Output Artifacts
-- **Summaries**: Manually created markdown files in `summaries/` (not automated - likely AI-generated from transcripts)
+- **Summaries**: AI-generated markdown files in `summaries/` using Copilot with `.github/summary-generation-prompt.md` template
 - **Transcripts**: Auto-generated SRT files (unusual format - text-only, double-newline separated)
 - **Logs**: All operations logged with timestamps for debugging
+
+## Summary Generation Workflow
+Use `.github/summary-generation-prompt.md` as a comprehensive template for generating stream summaries:
+1. Open transcript SRT file from `transcripts/{channel}/`
+2. Reference the prompt template in Copilot Chat
+3. Generate structured markdown summary with trading positions, market analysis, and key takeaways
+4. Save to `summaries/` with naming: `{channel}-{YYYY-MM-DD}-{title-prefix}-SUMMARY.md`
 
 ## Common Pitfall
 The SRT files generated are non-standard - they lack timestamps and sequence numbers, containing only transcribed text separated by blank lines. This is due to the custom Python block in `vod-transcribe.sh`.
