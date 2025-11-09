@@ -1,97 +1,68 @@
-# Analyst's Comprehensive Briefing - Investment Stream Analysis
+Act as a senior financial analyst and portfolio manager with 20+ years of experience in equity markets, derivatives, and macro-economic analysis. Your task is to analyze the provided transcript from a financial market commentary livestream, which is currently in current file.
 
-## Purpose
-This prompt is designed to analyze market commentary livestream transcripts and produce highly-structured, actionable investment briefings. It breaks out sectors, investment strategies, and miscellaneous thoughts into clearly defined, repeatable sections.
+You must produce a comprehensive "Market Commentary Analysis Report." The tone should be professional, insightful, and suitable for other financial professionals.
 
-## Role & Context
-**Role**: You are a senior investment analyst at a top-tier hedge fund.
-
-**Task**: Your portfolio manager is in back-to-back meetings and needs a comprehensive, actionable briefing on a recent market commentary livestream.
-
-**Input**: The full transcript of the livestream.
-
-## Mission
-Analyze and distill the entire transcript into a clear, structured "Comprehensive Briefing." The briefing must be:
-- Objective and comprehensive
-- Capture all critical information
-- Follow the specific, segmented format below
-- Keep sections distinct (do not merge)
+Please structure your report using the exact Markdown headings and formatting below. Be thorough and analytical.
 
 ---
 
-## Required Output Format
+## 1. Executive Summary
 
-### 1. Headline (One Sentence)
-A single, impactful sentence that captures the most important takeaway or dominant theme of the entire discussion.
-
-### 2. Executive Summary (2-3 Sentences)
-A brief paragraph summarizing:
-- Overall market sentiment
-- Key topics covered
-- General outlook provided by the speakers
-
-### 3. Key Macro & Economic Commentary
-Use bullet points to detail the high-level conversation about the broad economy and market:
-
-- **Market Drivers**: What key data (e.g., CPI, jobs report), events (e.g., Fed meeting, geopolitical news), or narratives were discussed as moving the markets?
-- **Economic Outlook**: Summarize all comments on inflation, interest rates, GDP growth, and Federal Reserve policy.
-- **Broad Market Forecasts**: What were the most significant predictions or opinions about the direction of major indices (S&P 500, NASDAQ, etc.)?
-
-### 4. Sector-Specific Analysis
-Create a separate sub-heading for each market sector (e.g., Technology, Healthcare, Energy, Financials, Real Estate) discussed. 
-
-**If no sectors are discussed, state**: "No specific sectors were analyzed."
-
-#### [Sector Name, e.g., Technology]
-- **Sentiment**: What was the overall tone for this sector? (e.g., Bullish, Bearish, Mixed)
-- **Key Themes**: What were the main topics of discussion for this sector? (e.g., AI adoption, regulatory hurdles, supply chain issues)
-- **Specific Sub-sectors**: Were any sub-sectors (e.g., Semiconductors, Software) highlighted?
-- **Risks/Opportunities**: What specific risks or opportunities were identified for this sector?
-
-*Repeat this 4-point structure for every sector mentioned*
-
-### 5. Ticker-Specific Deep Dive
-Identify every stock ticker symbol (e.g., $MSFT, $GOOG, $NVDA) mentioned. For each ticker, create a separate entry using the following template.
-
-**If no tickers are discussed, state**: "No specific tickers were analyzed."
-
-#### Ticker: [e.g., $AAPL]
-- **Context**: Why was this stock discussed? (e.g., reacting to earnings, new product, valuation comparison)
-- **Detailed Commentary**: Summarize the specific analysis and opinions. What was the tone (bullish, bearish, neutral)? What key metrics (P/E, growth, margins) were discussed?
-- **Forecasts & Targets**: Were any specific price targets, "buy/sell/hold" ratings, or future forecasts mentioned?
-- **Key Catalysts**: Did the speakers identify any upcoming events or catalysts (positive or negative) for the stock?
-
-*Repeat this 4-point structure for every single ticker mentioned*
-
-### 6. Investment Approach Discussions
-Create a separate sub-heading for each investment strategy, philosophy, or methodology (e.g., Value Investing, Growth Investing, Technical Analysis, Momentum Trading, Options Strategy) that was covered.
-
-**If none are discussed, state**: "No specific investment approaches were discussed."
-
-#### [Strategy Name, e.g., Value Investing]
-- **Core Concept**: How was this approach defined or used in the discussion?
-- **Key Insights**: What specific insights, rules, or recommendations were provided related to this strategy?
-- **Application**: Were any examples given of how this strategy applies to the current market, sectors, or specific tickers?
-
-*Repeat this 3-point structure for every approach mentioned*
-
-### 7. Miscellaneous Market Musings
-This section is for all other market-related thoughts, opinions, or musings that do not fit into the categories above.
-
-Use bullet points to capture:
-- Standalone insights
-- Philosophical points about investing
-- Behavioral finance tips
-- General market commentary
-
-### 8. Concluding Sentiment
-A final sentence describing the concluding tone of the livestream.
-
-**Examples**:
-- "The stream ended on a note of cautious optimism"
-- "Speakers remained bearish on the near-term outlook"
+Provide a high-level, one-paragraph overview of the entire stream. Summarize the dominant market sentiment (e.g., bullish, bearish, mixed), the key themes, and the most significant tickers or strategies discussed.
 
 ---
 
-## Input
-**Transcript to Analyze**: [PASTE YOUR LONG TRANSCRIPT HERE]
+## 2. Ticker-Specific Analysis
+
+Identify and list all tickers (e.g., `$AAPL`, `$TSLA`, `BTC`, `CL=F`) discussed. Group them by the depth of the discussion.
+
+### 2.1. Major Ticker Discussions
+For each ticker that was a primary focus, provide a detailed summary covering:
+* **Thesis:** The core bullish or bearish argument presented.
+* **Key Catalysts:** Any news, earnings, or events mentioned.
+* **Technical Levels:** Specific price targets, support, or resistance levels.
+* **Context:** The nature of the discussion (e.g., earnings review, technical setup, macro-play).
+*(Format this as a bulleted list for each ticker. If the discussion is extensive, a two-page summary is fine; otherwise, a few detailed paragraphs are sufficient.)*
+
+### 2.2. Minor Ticker Mentions
+For tickers that were mentioned briefly or in passing:
+* List the ticker and provide a 1-2 sentence summary of the context in which it was raised.
+
+---
+
+## 3. Strategies & Theses
+
+Identify and detail all specific trading or investment strategies, methodologies, or macro-economic theses discussed. Examples could include:
+* Options strategies (e.g., covered calls, credit spreads).
+* Technical patterns (e.g., "breakout and retest," "mean reversion").
+* Macro theses (e.g., "long inflation," "Fed policy impact").
+* Portfolio management (e.g., "position sizing," "rotating sectors").
+
+For each strategy, explain its logic, execution, and any associated risks as described in the stream.
+
+---
+
+## 4. Market Trends & Trading Psychology
+
+Summarize all discussions related to:
+* **Broad Market Trends:** Sector rotations, index-level movements, or risk-on/risk-off sentiment.
+* **Trading Psychology:** Commentary on trader behavior, market fear/greed, discipline, risk management, or common retail errors.
+
+---
+
+## 5. Actionable Advice & Key Takeaways
+
+Extract and list all direct advice, specific predictions, or key rules given to the audience.
+* Use a clear bullet-point format for this section.
+
+---
+
+## 6. Sidetracks & Off-Topic Discussion
+
+This section is dedicated to all significant discussions, debates, or anecdotes that are **not** directly related to financial markets or trading.
+* Do not skip this content.
+* For each distinct off-topic segment, provide a brief paragraph summarizing the topic and the nature of the discussion (e.g., "Discussion on personal technology," "Debate about a recent news event," "Personal anecdote about travel").
+
+---
+
+Please begin the analysis based on the provided file.
