@@ -1,0 +1,1975 @@
+Hey everyone!
+I'm super excited to be sitting down
+with Ed Sheeran.
+Ed is the host of the Better
+Offline Podcast
+and a leading critic of the current
+AI boom.
+What I love about Ed is not just
+the passion he brings to his podcast,
+but that he always has the facts
+and the data to back up his skepticism
+and has a damn solid case
+that we should take
+everything we hear about
+AI with a grain of salt.
+I want to know what he thinks
+AI is good for and what's just BS.
+And maybe most of all, what will happen if
+he's right and this stuff can't deliver.
+And what should we be doing to prepare?
+Let's find out.
+Ed, super
+happy to have you on the podcast today.
+You know, you're
+obviously the host of Better Off Line.
+You know, certainly one of my favorite.
+I skepticism podcast.
+If I can call it that.
+And, you know, for those who haven't seen
+it, maybe I'll, I'll start off by,
+you know, sharing one of the quotes
+I heard you say recently that I think
+sort of sums up the whole thing, which was
+you were talking about the AI revolution,
+and you said the thing holding back AI is
+it doesn't fucking work.
+Can you, you know, unpack that statement
+and kind of the components of it.
+So if you look at what what generative
+AI was meant to be
+and large language
+models were meant to stand for.
+They kind of were always set up to fail.
+They were meant to be
+this panacea of we're going to be
+the future of consumer software.
+Were going to be the thing
+that kind of kind of restarts
+growth in software as a service.
+As I'm sure you all know, software
+as a service has been slowing
+since 2021, actually kind of before that,
+if I'm honest.
+People have been freaking out
+for several years before Covid, in fact.
+But generative
+AI was meant to be this thing.
+You plug it into anything
+and it just creates new revenue.
+The problem is that generative
+AI and large language
+models are inherently limited by the
+probabilistic nature of these models.
+What they can actually do
+is they can generate, they can summarize,
+you can put a hat on a hat,
+you can say, oh,
+they can do some coding things,
+but that's really what they can do.
+And they have reached the point
+where they're not what they can't learn
+because they have no consciousness.
+So what they can actually do as products
+is very limited.
+It's very limited indeed.
+Because what people want them to do
+is they want them to create units of work.
+They want to create entire software
+programs.
+You can't really do that.
+Oh, can you create some code?
+You can create some code.
+But if you don't know how to code.
+Do you really want to trust this.
+You probably don't.
+So inherently you've got all of this
+hundreds of billions of dollars of CapEx
+being built to propagate large language
+models that don't have the demand
+and don't have the capabilities
+to actually justify any of it.
+Right.
+And I think a lot of the argument
+that you're hearing is, well,
+you know, the next version
+will get even closer and even closer.
+And,
+you know, we're just around the corner
+from being able to deploy this at scale.
+I was going to ask you, if you buy that,
+it's it's pretty clear you don't buy that.
+But but, you know, tell me
+tell me a little bit more about, you know,
+why you think the inherent nature
+makes that, you know, decreasingly likely.
+Well, I mean, we've been told that
+for several years now.
+We've been told for years it's just around
+the corner any minute now.
+It's kind of like waiting for
+waiting for a bus.
+Except the bus will never come.
+More of a waiting for Godot situation.
+Yeah.
+Everybody's been saying all these things
+are getting exponentially better.
+They really haven't.
+They've been getting more powerful
+based on benchmarks that are rigged
+specifically for them, because you can't
+just test them on real things.
+So everyone's been saying, oh,
+they'll get more powerful, they get more,
+they'll get cheaper.
+And while they've got more powerful,
+the retro capabilities have mostly stayed
+the same.
+Other than reasoning models,
+which have really all kind
+of a technological hat on a hat,
+they are oh, instead of saying
+you ask it to do something and it just
+spitting out what it thinks is the answer,
+it will sit there and generate an action
+plan and execute that as best it can.
+The problem is,
+the more complex that reasoning effort,
+the more likely it is to hallucinate.
+So the upper bounds of coding Lem's
+getting better
+has been at the cost of more token burden,
+because it requires
+more token bang for reasoning models,
+but more propensity to hallucinate.
+So basically, the more complex the work
+you also get to do, the worse it gets.
+But really,
+it comes down to a far simpler point,
+which is where are the new things?
+Where are the new products?
+Where are the new products
+that actually matter?
+Microsoft has failed.
+I just reported this out
+actually very recently, that Microsoft
+only has 8 million
+active paying licenses for Microsoft.
+365 AI Copilot,
+which is a product category.
+I think business and productivity
+is 29 billion and a quarter,
+something like that.
+If Microsoft can't do it, nobody can.
+Microsoft is the software juggernaut.
+They are the software mob.
+If they can't work this out, nobody can.
+And it's.
+Copilot is a really interesting example.
+And, I mean,
+this is a personal experience.
+Don't you know, take it as,
+you know, the standard truth.
+But my experience with copilot
+has been like, in a word, underwhelming.
+I would say, like,
+I'm still struggling to figure out
+what it's actually useful for,
+other than summarizing meeting minutes.
+And, you know, we put out here
+a piece of content over a year ago
+basically saying
+no, copilot is not ready for prime time.
+And when we put that out, I mean,
+I'll be the first to say I thought, like,
+ready for prime time was going to be like
+weeks away based on some of the hype.
+And it still feels like
+we're not we're we're not there.
+Is that your experience as well?
+Is that what you're seeing and hearing?
+Yes. And talking
+to a number of copilot customers as well.
+People are just underwhelmed.
+People don't know what to do with it.
+And I think that that's
+probably the biggest problem.
+It's not just that it's underwhelming
+at the things it's meant to do.
+It's not really obvious what it is
+you're buying it for.
+They just announced a couple weeks back.
+Oh, they've released vibe code sorry.
+Vibe working for Excel and Word.
+It's like they're quite literally
+saying you work out what it is
+you're meant to do with this.
+It's very it's actually kind of nasty.
+I don't like it.
+I don't like the idea of paying
+for software that I have to work out
+the value of.
+That's not that's not how this works.
+It's not buying a computer.
+This is a software product.
+And I mean, the truth is that LMS
+can't do anything that we really need them
+to incorporate.
+Sorry, in word or in Excel.
+They can't really do that.
+I can't even think of what
+I want them to do. Like what?
+What possible.
+I'm writing the words
+I'm filling in the data in Excel.
+I guess the only time I've ever found
+ChatGPT
+useful was when I asked it
+how to do an Excel formula.
+But how would I work this out in Excel?
+And then I went back to Excel and
+I worked out how to do it from scratch.
+I wouldn't trust in them
+to do anything with my own data, not even
+because I think though people really get
+ahead of themselves on this one.
+I think it's important to say
+I don't think Microsoft
+is trading their models
+with your copilot data in 365.
+That's not what I'm scared of.
+I'm scared of not bloody
+trusting the numbers.
+Also, I want a human to look at that.
+When we hire a person,
+we're not just hiring them to do a job,
+we're hiring them
+so we can kind of distribute the risk.
+Well, and with that in mind that,
+that that's one of the promises of AI
+that is feeling a little bit dubious
+or at least that there's
+a lot of different views
+on, is there's this view of,
+oh you know, there's going to be these,
+this widespread
+job loss caused by AI and one camp.
+There's also, you know, the utopians
+who say, oh, it's going to create a job.
+Boom. Do you believe either of those
+or do you have a different perspective?
+right now.
+The jobs that this is replacing, 
+translators, which have already been
+they've been trying to automate them out
+for years and years and years with machine
+read translation
+and, SEO people who I mean,
+for the most part,
+I think that's a job where you're already
+operating on the fringes of what a job is.
+And I think there are good
+SEO people and a lot of bad ones, and
+I think that the good ones will be fine,
+because good SEO isn't generating copy.
+It's understanding how the internet works,
+but nevertheless the the chum level.
+But I think the only jobs
+that are being really replaced are jobs
+where the boss was already trying to fire
+people and had already been doing it.
+I think that on both sides it's a farce.
+If you use these models
+or talk to anyone who uses them regularly,
+you are not coming away with it.
+Saying this can replace a person
+you are not coming at away from it.
+Saying from six months ago to here I.
+I'm inspired to believe
+that this can replace a person.
+Go and sit on any of the subreddits
+of Replit or loveable or cursor or Claude,
+and you will see that there is no one
+on there building their own software
+just with their lams.
+The people that are able to build
+functional software
+LMS are people who can already code.
+And there was a study
+a couple of months ago
+and came out in the register where it was,
+people, engineers using large language
+models were actually slower.
+So it's kind of the whole thing's
+kind of farcical.
+And the idea that there will be more
+jobs again, that's just
+the kind of wanky way
+that people go about it.
+It's like,
+oh, there will be jobs training.
+The model already exists.
+They're already jobs training the models.
+But it's like,
+oh, they'll they'll be AI factories.
+What does that mean?
+None of these people
+actually think further than one sentence.
+If you work in
+IT, Infotech research Group is a name
+you need to know.
+No matter what your needs are, Infotech
+has you covered.
+AI strategy?
+Covered. Disaster recovery?
+Covered.
+Vendor negotiation? Covered.
+Infotech supports you with the best
+practice research and a team of analysts
+standing by ready to help you
+tackle your toughest challenges.
+Check it out at the link below
+and don't forget to like and subscribe!
+mentioned, like,
+the subreddits and the idea of asking
+people who are actually interacting
+with these on a daily basis.
+And this is one of the
+that the strange and kind of
+disturbing things about this to me is it
+feels like what you hear from CEOs
+or from business
+leaders is starting to feel more
+and more out of sync from,
+you know, what you're hearing
+from boots on the ground.
+So when you hear,
+you know, some of these
+these clips where a CEO says, oh, well,
+we're actually doing, you know, mass
+layoffs because we had AI efficiencies, do
+you just see that as pure opportunism,
+or is there is there more under the cover?
+It's opportunism.
+But I challenge anyone who reads
+any announcement when they said
+the CEO says oh we've replaced
+they will replace people with AI.
+They actually read what they say
+because they never say that.
+Not once.
+What they say is all the
+we are being more efficient
+and using the power of
+AI to be more efficient.
+They're not saying they're replacing
+anyone other than Marc Benioff,
+who is just a liar.
+He's a liar like I.
+I really just say that people lie,
+but I think he says 30
+to 50% of jobs inside
+Salesforce are automated or something.
+Just nonsense.
+And I've talked to people in Salesforce,
+they they back up what I'm saying.
+And that's the thing these people,
+they will say what they need to
+because they know
+the people investing in the market,
+they know the big hedge funds
+and all that.
+They know for a fact
+that those people don't know anything
+I don't know shit about. Fuck.
+They just do that.
+Everything is a great big vibe for them.
+And thus people are, though I mean,
+these are just craven, cynical liars.
+They're not replacing anyone with AI.
+They want you to believe that because the
+media will pick it up and run with them.
+So the
+let's stick on on Benioff for a while.
+And you know, for some very direct words
+there that we should
+that we should probably unpack
+a little bit.
+So so I mean Benioff big thing
+whether you believe them
+or not is,
+you know, going all in on a genetic AI.
+And they're building these products
+to help people
+go and gen tech in your own view.
+Why is that BS.
+And assuming that it is BS.
+How do you see the next, you know,
+handful of months or years unfolding
+for that organization as they have to cope
+with not actually having the,
+you know, the product or service
+they've been suggesting they do.
+Well, let's start with the most
+obvious thing, which is that Salesforce,
+his own CFO, said back in March that they
+will not see growth from AI this year.
+That feels like the biggest indictment
+of all of it.
+2nd June 26th, 2025 Marc Benioff
+says AI is throwing up to 50% of the work
+at Salesforce.
+That is a lie
+like that is that's a lie.
+Like,
+I'm sorry, he never has to prove himself.
+He just says this crap. He is lying.
+That is a lie.
+There is no way that that's happening.
+And to say that I'm actually shocked
+that there is not
+regulatory action taking place
+because that's that is nonsense.
+But Agent Flow sucks.
+People don't like it.
+The information is reported repeatedly.
+How people don't like Agent Forced.
+It doesn't do what they say it needs to.
+There was an internal Salesforce
+research paper that came out
+that said the the agents fail, I think 52.
+They only succeed 52% of the time on
+single step things like single set tasks.
+So I asked the agent to do something
+and then it does something,
+and they only succeed
+32% of the time on multi-step.
+So that means ask agent to do something.
+Agent books an appointment
+agent goes and look something up.
+That's terrible.
+That's Now.
+runs completely contrary to agents
+and agent force.
+And, a few weeks, a few weeks ago,
+they announced something
+along the lines of,
+oh, they've got a new internal AI,
+an autonomous coding tool called
+Vibe Code.
+They're out of.
+I guess everyone's out of ideas
+at this point as vibe.
+This vibe that.
+But if you look in the illustrious
+history of Salesforce, he's
+been promising Einstein
+AI since like 2016.
+Marc Benioff loves getting on stage
+and saying that AI is the future,
+but I never seems to do anything
+at Salesforce.
+So let's come back to that idea of,
+you know,
+again, tech is, you know, all hopped up
+and, you know, half
+or more of these a capabilities
+don't actually exist in your view.
+We kind of touched on it.
+But like what
+are the actual reasonable capabilities
+or use cases we can expect from it.
+Like it is clearly in your mind, it's
+a lot more limited than what it can't do.
+Like, what can you actually
+expect from this stuff?
+I think the
+Carl Brown of the Internet of Bugs
+said it really was great.
+YouTube covering 35 years in software
+engineering.
+It makes the easy stuff easier
+and the hard stuff harder.
+So if there are sections of code
+that you need to very quickly do,
+if you have a very character
+heavy coding project, nix
+the rash of, lutke as well said this.
+If you just need to generate
+a lot of quick
+bits of code that you can look over
+and manually see.
+Great. That's that's really it.
+You can't really build
+entire software projects with coding LMS.
+I guess Rag Search is kind of useful.
+It's a slightly more efficient.
+I don't even know
+if it's more efficient search.
+That's the thing.
+I'm not even being a cynic here.
+I'm really must be clear.
+I'm not saying here being like,
+oh, it all sucks just because I like,
+I don't care.
+I don't want it to or don't want it to.
+I'm simply stating what I've seen.
+I've yet to see one thing that made me go,
+ooh, that's interesting.
+And I'm I'm an early adopter.
+I'm sitting in my office right now.
+I have a tonal workout machine over there.
+I have a Corsair thousand DB
+two motherboard thing back here.
+I've got all manner of tech
+crap on the floor.
+I love weird new stuff.
+I have a GPD win four,
+which is a tiny little PlayStation
+portable looking windows PC.
+The buttons are kind of terrible,
+but I find it fascinating.
+I can tolerate bad or weird or crappy.
+If there's something interesting,
+it's doing nothing out there doing this.
+I really mean it.
+That's really,
+I think, the crowning glory at this era.
+How goddamn dollar is how really just
+unexciting and lifeless it feels.
+Because I am also at my day
+job on spreadsheet heavy.
+I mean, the spreadsheets all goddamn day.
+I hate it.
+I pray for the end
+sometimes with the amount of links
+I have to put it in document,
+you would think that I'd be able to say,
+look up everything
+written in the last week by this climb,
+and I could hit a button
+and it would spit it out.
+I tried to get manis, an agent
+and a genetic AI to do for my own name.
+I said, from the last year or two years,
+get me every link that mentions me.
+Should be real easy, right?
+Should be the thing that this thing is.
+I watched it right?
+Constant like lines of Python.
+Just like crunching numbers,
+obliterating compute to get me ten
+goddamn links.
+I think I've had at least 50 citations
+and I'm not even due to my own horn.
+I'm just saying very easy
+to get this right.
+Like very should be very easy.
+But even on the block and tackle
+most obvious use cases, it doesn't do it.
+I don't have much use for generating text.
+I really don't, but even if I did
+the text, the generate sucks.
+I truly and I've sat here
+and tried to work it out.
+I can't think of an actual use case
+that would change my mind anymore
+because oh, it could organize
+your calendar, can it?
+Because my count, the whole reason
+that you have a calendar organizer,
+well, you have in a system is it's
+not so that they can manage your calendar.
+It's so that you can trust them to it
+so that you can say, find me a time
+like Tuesday to Thursday
+and make sure that it doesn't
+get in the way of some crap I have on you.
+Don't
+if you have to hand-hold an assistant.
+It's not an assistant.
+It's an intern.
+At best, it's an intern that never learns.
+And so I'm really sitting here trying
+to think, okay, what would be the thing
+if I guess generative search was
+really powerful, but even then, it isn't.
+And I've used the very high end
+generative search products as well.
+It's just also distinctly underwhelming.
+And I'm really I'm
+trying to trying to be fair here,
+but it's just it's really underwhelming.
+You summed it up, I think really well
+with the word trust, right?
+Like it feels like trust is the biggest
+barrier to this thing being no.
+I mean, it's you're right.
+But I think it's it's simple.
+It's you it trust is part of it,
+but it's the fact that it doesn't work
+Right?
+Right.
+and even if it never will, because
+the limitations of probabilistic models.
+So you can't trust them. So you're right.
+But I think when you say trust,
+it's very easy for people
+to get tied up in that and go
+well with maybe they could build up trust.
+No, it's that because you can't like
+if you give them,
+if you let them off the hook
+and say, well, build up trust, it means
+that they can get you to kind of efficacy.
+No you can't.
+The whole point of automation is
+it needs to be unilateral.
+You can't leave something to control
+other things
+if you can't trust it to your point.
+But the reason you can't trust
+this is because probabilistic models
+are not operating on defined rules.
+You can try and they're really trying
+with deterministic stuff,
+but damn is it not working.
+Well.
+And that's,
+that's exactly where I was going with this
+that the, the trust is not in your view
+an iteration away.
+It's an impossibility of the fundamental
+structure of how this technology works.
+Right. The probabilistic model.
+But to me you know
+listening to everything you have to say
+about this, it feels like and you know,
+you mentioned, you know, your love
+of technology and early adoption.
+It feels like this not working
+is only a fraction of what's kind of drawn
+you into this.
+Like my sense is that,
+like what really pisses you off
+is this layer of what feels like collusion
+in tech and in the media.
+So like what's
+what's going on there and like,
+how have you seen it
+develop over the last few years.
+And, and do you have any sense
+that it's going to get better or worse.
+So collusion
+I don't think it's happening with
+I don't think the media is colluding.
+Just want to be abundantly clear
+that I don't think
+the media is doing their job.
+I don't think the media is sitting here
+trying to work out what this stuff does.
+I think they are accepting
+the company line.
+I think across the tech industry
+there is a
+they've realized they've hit a wall,
+that there are no more hypergrowth ideas.
+We don't have a new cloud,
+we don't have a new smartphone,
+we don't have a new anything.
+We don't have a new SAS.
+We don't have a new fuzzy thing
+to shake at the markets.
+So everyone shows I the collusion.
+I would say, is the fact that all of them
+are agreeing to do the same thing,
+so that no one has to stop
+the moment that someone stops the moment,
+that's when it ends.
+It's the moment one of them says,
+we don't want to do any of this anymore.
+None of them want to.
+They all hate it.
+It's so obvious
+you've got all of them
+saying it's a bubble or an overbuild
+at some level other than Sundar.
+I think at this point such a Nadella said
+it might be an over overbuild to do.
+Aakash Patel.
+Yes, I think, a few months ago
+Mark Zuckerberg
+just said it,
+if you like, a month ago to Alex Heath.
+Sam Altman just said it two months ago.
+I mean, they're all saying it's a bubble,
+so they want to be dumb.
+But I think the thing that drew me into
+it was the fact that the media is acting
+like it can do things. It
+can. And also the insane numbers,
+the the
+billions of dollars burned for bugger
+all revenue.
+I think that that drew me in
+because I think that the way
+when you look at how this is sold
+in the media, you look at how they talk
+about it in the on the earnings calls
+and such without ever revealing revenue.
+They talk about it
+is this massive revenue driver.
+When you look at the underlying numbers,
+they're insane.
+They're terrible.
+For my calculations.
+Best case scenario,
+Microsoft's making about and they're
+definitely not making this much.
+If they had 8 million paying active users
+and then 4 million
+more inactive paying users of Copilot AI,
+and they were all paying 30 bucks.
+If you're looking
+about $4 billion of annual revenue,
+which is piss poor for Microsoft,
+it's absolute. That's dog shit.
+Like they've those numbers of Steve
+Ballmer would throw a chair through you.
+And yet
+you've got what, 80 something billion
+dollars of CapEx this year for this.
+And by the way,
+they give tons of discounts.
+It's more likely they're making like 2
+billion on this, which is still piss poor.
+Now, Microsoft
+also stopped announcing their AI revenue.
+They said it was annualized January 20th.
+Whenever they did, their January
+earnings was the last time
+they mentioned it, 13 billion annualized.
+So about 1.08 billion a month.
+Again, they stopped saying that number.
+Yet they still say AI
+is this amazing thing.
+If you think something's amazing,
+why aren't you telling me
+how much money you're making?
+And the answer is
+they're not making the money.
+It's very clearly not going well.
+So what's pissing me off is I'm seeing
+everyone act like
+this has been over a year
+and a half of this.
+Now everyone acting like
+this is the next big revenue driver.
+The next big economic driver.
+And the only thing it's been driving
+is hundreds of billions of dollars
+of CapEx in the datacenters,
+full of GPUs from one vendor.
+Well, and that's the piece
+that has me most concerned these days.
+It feels like more and more
+you're hearing stories of.
+Yes, these big CapEx purchases here.
+But also, you know, it feels like
+every week there's some new story about,
+you know, big tech vendor
+A, you know, promising,
+you know, however many tens or hundreds
+of billions of dollars to big tech vendor
+C and it just, you know,
+you used a word on your on your podcast
+that was rattling around in my head
+and I haven't heard anyone use it yet,
+which is it feels.
+It feels.
+And Ronnie,
+I don't know if you said and Ronnie
+or you said Enron, but it's just like.
+Enron, Nortel.
+It just feels like
+what you would expect to see
+pre a bubble bursting like it or like,
+I don't know if it feels like
+a Russian economy or what.
+Like it just does not feel like healthy.
+Yeah.
+It's very similar to Enron.
+But Enron was insane.
+I don't think people recognize
+how insane Enron was.
+Like, this is not Enron.
+This will never get that,
+because Enron was making SPV
+and giving their debt to other companies.
+Honestly, insane,
+but kind of impressive how insane it was.
+Just like,
+yeah, we're going to make a company
+just to offload all our debt to
+and then we're going to get revenue
+from them.
+Fraud masters.
+However, one thing Enron did,
+but more Nortel
+and the telecoms giants did during that
+bubble was
+they would give these generous vendor
+financing packages to people
+so they would sell sell their stuff
+to someone else
+with generous credit package.
+When don't worry about paying me
+for a minute.
+I just did this for the earnings.
+I don't know what Nvidia's doing.
+I do not have any privileged access.
+Their accounts receivable are climbing.
+If those things don't start coming and
+to be clear, they are generally climbs.
+It's not necessarily always a bad sign.
+In fact, in this case, it could be a
+good one that Nvidia loves selling chips.
+It's great,
+but revenue growth isn't growing
+at the same rate as accounts receivable.
+So I'm kind of like I'm kind of weird.
+There's also the fact
+that 39% of their last quarter revenue
+came from two resellers,
+Supermicro and Dell Supermicro last year
+was, on the massive fraud investigation.
+So it was good
+that that's one of your larger customers.
+So I think the simplest way to put it,
+I've kind of got myself
+in a tizzy because whenever
+I think these numbers, I feel insane.
+It comes down to something simple,
+which is if there was a healthy market
+for GPUs, Nvidia would not be doing this.
+Nvidia seeds
+companies like core, Wave or Lambda,
+they get, they invest in them,
+they become their largest customer,
+which they they sell them GPUs.
+Those companies, these neo clouds.
+So cool wave will take the debt
+and the contract.
+Sorry the contract and the GPUs use
+those as collateral to raise debt,
+which will they will
+then use to buy more GPUs from Nvidia.
+That's not that's not good.
+That's not a good.
+That's not good at all.
+That's not what you want to see.
+But then you get to the much more
+worrying thing, which is when you go
+and look at these neo clouds.
+And just to be clear, a neo cloud
+is just an AI specific compute company.
+So like there's Microsoft Azure, there's
+Google Cloud, there's Amazon Web Services.
+Those companies sell all kinds of compute.
+The specific neo clouds, the core weaves,
+nebulas and lambdas of the world.
+They just sell AI compute.
+Now the problem with
+those is when you look at their revenues,
+their biggest customers are Nvidia,
+Microsoft, Amazon and Meta
+and OpenAI.
+That's not good.
+That's not a diversified revenue base.
+And also when most of your revenues
+from hyperscalers
+that build their own capacity,
+that's basically them saying
+we will quit one day, like we are like
+they are just using this
+so they don't have to raise their own
+CapEx guidance.
+Again, this isn't a sign
+that the industry is doing well.
+This isn't a sign that people want
+AI compute.
+It's a sign that there are hyperscalers
+that have a vested interest
+in keeping AI alive
+that I would call the former.
+I don't know if it's actual collusion.
+I don't know what the.
+That's
+actually my biggest question right now.
+What are they doing with all this compute.
+Because it certainly isn't useful
+I don't know, it's all very weird to me.
+It is
+weird and it, you
+know, you keep seeing these headlines and,
+to your point,
+if you read past the headline,
+it feels like every number you read
+should have an asterisk beside it.
+Right.
+Like every time you see something going
+on, it's like,
+well,
+we're going to invest this much money,
+but it's contingent on A, B and C,
+and it's actually it's circular
+and like it's tough to really understand
+what's going on.
+And maybe the most confusing part is
+the market
+seems to be rewarding them for it
+in general.
+Like That the skepticism doesn't seem like
+it's permeated the investor layer.
+And I don't know if that's because there's
+big institutional investors that are,
+you know, in on the take
+or can't have this fail.
+But, I mean, do you do
+you have a sense of them
+that the mechanism there
+that's allowing this to continue to
+like grow versus shrink?
+I think that it is far simpler.
+I think the markets are run by babies.
+I think that I think
+that they have the institutional knowledge
+and emotional intelligence of babies.
+It's that simple.
+Oracle announces a $300 billion deal
+with OpenAI and the market goes
+psycho $300 billion over four years
+or five years.
+That number keeps changing, by the way.
+And the market goes,
+oh, that's squealing,
+annoying king and rolling on their backs.
+It's disgusting.
+But also unrealistic.
+OpenAI doesn't have that money,
+and everyone is saying that now.
+OpenAI doesn't have the money. Boring.
+That's dull.
+That's tired.
+You know what's wired?
+Oracle doesn't have the capacity.
+OpenAI can't afford to pay Oracle.
+And Oracle does not have the capacity.
+It takes about two and a half years
+per gigawatt.
+They need 4.5GW to serve this contract.
+By my calculations,
+they will only have 1.2GW by the middle
+of the fiscal year 2027, when OpenAI
+should be paying them 30 to $60 billion.
+I forget which one it is.
+The point is,
+if the markets even sat there for a second
+and thought about it,
+they would be panicking.
+I'd be panicking. This is panic worthy.
+And what's crazy to me is
+I don't have a finance background.
+I was like the dumbest guy in my privates.
+I went to a private school in miserable
+time or worst time of my life.
+I was the dumbest kid in the year.
+Every year, without fail,
+I learned all this stuff myself
+and this feels very obvious.
+But when I talk to like,
+hedge fund managers, they go, oh really?
+Oh, I say, what the fuck do you do?
+What do you do all day?
+Do you read anything other than excel?
+Do you vibe with Excel?
+You use vibe, Excel?
+Do you use Copilot?
+All of these AI boosters.
+Also, if you ask them whether they use AI,
+they get very nervous
+because they don't really have an answer.
+But putting that aside,
+the markets want AI to exist.
+They want it to do the thing
+because once the markets accept,
+I don't even know if they fully understand
+this.
+Once the markets accept the
+AI is not the thing, they will realize
+that there are no more hypergrowth
+markets in tech
+and they will start
+punishing every tech stock.
+That's inevitable.
+But right now, Nvidia is the fastest,
+most strongest, most biggest company
+that ever did big company anything.
+So yay, more number go up.
+Who knows if numbers will continue
+going up, but I think the
+on top of all of that, I think the market
+has an unhealthy relationship
+with Nvidia AI.
+Nvidia's last quarterly earnings,
+they had 55% year over year growth.
+The markets were pissed mugs like,
+what is this?
+What what?
+Because I think I think 2020
+for the same quarter,
+they had 265% year over year growth.
+So the markets are babies.
+Still babies.
+What's crazy is
+if Nvidia was to, in a year's time
+from their last earnings,
+make 55% year over year growth,
+they'd be selling $72
+billion worth of GPUs in one quarter.
+It's not sustainable.
+None of this makes any sense.
+It's all this short termism bullshit
+and it's going to hurt retail
+So let's talk about those retail investors
+because there's
+you know we're talking about words
+like inevitable correction and end
+which I completely agree
+with you on by the way.
+Assuming
+there is an inevitable correction and it
+you know, I'm curious,
+you mentioned earlier that
+as soon as the first tech company
+kind of says, okay,
+we're like putting our foot on the gas
+here, that's going to be the first domino
+in the series.
+Who who is most at risk here?
+Is it
+the tech companies as a retail investors?
+How what kind of impact could
+this have on the on the broader economy?
+So Nvidia makes up 7 to 8% of the S&P 500.
+So that's where we should Wow.
+then. Yeah it's really it sucks man.
+The Magnificent Seven makes up 35% of it
+I think which is Nvidia Microsoft.
+Net Google Amazon Tesla and Apple
+I think that's a there's seven of them.
+Jesus Christ
+nearly said the Magnificent eight.
+That very bad. No.
+So first of all it starts there.
+So if you are invested in the market,
+you're probably partially invested
+in The Magnificent Seven.
+I think that there are also
+a lot of unfortunate retail them,
+but I don't know this for a fact,
+but I get the sense that there are
+a lot of unfortunate retail investors
+who may be heavily
+shored up with Oracle as well
+because of Oracle's big growth bust.
+So what's going to happen
+is when these stocks tank
+that like people's retirements
+people for our Wang pays peoples.
+Honestly just people's
+Robinhood accounts are going to start
+looking like a dog's dinner.
+And the tech companies
+are going to be fine.
+Other than OpenAI, I think OpenAI dies
+and gets absorbed into Microsoft.
+It's the think, Amy Hood
+I'm hinges her jaw.
+And just
+because Microsoft owns all of the research
+and IP
+and has access to all of their marvels
+and exclusively sells them anyway.
+So and they also run
+all of their infrastructure.
+So they'll just take the open
+AI stack of Microsoft One on there.
+They'll be done.
+But I think the there is going to be
+apocalyptic terms for startups, I think
+because I think I took something like 66%,
+I thought it was 33%.
+I've got top recently.
+It was way more than that of a of funding
+if startup funding in the US.
+So you're going to find a bunch of venture
+capitalists who can't raise anymore.
+They've just their limited partners
+are going to say go fuck yourself.
+Because the other unique thing
+about AI startups is because they're so
+because it's so resource intensive,
+because the cost of running
+these models is so horrible.
+These companies
+have had to raise all this money
+and then only to find out
+that they can't sell
+because it's really easy
+to clone the products,
+because all of these products
+are just wrappers of GPT three
+or close to what have you.
+Because in previous booms,
+sure, you would be building
+cloud software and code languages,
+but your ingenuity as a coder
+or as a systems engineer, the systems
+you could build were your own IP.
+You could build
+really fundamentally strong IP.
+With LMS, you can't.
+You'll notice
+that no one has a profitable company. No.
+And in fact, no one really appears
+to be able to sell their companies.
+I found one
+AI company, like a true blue generative
+AI company that actually sold for money.
+It was cognitively, I want to say
+cognitively they were a customer
+support AI company to a public company
+called nice.
+I've never heard of otherwise.
+There was one that sold to AMD in 2024,
+and the rest of them are these weird
+kind of aqua hire situations like
+inflection or windsurf, what have you.
+Kind of a kludgy point.
+But there is a reason I'm telling you,
+which is you're going to have
+all of these startups, these AI startups
+that are going to be sat there
+with nothing to do.
+They can get acquired or die.
+So you'll see a wave of aqua hires.
+I also think that you're going
+to see something
+I call the subprime AI crisis,
+which is right now
+all of the rates that you're currently
+paying with, say, anthropic or OpenAI.
+They are subsidized heavily.
+I believe all of them are unprofitable.
+I think that at some point
+they're going to crank up the prices.
+This is actually already happened.
+I reported this back in June.
+The anthropic June or July.
+I think that anthropic and OpenAI released
+service tiers
+of priority processing,
+which means the troll toll.
+You need to pay this,
+otherwise you won't have proper uptime,
+which was never a problem before.
+But it's a problem now.
+It's a problem we've created for you.
+So that is going to get worse.
+I think they're going to just start
+increasing the costs
+of these models
+on a per to per million token basis.
+But that's kind of already happening.
+And indeed reasoning models
+make that happen.
+But again, kind of a cloudy point.
+But there is just a set up here
+where all of these AI startups have
+no they have no horizon.
+They have no future.
+There will be no way to turn them
+profitable.
+There will be no way to get them acquired
+so they will die.
+Once that starts happening,
+it will just become flat out
+difficult to raise money
+as a startup, in part
+because so much venture capital in the US
+has been jettisoned into AI.
+So you're going to have venture
+capitalists who can't raise startups,
+who can't raise tech companies are going
+to take a haircut in the public markets.
+This is going to fuck over
+retail investors
+retail in a bit like regular
+people invested in this
+who believe the headlines, who believe
+that I was taking jobs, that believe
+that I was getting exponentially more
+powerful, settled in Nvidia and Microsoft,
+those those companies
+are going to take a real him.
+I also think we're going to see net
+after Effects.
+I think core we will die.
+I really despise core.
+We've they're they are antithetical
+in my belief to what technology is.
+They're not about providing AI compute.
+They are a debt vehicle
+wearing computer hats
+like they are there to raise debt
+to buy more GPUs.
+They do not have a ton of real customers.
+I think they're they're going to be dead.
+I think net bias is going to have
+similar problems.
+I think Lambda I think all of these
+AI specialists are going
+to start collapsing
+because they're so core.
+We've has $25 billion worth of that.
+They lost $300 billion
+in the last quarter.
+They're going to lose more next.
+None of this makes sense.
+But those stocks
+will get completely plowed.
+But we're going to see net after effects
+with companies like Broadcom.
+Broadcom
+meant to get $10 billion from OpenAI
+next year for AI chips that they built.
+Special bad news.
+The information reported a few weeks ago
+that apparently those chips
+will have modest rollouts.
+That's what you want to hear
+when you spend $10 billion.
+The word modest is what you're
+really looking to tell people.
+Modesty, everyone. So
+on a grander
+level, once the illusion breaks,
+because this has all been vibes.
+It's funny, they use the word vibe so much
+because that's really what this is,
+because it has been vibes the entire time.
+Once the vibe shifts,
+once it floats, when fully everyone
+accepts what they know to be true,
+what they see in front of their eyes,
+the collapse will be thorough
+and horrible,
+and I think everyone that touched
+AI is going to get burned on some level.
+And I think there were,
+I don't think any of the the problem
+is that all of the ultra
+rich people will be fine.
+They already got their money.
+They already cashed out,
+I think section at dealers on the way out.
+I think Amy Hood boot boots him hard.
+I think Judson Althoff,
+who took over a few weeks ago,
+is the CEO of Commercial Applications.
+What's that you do anymore?
+I think that we're going to see him
+get booted out and I think
+the I reckon Metta is going to be
+the first to pull out of CapEx.
+But long story short, retail investors
+get folks is they always do.
+It's always,
+always, always regular people.
+So with the regular people in
+mind and with this forecast,
+which, as I said, like to me,
+inevitable is a word
+that is in my vocabulary for as well.
+If you're a business leader right now
+or you're an investor right now, like
+is there anything you can do
+differently to,
+you know, limit your exposure
+or make this less bad or even help, like
+at an individual level
+or even at a broader level to try
+and make the,
+you know, the popping of this
+less dire for the broader economy.
+are. I don't have any stocks
+I'm a psychopath.
+I live in cash people now people like
+you should have short positions now.
+It's far weirder when you know that I just
+do this for the, for the thrill. But
+my general thing is like batteries
+and EVs and solar,
+like they are the actual future.
+I don't know.
+For this, the current tech
+industry is so divorced from actual value
+creation that I don't know
+what the hell to do with them.
+I think the on an organizational level,
+it's time to walk away from AI commits.
+There's no reason to be doing this
+anymore.
+It's a waste of time and money.
+If you have said the words
+train people for AI, you are being conned.
+The wallet inspector has got your wallet.
+This whole thing of we need to train
+people for AI is gaslighting.
+You are being gaslit by software.
+The software it is. It is inadequate.
+You are training yourself.
+So it's kind of like occasionally
+you'll get like, people talking about
+their dogs, training them.
+This is what's happening.
+You are learning bad habits
+because the software sucks.
+Your dog is also more intelligent.
+So the thing to do,
+I think, on a very basic level is to say,
+yeah, walk away from these AI commitments,
+stop pushing them.
+If anyone says AI training, say,
+why do I have to be trained to use this?
+What is the outcome?
+That is actually the big question
+to ask anyone.
+Just what's the outcome?
+What do you think?
+How will we measure the success of this?
+And if they can't come up with that, say,
+we shouldn't do this.
+This is expensive and bad.
+I think the any talk I've written,
+I just put out a few weeks ago
+an 18,000 word kind of compendium of what
+the case against generative AI.
+I read it.
+I know it's kind of selfish,
+but it's free.
+Like it's literally I don't like
+read it or not, it doesn't really matter.
+But I go through it in there.
+But it's learn the talking points,
+which are these
+these models are unreliable.
+These products don't do much.
+And honestly, everyone's saying AI
+is the future doesn't use them.
+That really isn't.
+Bill McDermott from ServiceNow.
+Around the launch of chat,
+GPT said everything had to be AI, AI.
+And that is a quote from the information.
+Anyone speaking like
+that just immediately
+think this person doesn't use it,
+because if they did, in
+pretty much every software
+revolution, you can point to them saying,
+and then I did this with this.
+Go and watch the original iPhone
+announcement.
+Steve Jobs horrible monster of a person,
+deadbeat dad sued by the California
+District attorney for child
+support for his kid and I'm not kidding.
+It's wild.
+Nevertheless, his first presentation,
+he goes, oh yeah, I've got an iPod.
+Got him, I got this.
+Now, the one device the iPhone's coming
+out here, he just says what it does.
+He just says what it does.
+He says the the functions.
+And then you go, wow, I use function
+wow I too listen to music
+and use email website.
+Wow. You didn't have to do
+you didn't have to solve the riddle
+of the Sphinx
+to you to know why the future was here.
+Like, that's the biggest insult
+of all of this to me.
+It's you can't just have someone go.
+You've got to use this.
+It does this.
+Every single product I've ever used,
+I've been excited for.
+Someone said,
+you've got to fucking see this, man.
+Like I mentioned.
+So TONAL it's this, workout
+machine has magnetic resistance.
+It can check your form with a camera.
+You can adjust it for the lifting.
+When I show people this, they go apeshit.
+It's like, wow, that's really cool.
+It's insanely expensive.
+If you don't use it.
+It's a terrible waste of money.
+But the point is,
+I don't have to explain it much.
+They see it and they go, wow, that's sick.
+Even like the iPhone Air,
+iPhone Air is awesome.
+It's awesome because it's it's thin, like
+an iPad Pro and it's got a big screen.
+It looks nice. Wow. How great.
+I don't have to advertise.
+Every person I talk to about
+AI is emphatic in trying to convince me,
+and it feels like a MLM.
+It feels like MLM or talking
+to a polyamorous couple.
+Like they're constantly trying
+to convince you that their way of life is
+is the right one, and that you are.
+You simply don't get it.
+You need to practice compassion
+so that you can use ChatGPT.
+It's utter bollocks.
+I shouldn't, I like I said earlier, I'm
+an early adopter.
+I love new tech shit.
+I'm willing to look past Wonkiness
+because I'm like all of the current
+handheld gaming PCs,
+for example, like the ROG
+Ally X or the Lenovo Legion.
+I think they're wonky.
+They have wonky. This them,
+but they're cool.
+You love, you're like, wow,
+I can see the future in this.
+It's like a PC,
+but it's like a game console.
+Wow, how amazing.
+The new AirPods three.
+While they fit better, they sound good.
+Oh, they can measure my heart rate.
+I know what I do with that. ChatGPT,
+analyze data.
+Indeed.
+When you go on OpenAI's website
+and you try and read what they say,
+it's like, oh yeah, ChatGPT could be,
+brainstorm AI ideas.
+You can, analyze documents.
+I guess we need $1 trillion.
+We need $1 trillion because more.
+Even their own literature,
+they say like 90% of people
+just use it to chat.
+It's not a product, it's a parasite.
+parasite.
+It feels.
+There's a word that caught my attention
+earlier.
+That to me encapsulates
+the best use case for it in
+you know, business or commerce
+which is you said,
+you said it's like an intern
+and it feels like that's what we've built.
+We've built this
+like army of free interns.
+And they're not very good.
+They don't really know what they're doing.
+But they're free.
+So everybody should have their own free
+intern.
+Do you buy that logic or is
+I, I think that that is the closest
+you'll get.
+And I think it's an insult to interns
+because an intern, even the dumbest intern
+you've ever met who does not understand
+anything, understands more than this.
+Because these models don't understand
+anything, people,
+or so even the silliest morons can learn.
+You can learn. I'm not even insulting.
+I don't not calling interns morons.
+If interns don't know stuff, it's
+because you a shitty boss.
+Your job is to teach an intern.
+That's the whole point.
+That's why they're free.
+They're free because you are giving them
+something in return,
+which is the value of your experience,
+so that they can do a job and potentially
+do a job for you in the future.
+So you can say, these are like
+interns in the sense they're useless,
+in the sense that you need
+to handhold them on everything.
+But guess what?
+Even in tech, like I started as an intern
+at a games magazine, I built shelves,
+I got tea, and indeed
+I tried to make the tea rom once and,
+they,
+they showed me how they knew that scam.
+Respect to MCA over at CVG magazine.
+But it's
+about
+as close as you get, but not close enough,
+because an intern can learn,
+and also an end into the very existence
+of an intern is that it will grow,
+that an intern will grow.
+That's the whole point of having them,
+an intern that stays trapped in Amber
+at a certain level of incompetence
+is useless.
+And also, and it's gonna look antithetical
+to what an intern is.
+Like I said,
+it's about investing in the in the future.
+But I guess if you're an asshole
+and you think an intern
+is just a vessel
+that you allocate outputs to, fine.
+But I think that that's actually
+the overall problem.
+I said this in the article
+from a few weeks ago.
+It's the people, the these executives
+see every job as a unit of work.
+We are not on a podcast talking.
+We are just talking
+for a certain amount of time.
+There is no the value here is the fact
+that our mouths open and noises come out.
+It's not really about the noises
+themselves.
+When you are writing,
+it's just about making 800 words
+and there's meaning in there.
+I guess it's not really about
+they see everything is outputs.
+They see software
+engineering is just coding.
+When that's not true at all.
+It's software
+engineering. It's systems architecture.
+It's making sure things work now,
+and you leave enough comments
+so that things work in the future,
+and you build things in a logical way
+that doesn't break
+when you add stuff, when you.
+And of course, people would think, oh,
+that's what an intern is.
+They're just units of work
+that happens to have a heart and a body
+and a brain allegedly.
+When in fact an intern is promise
+and opportunity and hope.
+And if you see them as something else
+or an asshole, but you're also just wrong.
+So, yeah,
+if you see interns, as this empty vessel
+for your theoretical job, great.
+But I don't know, man.
+I, I've never taken on an intern.
+I've mentored a few people.
+But generally the most exciting
+and fun thing about having a young person
+working for you on any level is that they
+want to learn that they're excited to,
+that they grow with you and grow
+for themselves, and then eventually
+leave you and go and do their own thing,
+having a trapped in Amber intern,
+that vaguely resembles a work product
+that's useless.
+But I guess when you're an asshole,
+it doesn't do any real work.
+Not saying this is you, by the way,
+just to be abundantly clear,
+just really want to not insult you,
+because it's not what I mean.
+It's. Yeah, of course that is it.
+But it's so weird as well. It's like, wow.
+Even if even if that was true,
+even if this intern thing was true. Wow.
+We've given we've given these companies
+think OpenAI is effective cost.
+If you include Microsoft's investment
+in CapEx, it's
+like 100
+and something billion dollars. Wow.
+That's a really expensive intern, man.
+That's so expensive.
+We we made crappy interns.
+We we made freeze like flash
+frozen interns.
+Jesus Christ, how depressing.
+We 20 years ago, we had the ability
+to condense computers
+into little, little, frames.
+We had laptops are incredible.
+Like, we've actually had innovations
+in the last 20 years
+that are insanely amazing,
+but this is a actually a side rant,
+which I'll stop.
+But like, we've had amazing innovations.
+This isn't one of them. them.
+So I, you know, I.
+I want to talk about amazing innovations.
+I think the intern piece, I mean. Well,
+well said.
+I think we've probably beat
+that topic to death at this point.
+So. We’re aligned.
+I think so too.
+Innovations, you know, you mentioned
+things like batteries, like solar power.
+You know, you're you're
+you're someone who's obviously very
+passionate about new and emerging tech.
+What technology
+that's up and coming actually excites you.
+That's not, you know, AI related.
+And what tech companies,
+if any, do you actually see it
+doing really interesting work?
+So the I like Anker.
+A N K E R because they keep making
+interesting and fun things.
+They've got these little back. They like.
+Look I didn't really understand
+woman buying shoes before until Anker.
+Now I understand
+because I do it with batteries.
+They release a new battery. I'm like, I,
+credit
+cards out because they keep making using.
+I was gallium nitride.
+They found a way to basically condense
+power
+to a way
+that you can get a little power break.
+I'm trying to think like
+half the height of width of a Diet
+Coke can with a retractable cable.
+The charges at 45W.
+This sounds minor,
+but I can charge Nintendo Switch.
+I can charge a MacBook.
+I think a MacBook air.
+That's cool. That's cool as hell.
+They have this thing called the Soundcore
+X1 Pro,
+which is just a giant wheelie
+projector like, and it can keystroke leak.
+You can put it at weird angle,
+it can project onto things.
+It has the speakers built
+in. It's all like wireless.
+That's cool.
+I think that was a bid.
+Well,
+like the electric car company in China,
+the cars aren't nice, but driving down
+the price of electric vehicles is cool.
+I also think I have complex feelings
+about Waymo, but I've been in one
+and it's the first time in a while
+I've gone, oh wow, that's new.
+That's cool.
+I mean, that's something.
+And I also think the I don't know,
+you've got what is it framework?
+There is a laptop company
+that I really wish
+I remember the name of where
+you can put the laptop together yourself.
+It's built
+specifically for right to repair.
+Cool as hell. I love it.
+And I also think that the new generation
+of, I think within five years
+we're going to have insanely good
+handheld PCs.
+I think handheld PC
+gaming is going to be huge.
+I think it is way too expensive right now,
+but even now it's so cool.
+It's so cool.
+We're in the we're in the golden age of
+mobile gaming right now, which is insane.
+I thought it was dead
+because I thought cell phones
+with microtransaction crap had ruined it.
+But no, that it's exciting, it's cool.
+And I think just batteries
+all getting smaller and more powerful
+with that, we will have new form factors.
+We will learn new things
+about what we can build.
+And I'm going to say
+something really controversial.
+We are not there yet,
+and I don't know how long it will take,
+but the Apple Vision Pro proved
+that there is a new computing form coming.
+I think there were entire
+ten minute periods
+with the Vision Pro where I was like,
+wow, this is the future.
+And then there was the rest of the time.
+Then there was the rest of it.
+When the thing moves slightly
+and you can't see properly,
+or it's slightly out of focus
+and you're dicking with it
+and you're not sure if it works properly.
+Sometimes the poking doesn't work,
+but when it does, and to be clear,
+I'm very clear this product
+should never have been released.
+It's way too early, but man, you see it
+and you're like, oh,
+these are surmountable problems.
+These are like,
+these are things that they can work out.
+You can see the promise.
+I don't see any promise in generative AI.
+Nothing that's happened is maybe go, ooh,
+what could they do next?
+Vision pro yes,
+even I haven't tried them yet.
+The meta Ray-Bans.
+I don't think anyone should wear them.
+I think they are just cruisin
+for a bruisin’ wearing them.
+I think the idea is sick and I think
+that there are accessibility options.
+Like a friend of mine works on a company
+that does accessibility stuff
+where they are.
+I think that that is incredible.
+I don't think AR is ever going to scale,
+but I truly think like
+for like front lawn or whatever
+you call it.
+Like, I want to say wearables
+because that can mean anything.
+But I think the AR has possibilities.
+I don't know if it's a hypergrowth market.
+I'm none of these things I think are $100
+billion market cap companies.
+What I do think they are is cool.
+I think they are cool.
+I think it's an interesting way
+of looking at the world.
+I don't know, I'm
+excited to see some new stuff.
+I just
+and it kind of to wrap it back around.
+That's
+kind of the depressing thing about AI.
+It's so dull.
+It's so boring is so
+I've never been more bored
+with the tech revolution in my life.
+And I used to do I used to represent power
+platform as a service companies.
+I don't
+I've
+not had to say Kubernetes in a long time,
+but even thinking about
+it makes me slightly sad.
+That was more exciting than generative AI.
+At least that's like,
+oh, we're gonna get it.
+Oh, sorry, I'm rambling.
+It's just the tech
+industry is capable of doing cool shit.
+It's not doing it right now at scale.
+Right.
+So there's there's one more angle
+I wanted to take kind of around the
+AI thing, which is one of the one
+of the quote promises of, of
+AI is that it's going to in some way
+transform the future of work.
+And work is going to look so different
+and, you know, 6 or 18 months
+and it does right now, and you know, we've
+we've debunked a bunch of that,
+you know, in the past hour.
+But I did want to ask you, Ed,
+is there like from where you're sitting,
+what does the future of work
+look like over the next handful of years?
+If it's at all different from now?
+Like what?
+What do you think we'll see more of?
+What do you think we'll see less of?
+And how is that going to evolve
+with or without AI?
+I think it's going to look much the same.
+I think the biggest problem that they have
+right now is that on top of that
+this is good.
+It's just an idea.
+Right. But I think on top of that
+there is no innovation
+within business software left.
+And maybe there maybe there is somewhere.
+But to innovate business further
+like really this is scary to say.
+I realize to actually like enterprise
+software and stuff like that,
+they're out of innovation
+because enterprise software
+was never about innovation.
+It was about taking industries
+and disrupting them.
+There was all that.
+That was there was never
+it was modernizing rather than innovation.
+So the future of work is a problem
+that they've had for a few years
+with the remote work era,
+because they desperately wanted
+people back at the office,
+because they realized, oh, crap, that's
+remote work, makes it really obvious
+who doesn't do anything at my company.
+I comes along and they're excited
+because, well,
+it means they can fire some people,
+but it also means that they can make
+some of their useless people useful.
+Problem is, AI doesn't do that.
+AI actually doesn't really do anything.
+So the future of work is going to look
+very much the same in a few years.
+I truly think the I truly think
+the AI is not having a meaningful effect
+on the enterprise.
+It's going to be proven
+through multiple studies at this point.
+And that's because the modality of all
+jobs have stayed mostly the same.
+We have the ability to record stuff
+thousands of miles away,
+hundreds of miles away.
+We have the ability
+to send large documents and process
+large documents in the cloud.
+We have the bits and pieces.
+What we don't have is technology
+that makes us better
+at our jobs, for the most part,
+because a lot of the jobs
+that actually humans 
+or the jobs that humans do
+within
+software are very much human driven.
+The actual tasks are not the output
+itself.
+They are the ability to understand
+all of the stakeholders
+and all of the context
+and all of these things,
+and bring them together in a task
+that might seem simple, but is actually
+a combination of institutionalized
+knowledge and context.
+You can't automate that.
+You can't automate person to person.
+You can try and they've been trying,
+but it doesn't work.
+So I think that we're going to see
+very possibly
+a kind of existential crisis
+within the world of work.
+I think once the AI boom goes away,
+CEOs are going to sit there
+and not really know what to do next,
+because the big thing
+and the reason that CEOs love AI as well,
+is when you're a CEO, it's
+not really obvious what you do
+unless it spend money.
+If you spend money as a CEO,
+that means you're doing stuff.
+AI lets you spend money.
+And once AI is gone,
+what the hell are they going to do?
+I don't know,
+Well, and it,
+yeah.
+The the picture you paint, I think in
+some ways like comes full circle of why
+the promises of AI
+and its capabilities are so alluring
+because they present there's this.
+Oh, we know what the future of business
+or the future of work
+or the future of enterprise software
+looks like.
+And it's
+going to be so much more efficient,
+and we're going to have so much more,
+you know, capability or quality.
+And, you know,
+if the alternative to that is, is saying,
+you know, putting up your shoulders
+and saying, we've got nothing.
+That's,
+that's a hard pill to swallow, right?
+Yeah,
+and I think the remote work in the Covid
+era really showed
+how many bosses don't do a goddamn thing.
+And I think it showed a bunch of managers
+that didn’t either AI gives them
+the exciting idea that they can pretend
+they do work,
+which is what they've been doing already.
+But actual work would come out,
+and I don't think they have an answer.
+I don't think anyone does.
+I think that this is
+this is everyone's caught
+with their pants down here
+because no one was thinking too hard.
+Well said.
+Ed I know we're kind of at time here.
+I want to say a big
+thank you for coming on the program today.
+Really insightful.
+I love the conversation and,
+I really appreciate it.
+Thank you.
