@@ -133,7 +133,7 @@ fi
 # Define final file paths
 mp4_filename="${vod_dir}/${base_name}.mp4"
 audio_filename="${vod_dir}/${base_name}.aac"
-srt_filename_en="${transcript_channel_dir}/${base_name}-en.srt"
+txt_filename_en="${transcript_channel_dir}/${base_name}-en.txt"
 
 # Move downloaded file to organized location
 mv "$downloaded_file" "$mp4_filename"
@@ -155,53 +155,17 @@ fi
 # Step 2: Extract audio from video
 echo "$VOD_ID - $timestamp - Starting audio extraction" | tee -a "${logs_dir}/run-${timestamp}.log"
 trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred. Deleting current file..."; rm -f "$audio_filename"' EXIT
-ffmpeg -i "$mp4_filename" -vn -acodec copy "$audio_filename" -loglevel error -stats
+
+./lib/extract-audio.sh "$mp4_filename" "$audio_filename"
+
 trap - EXIT
 echo "$VOD_ID - $timestamp - Audio extraction completed" | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Step 3: Transcribe using faster-whisper
-echo "$VOD_ID - $timestamp - Starting English transcription with Whisper (large-v3 model)" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "$VOD_ID - $timestamp - This may take a while for long videos..." | tee -a "${logs_dir}/run-${timestamp}.log"
-trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred. Deleting current file..."; rm -f "$srt_filename_en"' EXIT
+echo "$VOD_ID - $timestamp - Starting English transcription" | tee -a "${logs_dir}/run-${timestamp}.log"
+trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred. Deleting current file..."; rm -f "$txt_filename_en"' EXIT
 
-# Use Python to run faster-whisper
-python3 << EOF
-from faster_whisper import WhisperModel
-import sys
-import os
-
-# Use large-v3 model with CUDA acceleration
-print("Loading Whisper model (this will download ~3GB on first run)...")
-print("Model downloads to: ~/.cache/huggingface/hub/")
-model = WhisperModel("large-v3", device="cuda", compute_type="float16")
-
-print("Model loaded. Starting transcription...")
-segments, info = model.transcribe(
-    "$audio_filename",
-    language="en",
-    beam_size=5,
-    vad_filter=True,  # Voice activity detection to filter silence
-    vad_parameters=dict(min_silence_duration_ms=500)
-)
-
-print(f"Detected language '{info.language}' with probability {info.language_probability}")
-
-# Write SRT file
-with open("$srt_filename_en", "w", encoding="utf-8") as f:
-    segment_count = 0
-    for segment in segments:
-        segment_count += 1
-        start_time = segment.start
-        end_time = segment.end
-        text = segment.text.strip()
-        
-        f.write(f"{text}\n\n")
-        
-        if segment_count % 100 == 0:
-            print(f"Processed {segment_count} segments...")
-
-print(f"Transcription complete! Generated {segment_count} segments.")
-EOF
+./lib/transcribe-audio.sh "$audio_filename" "$txt_filename_en"
 
 trap - EXIT
 echo "$VOD_ID - $timestamp - English transcription completed" | tee -a "${logs_dir}/run-${timestamp}.log"
@@ -212,5 +176,5 @@ echo "Processing completed successfully!" | tee -a "${logs_dir}/run-${timestamp}
 echo "Output files:" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "  - Video: $mp4_filename" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "  - Audio (AAC): $audio_filename" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "  - Transcript: $srt_filename_en" | tee -a "${logs_dir}/run-${timestamp}.log"
+echo "  - Transcript: $txt_filename_en" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"

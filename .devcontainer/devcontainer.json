@@ -4,7 +4,8 @@
   
   "runArgs": [
     "--gpus=all",
-    "--ipc=host"
+    "--ipc=host",
+    "--memory-swap=-1"
   ],
   
   "customizations": {

@@ -4,26 +4,33 @@ set -e
 # YouTube Transcript Fetcher (using yt-dlp)
 # Fetches transcript/captions from a YouTube video without API keys
 #
-# Usage: ./youtube-transcript-ytdlp.sh [--lang LANG] <youtube_url>
+# Usage: ./youtube-transcript-ytdlp.sh [--download] [--lang LANG] <youtube_url>
 # 
 # Examples:
 #   ./youtube-transcript-ytdlp.sh https://www.youtube.com/watch?v=dQw4w9WgXcQ
 #   ./youtube-transcript-ytdlp.sh --lang en https://www.youtube.com/watch?v=dQw4w9WgXcQ
+#   ./youtube-transcript-ytdlp.sh --download https://www.youtube.com/watch?v=dQw4w9WgXcQ
 #
 # Options:
-#   --lang LANG    Preferred caption language (default: en)
-#                  Examples: en, es, fr, de, ja, etc.
+#   --download         Download video (lowest quality), extract audio, and transcribe
+#   --lang LANG        Preferred caption language (default: en)
+#                      Examples: en, es, fr, de, ja, etc.
 #
-# Dependencies: yt-dlp (install: pip install yt-dlp)
+# Dependencies: yt-dlp (install: pip install yt-dlp), ffmpeg
 
 cd "$(dirname "$0")"
 
 # Default values
 LANG="en"
+DOWNLOAD=false
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
+    --download)
+      DOWNLOAD=true
+      shift
+      ;;
     --lang)
       LANG="$2"
       shift 2
@@ -34,8 +41,9 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo "Error: Unknown argument: $1"
-      echo "Usage: $0 [--lang LANG] <youtube_url>"
+      echo "Usage: $0 [--download] [--lang LANG] <youtube_url>"
       echo "Example: $0 --lang en https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      echo "Example: $0 --download https://www.youtube.com/watch?v=dQw4w9WgXcQ"
       exit 1
       ;;
   esac
@@ -44,8 +52,9 @@ done
 # Validate URL
 if [[ -z "$VIDEO_URL" ]]; then
   echo "Error: Missing YouTube video URL!"
-  echo "Usage: $0 [--lang LANG] <youtube_url>"
+  echo "Usage: $0 [--download] [--lang LANG] <youtube_url>"
   echo "Example: $0 https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  echo "Example: $0 --download https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   exit 1
 fi
 
@@ -73,14 +82,18 @@ timestamp=$(date "+%Y.%m.%d-%H:%M:%S")
 
 # Create directory structures
 transcript_dir="transcripts/youtube"
+vod_dir="vods/youtube"
 logs_dir="logs"
-mkdir -p "$transcript_dir" "$logs_dir"
+mkdir -p "$transcript_dir" "$vod_dir" "$logs_dir"
 
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "YouTube Transcript Fetcher (yt-dlp)" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "Video ID: $VIDEO_ID" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "URL: $VIDEO_URL" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "Preferred Language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
+if [ "$DOWNLOAD" = true ]; then
+  echo "Download Mode: Enabled (video download + audio extraction + transcription)" | tee -a "${logs_dir}/run-${timestamp}.log"
+fi
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Step 1: Get video metadata
@@ -126,6 +139,7 @@ yt-dlp --list-subs "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
 # Step 3: Download subtitles
 temp_srt_file="${transcript_dir}/${base_name}-${LANG}.srt"
 output_file="${transcript_dir}/${base_name}-${LANG}.txt"
+transcript_downloaded=false
 
 echo "$VIDEO_ID - $timestamp - Downloading subtitles" | tee -a "${logs_dir}/run-${timestamp}.log"
 
@@ -145,33 +159,82 @@ yt-dlp \
 subtitle_file=$(ls "${transcript_dir}/${base_name}."*".srt" 2>/dev/null | head -n 1)
 
 if [ -z "$subtitle_file" ]; then
-  echo "Error: No subtitles found for language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
-  echo "Try running with --list-subs to see available languages" | tee -a "${logs_dir}/run-${timestamp}.log"
-  exit 1
+  echo "$VIDEO_ID - $timestamp - Warning: No subtitles found for language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
+  
+  # If download mode is not enabled, this is an error
+  if [ "$DOWNLOAD" = false ]; then
+    echo "Error: No subtitles available and --download not specified" | tee -a "${logs_dir}/run-${timestamp}.log"
+    echo "Try running with --list-subs to see available languages" | tee -a "${logs_dir}/run-${timestamp}.log"
+    exit 1
+  else
+    echo "$VIDEO_ID - $timestamp - Continuing with download only (no transcript)" | tee -a "${logs_dir}/run-${timestamp}.log"
+  fi
+else
+  # Rename to temporary SRT file
+  mv "$subtitle_file" "$temp_srt_file"
+
+  # Step 4: Convert SRT to plain text (remove timestamps and sequence numbers)
+  echo "$VIDEO_ID - $timestamp - Converting to plain text format" | tee -a "${logs_dir}/run-${timestamp}.log"
+
+  # Remove timestamps and sequence numbers, keep only text
+  # SRT format has: sequence number, timestamp line, text line(s), blank line
+  grep -v '^[0-9]*$' "$temp_srt_file" | \
+    grep -v '^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]' | \
+    grep -v '^$' | \
+    sed 's/<[^>]*>//g' > "$output_file"
+
+  # Clean up temporary SRT file
+  rm -f "$temp_srt_file"
+
+  echo "$VIDEO_ID - $timestamp - Transcript saved" | tee -a "${logs_dir}/run-${timestamp}.log"
+  transcript_downloaded=true
 fi
 
-# Rename to temporary SRT file
-mv "$subtitle_file" "$temp_srt_file"
+# Step 5: Download video and extract audio (optional)
+if [ "$DOWNLOAD" = true ]; then
+  echo "$VIDEO_ID - $timestamp - Downloading and extracting audio to AAC" | tee -a "${logs_dir}/run-${timestamp}.log"
+  
+  audio_file="${vod_dir}/${base_name}.m4a"
+  
+  # Download the best audio-only stream and convert it to AAC
+  # -f "ba[ext=m4a]/ba" = "Best audio, preferring M4A (which is AAC)"
+  # -x --audio-format aac = "Extract audio and *force convert* to AAC"
+yt-dlp \
+    -x \
+    --audio-format aac \
+    --output "$audio_file" \
+    --no-warnings \
+    "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
+  
+  echo "$VIDEO_ID - $timestamp - Audio extraction completed: $audio_file" | tee -a "${logs_dir}/run-${timestamp}.log"
+  
+  # If no transcript was downloaded from YouTube, transcribe the audio
+  if [ "$transcript_downloaded" = false ]; then
+    echo "$VIDEO_ID - $timestamp - No subtitles available, transcribing audio with Whisper" | tee -a "${logs_dir}/run-${timestamp}.log|"
+    
+    # Check if the audio file was actually created
+    if [ ! -f "$audio_file" ]; then
+        echo "$VIDEO_ID - $timestamp - Error: Audio file $audio_file was not created." | tee -a "${logs_dir}/run-${timestamp}.log"
+        exit 1
+    fi
 
-# Step 4: Convert SRT to plain text (remove timestamps and sequence numbers)
-echo "$VIDEO_ID - $timestamp - Converting to plain text format" | tee -a "${logs_dir}/run-${timestamp}.log"
-
-# Remove timestamps and sequence numbers, keep only text
-# SRT format has: sequence number, timestamp line, text line(s), blank line
-grep -v '^[0-9]*$' "$temp_srt_file" | \
-  grep -v '^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]' | \
-  grep -v '^$' | \
-  sed 's/<[^>]*>//g' > "$output_file"
-
-# Clean up temporary SRT file
-rm -f "$temp_srt_file"
-
-echo "$VIDEO_ID - $timestamp - Transcript saved" | tee -a "${logs_dir}/run-${timestamp}.log"
+    ./lib/transcribe-audio.sh "$audio_file" "$output_file"
+    
+    transcript_downloaded=true
+    echo "$VIDEO_ID - $timestamp - Audio transcription completed" | tee -a "${logs_dir}/run-${timestamp}.log"
+  fi
+fi
 
 # Summary
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
 echo "Processing completed successfully!" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "Output file:" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "  - Transcript (plain text): $output_file" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "  - Language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
+echo "Output files:" | tee -a "${logs_dir}/run-${timestamp}.log"
+if [ "$transcript_downloaded" = true ]; then
+  echo "  - Transcript (plain text): $output_file" | tee -a "${logs_dir}/run-${timestamp}.log"
+  echo "  - Language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
+fi
+if [ "$DOWNLOAD" = true ]; then
+  echo "  - Video (mp4): ${vod_dir}/${base_name}.mp4" | tee -a "${logs_dir}/run-${timestamp}.log"
+  echo "  - Audio (aac): ${vod_dir}/${base_name}.aac" | tee -a "${logs_dir}/run-${timestamp}.log"
+fi
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
