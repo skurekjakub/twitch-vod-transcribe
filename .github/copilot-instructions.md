@@ -1,9 +1,17 @@
 # Twitch & YouTube VOD Transcriber - AI Coding Agent Instructions
 
 ## Project Overview
-Modular bash/Python pipeline that downloads and transcribes Twitch VODs and YouTube videos using OpenAI's Whisper model (via `faster-whisper`). Features reusable library components for audio extraction and transcription.
+Modular bash/Python pipeline that downloads and transcribes Twitch VODs and YouTube videos using OpenAI's Whisper model (via `faster-whisper`). Features reusable library components for audio extraction and transcription, plus batch processing for daily workflows.
 
 ## Architecture & Data Flow
+
+### Batch Processing Workflow (via `batch-transcribe.sh`)
+**Primary entry point for daily use** - processes 3-5 videos from a URL list:
+1. **Read URLs** → Parses `urls.txt` (or specified file) line-by-line
+2. **Auto-detect** → Identifies Twitch vs YouTube URLs via regex
+3. **Route** → Calls appropriate script (`vod-transcribe.sh` or `youtube-transcript-ytdlp.sh`)
+4. **Smart Retry** → For YouTube: tries caption fetch first, auto-retries with download if no captions
+5. **Progress Tracking** → Logs all operations to `logs/batch-{timestamp}.log`
 
 ### Twitch Workflow (via `vod-transcribe.sh`)
 1. **Download** → Uses `twitch-dl` to fetch VOD at specified quality (default 480p)
@@ -14,9 +22,12 @@ Modular bash/Python pipeline that downloads and transcribes Twitch VODs and YouT
 ### YouTube Workflow (via `youtube-transcript-ytdlp.sh`)
 1. **Fetch Captions** → Uses `yt-dlp` to download existing YouTube captions (if available)
 2. **Convert to Text** → Strips timestamps/formatting from SRT to plain text
-3. **Fallback Download** → If no captions exist and `--download`/`--download-video` specified:
-   - Audio-only: Downloads m4a → Calls `lib/transcribe-audio.sh`
-   - Video: Downloads mp4 → Calls `lib/extract-audio.sh` → Calls `lib/transcribe-audio.sh`
+3. **Smart Fallback** → If no captions exist:
+   - **Automatic** (in batch mode): Downloads m4a → Calls `lib/transcribe-audio.sh`
+   - **Manual** (single video): Requires `--download` or `--download-video` flag
+4. **Fallback Modes**:
+   - Audio-only (`--download`): Downloads m4a → Calls `lib/transcribe-audio.sh`
+   - Video (`--download-video`): Downloads mp4 → Calls `lib/extract-audio.sh` → Calls `lib/transcribe-audio.sh`
 
 ### File Organization Pattern
 ```
@@ -45,7 +56,42 @@ logs/
 
 ## Key Commands
 
-### Entry Point Scripts
+### Batch Processing (Recommended for Daily Use)
+```bash
+# Process all URLs in urls.txt (default file)
+./batch-transcribe.sh
+
+# Use custom URL file
+./batch-transcribe.sh my-urls.txt
+
+# Custom quality for Twitch + force YouTube downloads
+./batch-transcribe.sh --quality 720p --download-youtube
+
+# Continue processing even if one fails
+./batch-transcribe.sh --continue-on-error
+
+# Full options
+./batch-transcribe.sh --quality 720p --download-video-youtube --youtube-lang es --continue-on-error
+```
+
+**Batch Options:**
+- `--quality QUALITY` - Twitch video quality (default: 480p)
+- `--download-youtube` - Force audio download for YouTube (skips caption check)
+- `--download-video-youtube` - Force video download for YouTube
+- `--youtube-lang LANG` - Caption language preference (default: en)
+- `--continue-on-error` - Don't stop on individual URL failures
+
+**URL File Format** (`urls.txt`):
+```
+# Comments start with #
+https://www.twitch.tv/videos/2588036186
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+https://youtu.be/jNQXAC9IVRw
+
+# Blank lines ignored
+```
+
+### Entry Point Scripts (Single Video)
 ```bash
 # Twitch VOD transcription
 ./vod-transcribe.sh https://www.twitch.tv/videos/2588036186  # Full pipeline
@@ -73,9 +119,12 @@ python download_vod.py <url>                      # Download Twitch VOD only
 ## Project Structure
 ```
 .
+├── batch-transcribe.sh            # Batch processor (main entry point)
 ├── vod-transcribe.sh              # Twitch VOD entry point
 ├── youtube-transcript-ytdlp.sh    # YouTube entry point
 ├── download_vod.py                # Standalone Twitch downloader
+├── urls.txt                       # Default URL list for batch processing
+├── urls-batch.example.txt         # Example URL file format
 ├── lib/                           # Reusable helper scripts
 │   ├── extract-audio.sh           # Audio extraction (ffmpeg wrapper)
 │   └── transcribe-audio.sh        # Transcription (Whisper wrapper)
@@ -145,24 +194,35 @@ All operations use: `echo "$ID - $timestamp - <message>" | tee -a "${logs_dir}/{
 ### URL Validation
 - Twitch: `^https://www\.twitch\.tv/videos/[0-9]+$`
 - YouTube: Accepts `youtube.com/watch?v=` and `youtu.be/` formats
+- Batch script auto-detects type and routes accordingly
 
-### Quality Options
-- Twitch: `160p`, `360p`, `480p`, `720p`, `720p60`, `1080p`, `1080p60`, `source`
-- YouTube: Handled by yt-dlp (`bestaudio`, `worst`, etc.)
+### Batch Processing Logic
+**YouTube Smart Fallback** (in `batch-transcribe.sh`):
+1. Try caption fetch first (fast, no download)
+2. If caption fetch fails AND `--download-youtube` was NOT specified:
+   - Log retry message
+   - Automatically call `youtube-transcript-ytdlp.sh --download` (audio transcription)
+3. If caption fetch succeeds: use captions
+4. If both fail: mark as failed (continue or exit based on `--continue-on-error`)
 
-## Modular Design Philosophy
+**URL Processing**:
+- Reads `urls.txt` by default (override with positional argument)
+- Skips blank lines and lines starting with `#`
+- Trims whitespace from URLs
+- Processes sequentially (not parallel) to avoid resource contention
+- Logs: `[X/Y] Processing: <url>` format for progress tracking
 
-### Library Scripts (`lib/`)
-- **Purpose**: Reusable, single-responsibility components
-- **Interface**: Take file paths as arguments, output to specified locations
-- **Independence**: Can be called from any script or used standalone
-- **Logging**: Each script logs to its own timestamped log file
+### Error Handling Patterns
+**Batch Script**:
+- Two modes: fail-fast (default) or continue-on-error
+- Tracks counters: `successful`, `failed`, `skipped`
+- Comprehensive summary at end
+- Exit code 1 if any failures (unless `--continue-on-error`)
 
-### Entry Point Scripts (Top-level)
-- **Purpose**: End-to-end workflows for specific use cases
-- **Responsibilities**: Download management, file organization, workflow orchestration
-- **Delegation**: Call library scripts for audio extraction and transcription
-- **User-facing**: Designed for direct command-line usage
+**Individual Scripts**:
+- Use bash `trap` to clean up partial files on failure
+- Separate traps for download, audio extraction, and transcription phases
+- All operations logged to `logs/{operation}-{timestamp}.log`
 
 ## Output Artifacts
 - **Transcripts**: Plain text files (`.txt`) with text-only content, double-newline separated
@@ -178,6 +238,13 @@ Use `.github/summary-generation-prompt.md` as a comprehensive template for gener
 4. Save to `summaries/` with naming: `{channel}-{YYYY-MM-DD}-{title-prefix}-SUMMARY.md`
 
 ## Common Patterns
+
+### Daily Workflow
+1. Add URLs to `urls.txt` (one per line, mix Twitch/YouTube)
+2. Run `./batch-transcribe.sh` (or with `--continue-on-error` for resilience)
+3. Check `logs/batch-{timestamp}.log` for results
+4. Find transcripts in `transcripts/{channel}/` or `transcripts/youtube/`
+5. Generate summaries using `.github/summary-generation-prompt.md`
 
 ### Transcript Format
 All transcripts are plain text (`.txt`) files with:
