@@ -94,12 +94,14 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged)
 # -f bestvideo+bestaudio/best = "Download best video and best audio and merge, or best single file"
 # --merge-output-format mp4 = "Merge to MP4 format"
+# Note: No output redirection here to avoid "I/O operation on closed file" error
 yt-dlp \
   -f "bestvideo+bestaudio/best" \
   --merge-output-format mp4 \
   --output "${video_file_base}.%(ext)s" \
-  --no-warnings \
-  "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/download-${timestamp}.log"
+  "$VIDEO_URL"
+
+echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Find the downloaded video file
 video_file=$(ls "${video_file_base}".mp4 2>/dev/null | head -n 1)
