@@ -1,6 +1,6 @@
 ---
 description: Analyzes an earnings call transcript for a financial professional
-mode: agent
+agent: agent
 ---
 
 # Role: Expert Financial Analyst (Equity Research)
