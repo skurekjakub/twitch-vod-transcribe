@@ -20,19 +20,34 @@ Provide a concise, multi-paragraph overview of the *entire episode*. What was th
 
 ---
 
-## 2. Key Subjects & Entities Discussed
+## 2. Episode Index & Glossary
+Identify and list the key subjects and entities discussed. This section serves as a high-level "table of contents" and "glossary" for the episode. Do not provide detailed analysis or arguments here; that belongs in Module 3.
 
-Identify and list all specific subjects, people, places, organizations, or creative works (e.g., books, movies, research papers) that were discussed.
+### 2.1. Primary Subjects & Themes
+Provide a simple bulleted list of the main topics, themes, or questions that were the primary focus of the episode.
 
-### 2.1. Primary Subjects
-For each subject that was a primary focus of the conversation, provide a detailed summary covering:
-* **Subject:** The person, place, or topic.
-* **Context of Discussion:** Why was this subject discussed? What was the central point being made about it?
-* **Key Information Shared:** List the specific facts, details, or information presented about this subject.
+Purpose: This section serves as a high-level "list of contents" for the core discussions. The detailed analysis of what was said about these subjects belongs in Module 3.
 
-### 2.2. Secondary & Passing Mentions
-For subjects, people, or entities that were mentioned briefly or in passing:
-* List the name and provide a 1-2 sentence summary of the context in which it was raised.
+Example:
+
+The future of generative AI in creative industries.
+
+The philosophical concept of "emergence."
+
+The historical context of the 1929 stock market crash.
+
+### 2.2. Glossary of People, Places & Passing Mentions
+List all other specific people, places, organizations, or creative works (e.g., books, movies, research papers) mentioned in passing.
+
+For each item, provide a 1-2 sentence summary of its identity and the context in which it was raised.
+
+Example:
+
+Dr. Jane Smith: Mentioned as a key researcher in the field of mRNA vaccines.
+
+"The XYZ Affair": Used as a historical analogy for the current political situation.
+
+"Superintelligence" (Book): Referenced as a foundational text on AI risk.
 
 ---
 
