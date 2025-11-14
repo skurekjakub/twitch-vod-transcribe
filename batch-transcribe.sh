@@ -148,7 +148,7 @@ while IFS= read -r line || [ -n "$line" ]; do
     twitch)
       log "Detected Twitch VOD"
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if ./vod-transcribe.sh --quality "$QUALITY" "$url" 2>&1 | tee -a "$log_file"; then
+        if ./vod-transcribe.sh --quality "$QUALITY" "$url"; then
           successful=$((successful + 1))
           log "✓ Successfully processed Twitch VOD"
         else
@@ -156,7 +156,7 @@ while IFS= read -r line || [ -n "$line" ]; do
           log "✗ Failed to process Twitch VOD (continuing)"
         fi
       else
-        ./vod-transcribe.sh --quality "$QUALITY" "$url" 2>&1 | tee -a "$log_file"
+        ./vod-transcribe.sh --quality "$QUALITY" "$url"
         successful=$((successful + 1))
         log "✓ Successfully processed Twitch VOD"
       fi
@@ -165,27 +165,26 @@ while IFS= read -r line || [ -n "$line" ]; do
     youtube)
       log "Detected YouTube video"
       
-      # Build YouTube command
-      youtube_cmd="./youtube-transcript-ytdlp.sh"
+      # Build YouTube script arguments as an array to handle special characters in URLs
+      youtube_args=()
       
       if [ "$DOWNLOAD_VIDEO_YOUTUBE" = true ]; then
-        youtube_cmd="$youtube_cmd --download-video"
+        youtube_args+=("--download-video")
       elif [ "$DOWNLOAD_YOUTUBE" = true ]; then
-        youtube_cmd="$youtube_cmd --download"
+        youtube_args+=("--download")
       fi
       
-      youtube_cmd="$youtube_cmd --lang $YOUTUBE_LANG $url"
+      youtube_args+=("--lang" "$YOUTUBE_LANG" "$url")
       
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if eval "$youtube_cmd" 2>&1 | tee -a "$log_file"; then
+        if ./youtube-transcript-ytdlp.sh "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            youtube_cmd="./youtube-transcript-ytdlp.sh --download --lang $YOUTUBE_LANG $url"
-            if eval "$youtube_cmd" 2>&1 | tee -a "$log_file"; then
+            if ./youtube-transcript-ytdlp.sh --download --lang "$YOUTUBE_LANG" "$url"; then
               successful=$((successful + 1))
               log "✓ Successfully processed YouTube video with audio transcription"
             else
@@ -198,15 +197,14 @@ while IFS= read -r line || [ -n "$line" ]; do
           fi
         fi
       else
-        if eval "$youtube_cmd" 2>&1 | tee -a "$log_file"; then
+        if ./youtube-transcript-ytdlp.sh "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            youtube_cmd="./youtube-transcript-ytdlp.sh --download --lang $YOUTUBE_LANG $url"
-            eval "$youtube_cmd" 2>&1 | tee -a "$log_file"
+            ./youtube-transcript-ytdlp.sh --download --lang "$YOUTUBE_LANG" "$url"
             successful=$((successful + 1))
             log "✓ Successfully processed YouTube video with audio transcription"
           else

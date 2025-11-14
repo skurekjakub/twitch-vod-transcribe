@@ -194,23 +194,30 @@ fi
 if [ "$DOWNLOAD" = true ]; then
   echo "$VIDEO_ID - $timestamp - Downloading and extracting audio to AAC" | tee -a "${logs_dir}/run-${timestamp}.log"
   
-  audio_file="${vod_dir}/${base_name}.m4a"
+  audio_file_base="${vod_dir}/${base_name}"
   
   # Download the best audio-only stream and convert it to AAC
-  # -f "ba[ext=m4a]/ba" = "Best audio, preferring M4A (which is AAC)"
   # -x --audio-format aac = "Extract audio and *force convert* to AAC"
-yt-dlp \
+  yt-dlp \
     -x \
     --audio-format aac \
-    --output "$audio_file" \
+    --output "${audio_file_base}.%(ext)s" \
     --no-warnings \
-    "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
+    "$VIDEO_URL"
+  
+  # Find the actual audio file created (could be .aac, .m4a, etc.)
+  audio_file=$(ls "${audio_file_base}".{aac,m4a,opus,webm} 2>/dev/null | head -n 1)
+  
+  if [ -z "$audio_file" ]; then
+    echo "$VIDEO_ID - $timestamp - Error: No audio file found matching ${audio_file_base}.*" | tee -a "${logs_dir}/run-${timestamp}.log"
+    exit 1
+  fi
   
   echo "$VIDEO_ID - $timestamp - Audio extraction completed: $audio_file" | tee -a "${logs_dir}/run-${timestamp}.log"
   
   # If no transcript was downloaded from YouTube, transcribe the audio
   if [ "$transcript_downloaded" = false ]; then
-    echo "$VIDEO_ID - $timestamp - No subtitles available, transcribing audio with Whisper" | tee -a "${logs_dir}/run-${timestamp}.log|"
+    echo "$VIDEO_ID - $timestamp - No subtitles available, transcribing audio with Whisper" | tee -a "${logs_dir}/run-${timestamp}.log"
     
     # Check if the audio file was actually created
     if [ ! -f "$audio_file" ]; then
@@ -223,6 +230,22 @@ yt-dlp \
     transcript_downloaded=true
     echo "$VIDEO_ID - $timestamp - Audio transcription completed" | tee -a "${logs_dir}/run-${timestamp}.log"
   fi
+fi
+
+# Summary
+echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
+echo "Processing completed successfully!" | tee -a "${logs_dir}/run-${timestamp}.log"
+echo "Output files:" | tee -a "${logs_dir}/run-${timestamp}.log"
+if [ "$transcript_downloaded" = true ]; then
+  echo "  - Transcript (plain text): $output_file" | tee -a "${logs_dir}/run-${timestamp}.log"
+  echo "  - Language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
+fi
+if [ "$DOWNLOAD" = true ]; then
+  echo "  - Audio: $audio_file" | tee -a "${logs_dir}/run-${timestamp}.log"
+fi
+echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
+
+exit 0
 fi
 
 # Summary

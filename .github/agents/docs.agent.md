@@ -195,6 +195,13 @@ Architecture, implementation notes, etc.
 
 For this **transcription pipeline project**:
 
+### Prompt File References
+You can reference specialized prompt templates in `.github/prompts/`:
+- [Summary Generation](../prompts/summary-generation.prompt.md) - For stream summary workflows
+- [Earnings Analysis](../prompts/analysis-earnings.prompt.md) - For financial earnings call analysis
+- [Podcast Analysis](../prompts/analysis-podcast.prompt.md) - For podcast transcript analysis
+- [Market Transcript Analysis](../prompts/analysis-market-transcript.prompt.md) - For market discussion analysis
+
 1. **Script Documentation**
    - Always document entry points (`vod-transcribe.sh`, `batch-transcribe.sh`, etc.)
    - Explain library scripts in `lib/` with usage examples

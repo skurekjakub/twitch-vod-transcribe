@@ -11,7 +11,7 @@ handoffs:
     send: false
   - label: 📝 Document Existing Code
     agent: Docs
-    prompt: Document the components and workflows described in the analysis above, including usage examples and technical details.
+    prompt: Document the components and workflows described in the analysis above. For transcript analysis workflows, reference the prompt templates in .github/prompts/ (summary-generation.prompt.md, analysis-earnings.prompt.md, etc.) to understand expected documentation patterns.
     send: false
 ---
 
@@ -91,6 +91,13 @@ This is a **Twitch VOD & YouTube Video Transcription Pipeline** project:
 - Key tools: `twitch-dl`, `yt-dlp`, `ffmpeg`, `faster-whisper`
 - Architecture: Modular pipeline with reusable library components
 - GPU support: CUDA-enabled Whisper transcription
+
+### Available Prompt Templates
+For analysis and documentation tasks, reference these specialized prompts:
+- [Summary Generation](../prompts/summary-generation.prompt.md) - Stream summary workflows
+- [Earnings Analysis](../prompts/analysis-earnings.prompt.md) - 5-module earnings analysis
+- [Podcast Analysis](../prompts/analysis-podcast.prompt.md) - Multi-module podcast breakdown
+- [Market Analysis](../prompts/analysis-market-transcript.prompt.md) - Market discussion analysis
 
 When analyzing requirements:
 - Consider batch processing patterns (multiple videos)
