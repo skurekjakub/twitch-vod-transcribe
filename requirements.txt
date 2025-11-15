@@ -6,3 +6,5 @@ transformers
 accelerate
 snac
 soundfile
+torchaudio
+tensorboard

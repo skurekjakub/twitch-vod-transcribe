@@ -68,6 +68,8 @@ Identify and analyze all specific tickers (e.g., `$AAPL`, `$TSLA`, `BTC`, `CL=F`
 
 For each ticker that was a primary focus, provide a layered, narrative analysis of the trading thesis.
 
+**IMPORTANT**: Create a separate file for each ticker analysed in this module.
+
 ### Structure Each Ticker Analysis As:
 
 **Main Thesis:** State the core bullish or bearish position and the intended strategy (e.g., "Bullish breakout long," "Bearish options hedge," "Long-term fundamental hold") in 1-2 sentences.
