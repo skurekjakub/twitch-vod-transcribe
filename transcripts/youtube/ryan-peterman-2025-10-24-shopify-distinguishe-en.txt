@@ -1,0 +1,1349 @@
+People that have to ask that question by
+definition are not principal engineers.
+>> This is Ilia Gregoric. He grew to a
+distinguished engineer at Shopify, which
+is a VP level role. And I asked him what
+it took to get there. To be a really
+effective principal plus engineer, you
+need to have very good dynamic range.
+Technically,
+>> he turned down a clear path to director
+at Google to go back to being an
+engineer. This is a path that is vastly
+underappreciated and is actually
+surprisingly common for a lot of
+principal and then higher up roles. and
+his best advice might change how you
+plan your career.
+>> A better way, a more resilient way to
+build your career is to optimize for
+being the only person as opposed to the
+best person.
+>> Here's the full conversation.
+You mentioned you went to Wateroo and I
+I I got to ask the smartest interns that
+I ever worked with, they came from MIT,
+Caltech and Singha University in China.
+But the best interns I ever worked with
+all came from Waterlue. And so I I'm
+curious, what is it that makes these
+Waterlue interns so strong? For me
+personally, the most important thing
+that uh Waterloo got right and better
+than most and I know that more schools
+have adopted this pattern, but it's
+still not well well understood is their
+co-op program. So, what water did really
+well is they realized that yes, there is
+the academic portion of learning how to
+engineer and like what software design
+is all about. Uh but then there's the
+hands-on and applied part. And instead
+of modeling it as hey you're going to
+study for 3 years and then you have an
+optional kind of intermission style
+co-op which is what what most university
+operate on right you could take a year
+off or something like that to go and
+work in industry uh wateroo said you
+know what we're going to just do a
+rotation where every semester you study
+you work you study you work you study
+you work you know what that means you
+don't have a break in between you're
+just constantly iterating through this
+loop but what it gives you is um at
+least six six shots on goal for trying
+things, right? And this actually has
+very positive effects on many
+dimensions. So, first of all, um it
+removes the stigma of trying things,
+right? Because uh many of us like we
+don't know what what what's going to
+stick with us. Kind of coming back to my
+earlier point about consulting versus
+something else or something else. I had
+so many of my peers going through
+university where we all started with
+some preconceived notion of what we
+wanted to do. was like, "Oh, I really
+want to go to Wall Street and work
+there." And they they try one of the
+co-op terms there. And they're like,
+"No, actually like this for whatever
+reason." Mean like I don't like the city
+or I don't like the industry. I didn't
+like the people. It like it just didn't
+click for whatever reason, right? Same
+thing for like medicine or others or
+consulting. Um, and that's really
+important to discover early. And the
+really nice thing is it's a concentrated
+it's like it's a threemon sprint you get
+to try right and you have permission to
+try five more things at least without
+the stigma of looking at your resume
+saying hey like you you went to a role
+for 3 months you don't you went to a
+role for 3 months you like are you
+really like committed are you like do I
+want to hire you it's like no that's my
+co-op right like that's that's the whole
+point so you could first of all try a
+bunch of things and get a kind of a good
+range of experiences under your belt um
+but also see the kind of the gamut of
+like hey here's how a large company
+operates here's a smaller company here's
+a medium but like which which one
+resonates with me more right so it's
+industry it's uh the type of work that
+you do it's the type of an environment
+that you're in and I think that is
+really helpful on top of that you
+actually get exposure to like engineer
+things not learn the hypothetical and
+academic of like I know how a big
+onotation
+expresses this particular algorithm.
+It's like I actually had to build the
+thing, right? Like and turns out this
+didn't work or that particular solution
+worked or we had to solve it under these
+constraints and the whole big old thing
+was an issue because I was like sorting
+10 items in an array. Who cares, right?
+It's like pragmatic engineering. So
+I think that is key. um that is still a
+superpower of Wateroo and I wish more
+universities like it's an open secret
+and I wish more people would copy it
+because it's such a lever for success
+for people that go through that program.
+>> After you went through all of those
+iterations and all the co-op loops, I
+understand that you started your own
+company um which became Post Rank that
+was then acquired by Google. And I'm
+curious the story behind you choosing to
+found a company right after graduating
+from Waterlue.
+>> I graduated from Waterlue and as most
+students um I didn't know know what to
+do. Um I wasn't ready to to commit. Um
+so my escape uh which is which was a
+wellrun track for many is I'll go to
+grad school. So I I applied and then got
+into University of Toronto actually. And
+during that summer in between um I had a
+couple of project ideas that I wanted to
+get off the ground. So I I had a
+particular itch that I wanted to scratch
+and the itch was if you think back to uh
+how Google was founded the key insight
+if you simplify it and boil it down that
+like Larry and Sergey had back in 1997
+is hey um we could treat the link crap
+of the internet effectively as a
+feedback loop on what is good content.
+So if you and I create pages and we link
+to each other, that's a mutual signal of
+both directions that there's something
+there, right? So disconnected pages are
+not worth much. But in effect, it's kind
+of a social currency. Links are a social
+currency. Right? Now, fast forward to
+2010, 2011 when I'm sitting there, the
+web 2 revolution has already happened or
+like well underway. You now all of a
+sudden have dynamic content on the web,
+not static links, not static web pages,
+but we have comments on blogs, right?
+Blogs became a thing. Comments became a
+common thing. So my observation was,
+hey, if a conversation is happening on
+Reddit about an interview that Ryan has
+recorded like that means there's
+something there. I don't I can't
+qualitatively say whether it's good or
+bad. I just know that people are talking
+about it and that a signal. So what if
+you built a system that went out and
+aggregated all of these interactions and
+then built a better version of page rank
+effectively right links becomes one
+input but you know thumbs up and number
+of conversations and number of likes and
+all of these things become additional
+inputs and that was post post rank right
+it's it's kind of embedded in the name
+it's it's a was an algorithm for ranking
+posts based on social engagement kind of
+a child of the web 2 era still remember
+the day it was like July 8th when I
+released And then I didn't sleep for 3
+days because the servers were melting
+down. Not strictly because it was like
+such huge demand although there was. It
+was also because my code was terrible.
+So it's kind of like brute force just
+throw more servers at the problem and
+then eventually you know optimize it out
+over the next couple of weeks to to get
+it back to a manageable set. So that
+becomes kind of this nucleus of hey
+there's a there's a feature there right
+and it got um it got good publicity uh
+which then turned into conversation hey
+is there a product here so I remember
+the juncture points somewhere late in
+May we're kind of in the middle of all
+these conversations with investors
+um kind of unanticipated fork in the
+path right and I'm thinking what what do
+I do like I'm uncertain are we going to
+be able to close around can I do this
+because in a couple of weeks I'm
+supposed to start my my grad work and
+I'm looking at that syllabus. I'm like
+what are the courses I'm most interested
+in and I go through the list and it was
+like the the ones that immediately stood
+out to me about like entpreneurship
+and like how to do a company. I'm like
+wait a second. So, I could go and learn
+about this stuff academically and read
+books or I can like I'm literally having
+the conversations right now with the
+investors like I or I could just like go
+and like I I can read those books on my
+own time and I go I can go and try it
+which uh led me to reaching out to my
+adviser and basically asking hey can I
+take a a year time out you know I was
+planning to do this this year but how
+about I start next year and hemmed in
+hot and said okay I understand and you
+know come back to me in 6 months. Um to
+close that story, we did end up closing
+the round and that became postrank the
+company and uh I never did get to finish
+my uh so-called graduate degree.
+>> So in the process of building this
+company, I know eventually it was
+acquired by Google, but I'm really
+curious because I feel like a lot of
+acquisition conversations are behind the
+scenes hush hush. Um what does that kind
+of conversation look like like when they
+reach out for an acquisition? And maybe
+you can tell that story.
+It's a lot less stressful than you make
+it sound to be. I remember we were
+actually
+we were building the product that I was
+describing and uh we were presenting at
+one of the conferences in the Bay Area
+and you know we got off stage and uh
+Phil Moody who was one who was the uh
+kind of lead PM on Google Analytics kind
+of walked up to us and like hey this
+this is cool uh do you want to have a
+chat? And I remember taking a train from
+San Francisco to Mountain View later
+that day, sitting in the conference room
+and him basically interrogating us about
+what is it that you build and then um
+ending the conversation with, hey, maybe
+we should do something together. It's
+like, okay, well, tell me more, right?
+Um that's a that's a blank check for
+follow-up conversation. Um so it it was
+it was very friendly. There's there's
+nothing uh kind of uh more to it than
+that. And then uh what we learned uh
+after is this is right in the time span
+when Google and Facebook were uh like at
+war in terms of drawing the battle lines
+for social. Uh this is when Google woke
+up to the fact that Facebook is on a
+runaway trajectory and um all hands on
+deck. Google need. This is when Google
+starts working on Google+.
+Uh which of course has since been
+sunset. But it became this catalyze
+catalyzer with the Google for hey we we
+need an answer and they were looking for
+all the help that they could get and all
+the experience that they could acquire
+to speedrun this whole thing. Um and we
+became that catalyst for Google
+Analytics because what they saw in us is
+like they frankly they did not care for
+the uh
+PR product that we were building. what
+they cared about was uh the experience
+and some of the infrastructure that we
+we've accumulated that we could bring in
+to fast run and fasttrack this whole
+thing to say hey if I'm using Google
+Analytics I can get really good insights
+on how my social engagement is going and
+I can figure out how Google+ is helping
+me and all the rest um so that became
+the kind of the mutual point of win-win
+situation um that led us uh joining
+forces with Google Analytics
+>> in being brought in as an acquisition
+How do they determine leveling or
+compensation or any of that stuff?
+>> Google as many other tech companies run
+the same process. It's usually kind of
+accelerated batch model, right? Where
+you bring in the whole team and and you
+kind of do a a wholesale evaluation, but
+otherwise um everyone on our team went
+through the panel through the full panel
+uh myself included. Uh so that that was
+that was the bar and really the exercise
+for them was to vet the quality of the
+team and then to figure out where kind
+of on the leveling uh do all the
+engineers stuck up. I see. Okay. So it's
+it is just a normal interview process.
+What about in the case though cuz you're
+bringing in company and assets and
+stuff. Is that just like a giant signing
+bonus or something or how's that? it it
+depends on the company that that you
+know and then the deal of course so
+there there's multiple layers to it
+exactly as you said right there's the
+like there's the IP there's the
+customers uh there's the people and you
+can treat those as kind of distinct
+conversations right so as so far as
+negotiation is concerned um are you
+acquiring the product what are you going
+to do with the customers right um is
+there IP there are you going to use the
+technology um many like there's the aqua
+hire acquisition where you're
+effectively acquiring the team you're
+cool thing you built, but that's not the
+thing I need you to be building. Let's
+just put that on the shelf and let's
+just focus on like rebuilding the thing
+um in our infrastructure. Um post rank
+was closer to that. It was not a full
+kind of aqua hire because they brought
+in and they used the IP, but for all
+intents and purposes, the thing that we
+built ourselves, we had to rebuild from
+scratch with the Google Analytics
+because you're just operating at a
+completely different order of magnitude,
+right? And it was an amazing trial by
+fire if anything for our engineering
+team because we went from managing tens
+of thousands of analytics accounts and
+granted yes we were crawling the web at
+a fairly large scale to operating in a
+service that was literally executing on
+half more than half the internet right
+so like to to make a modification to a
+data pipeline I remember the
+conversations fondly um like sitting
+with our SR team and they're like okay
+well you're going to at this bit field
+right here. That's going to be this
+number of exabytes of data. I'm like,
+"Oh my god,
+okay. Uh, let me think about this more
+carefully, right?" Because before that
+was not even a a conversation point for
+me and and my team. So
+um a lot of it was about the talent and
+bring making ensuring that they're
+bringing in the right folks with the
+right experience and u that they're
+capable of kind of hitting the ground
+running and and working with with the
+rest of the Google Analytics team.
+>> So I want to get into your career at
+Google and it sounds like you were
+placed initially in Google Analytics.
+I'm curious what the leveling was and
+the role. Were you a manager because you
+mentioned your you brought your team
+with you. Um so I was founder and CTO of
+Postrank and I joined as an engineering
+manager um because effectively that's
+what my my role was um at Google and I
+was very invested in making sure that we
+build the right thing the right way and
+kind of manifest the vision of why we
+started this damn company to begin with
+because I strongly believed in like I
+want to help publishers understand that
+was still like me scratching my own itch
+of like I'm going to make Google anal
+analytics solve my problem. Damn it.
+Um and um I think we we succeeded um at
+that. It took us about a year to
+effectively rebuild our stack and the
+team was on a good trajectory and and
+that's where I
+uh took us to back and looked around for
+hey what's the next adventure? um I was
+in a really good direction uh within
+Google Analytics and I remember um a
+conversation with one of our VPs at the
+time where uh you know we were having
+one of these career sitdowns and he was
+like look um you have all the things you
+need you're on track for director you
+know here are the things that I I could
+see I could see you take on and all the
+rest and like huh that sounds all
+exciting and like and I'm very honored
+that like
+you think I'm capable of doing this work
+but at the same time um I couldn't not
+let my curiosity get the better of me
+like Google is such an amazing technical
+playground that even though that first
+year was a pressure cooker of like I
+need to get this thing shipped right and
+I'm going to work my my butt off to get
+it working I also was spending every
+free moment of time just like
+diving deep into various design
+documents and wikis uh Google is an open
+culture which is the thing that I loved
+about Google And I could approach anyone
+and everyone about um any piece of
+infrastructure, any product. And I
+leveraged that um and I learned a lot
+because you know I remember building
+Post rank and reading papers that were
+published about Bigtable this and Hadoop
+that and like trying to figure out how
+to replicate some of the magic that
+Google had and then I'm reading the
+internal design documents and I'm like
+oh my god this is three generations
+ahead of this paper that I was reading.
+This is amazing right? Like I wish the
+world knew about this right? And then I
+would half the time I would talk to the
+engineers. I'm like, "How come we never
+published a follow-up on this thing?"
+They're like, "We're too busy."
+It's not that it's a trade secret. We're
+literally too damn busy. Like, you know,
+if you find us the time and I was like,
+"Huh, well, that's interesting." Like,
+wouldn't it benefit the entire world,
+the entire like internet if we did more
+of this? um which led me down some
+interesting conversations and I
+discovered this group within Google
+which was called make the web fast which
+is basically a skunk course project
+started by uh Sergey
+um around well how can we make the
+internet fast u and it's a very kind of
+self-reerential self-motivating thing um
+that there's very direct evidence that
+the faster the internet is the faster
+users brow the browse the web the more
+they use Google so So it's a mutually
+beneficial relationship, right? So
+within that group, we had all kinds of
+fun projects. We literally built radio
+towers trying to figure out how to build
+more effective cellular networks. Uh you
+know, dug trenches built built towers.
+Uh we worked on TCP IP and trying to
+figure out how to reduce congestion. Uh
+we worked at optimizing proxies for hey,
+turns out that most humans write
+terrible websites. Could we just like
+optimize it out kind of dynamically as a
+web server plugin to um hold on a second
+when we say make the internet fast? What
+does that even mean? Like we know it
+when we see it and when we feel it, but
+if you had to put a number on it, how do
+you express that? Right? So if you if
+you walk the full dynamic range of those
+questions, you like it's it's an just
+absolutely amazing laboratory of like
+experiments to run. And I was really
+fascinated about about that. And I
+remember at that at that point in time I
+I I realized that I had I had an
+opportunity to cash in some chips and I
+could say look um I I see a path towards
+kind of career growth as a director in
+this and that and that that would be a
+great achievement. On the other hand, I
+could take a step back. I could take
+this lateral step and go and work as an
+IC in this field. I'm actually not quite
+even sure how I'm going to contribute. I
+just know that this is a really cool
+area that I'm passionate about and I'll
+hopefully probably find something useful
+that I can do there. Um, but that would
+definitely take me off the career track,
+right? I remember that conversation. It
+was like, well, you know, if uh IC bar
+at Google is actually really high, so if
+anything, you're going to be downleveled
+likely
+um and you're going to reset your track.
+I was like, okay, I think that's a trade
+worth having because I get to control my
+time. I get to work with people I look
+up to and I get to work in a particular
+on a domain that I think is just
+absolutely fascinating. So, I made that
+pivot and in retrospect it was an
+amazing right decision for me because um
+it allowed me to kind of flex my
+curiosity and technical muscle in a
+completely different direction. you
+turned down this more clear-cut director
+path which would be the clear-cut growth
+path for career um to optimize for other
+things which was sounds like intrinsic
+motivation in the work curiosity and
+also sounds like maybe you got some time
+back is that the math you were doing in
+your head and making that choice
+>> exactly that it was and there was a lot
+of uncertainty in that process but um
+this kind of a a repeating arc through
+my career where as a manager your time
+is managed by others,
+right? Like you you are in the service
+of others and I wanted to uh shift gears
+and and go into a mode where I have more
+self-direction and go pursue some like
+interesting research or uh projects that
+like where I can apply my own skill set
+in a unique way. So later I saw that you
+switched back to management and you're
+director of uh developer relations at
+Google. So what was the rationale then
+switching back given what you just said?
+Yeah. So, I've seesawed um a number of
+times through IC to manager and I think
+this is a path that is vastly
+underappreciated and is actually
+surprisingly common uh for a lot of like
+high performing
+um IC's and like you'll find in in
+principle and then higher up roles and
+the observation is um I think as a tour
+of duty uh when I'm when I'm doing
+management um to be a really effective
+like principle plus engineer you need to
+have very good dynamic range technically
+right and you can you can work well at a
+low level of the stack you can also zoom
+out and look at the business
+requirements kind of deeply understand
+what's actually necessary where can you
+relax constraints uh where can you where
+you need to hold hold the line and all
+the rest and once you get attached to
+certain projects like some projects you
+can execute and you call it done you're
+like a great I solved that problem right
+but many problems that are handed to you
+they they become they come as nebulous
+statements that then evolve into huh
+this is actually like a team's worth of
+effort like now that we've understood
+the shape of this problem and uh what
+often happens is you you kind of you see
+this pattern of um some individual doing
+the trailblazing work path finding where
+where we need to climb and then they
+find themselves okay now I need to
+recruit a team of people to help me
+actually build the thing like I know how
+to get to the top of that hill with a
+machete. But now we need to build a
+highway, right? And to build a highway,
+I need a team. Okay, well, let me go
+find a team. Before you know it, you're
+kind of you're you're a TL,
+right? And you're exercising your soft
+power to help direct people and all the
+rest. It's not a far stretch to switch
+to a manager, right? Because like, well,
+now you're doing performance management
+as well, plus a few other tricks. But
+often times, you'll find kind of
+yourself um managing or being
+responsible for the direction of a
+broader team. And before you know it,
+like I think it's a natural transition
+to say, well, okay, fine. I'm going to
+like manage this domain. I'm going to
+manage this as a product team. I'm going
+to manage this like the growth of the
+individuals and the rest. And that's
+completely fine. That's what happened to
+me with developer relations. Um, when
+you think back to the kind of the set of
+problems that I that I shared with you,
+um, I ended up gravitating towards the
+question of how do you measure
+performance?
+And I found myself doing a lot of web
+standards work. I got engaged with W3C
+and ITF and and trying to figure out hey
+what kind of metrics can we define in
+browsers such that we all have a common
+ground truth for how to measure
+performance and that was great a lot of
+that and that was my kind of IC
+contributor role um then you get those
+metrics into browser and then the
+problem becomes great how do I get
+community or ecosystem adoption on this
+thing well I need to go tell people and
+I need to convince them to adopt it
+right uh and integrate it Well, now I
+need to go talk to all of the analytics
+vendors. Uh, let me go talk to all the
+open source projects, right? That
+problem does not scale with one human.
+Like, you really need help of other
+humans. This is where the go to market
+and the kind of developer relations part
+came in. And I quickly realized that
+like it would be really helpful to have
+a team of people that can focus on this
+thing. And this is a thing we deeply
+care about. We want to accelerate the
+adoption of these things. It's kind of
+my my
+um model based on prior experience was
+look if we just leave this ecosystem be
+as it is in 3 to 5 years time we will
+probably see the adoption that we want
+but I'm not happy with 3 to 5 years like
+my question is how can I compress it
+into one to two years ideally one year
+or less right and for that to happen we
+need to inject we need to inject energy
+into the system that energy is a team of
+people great fine let me switch to the
+my manager role. I'm going to go recruit
+people and I'm going to like put my
+organizer hat on and we're going to go
+and execute this problem.
+>> So when you say tour of duty, it's this
+starting as an IC doing pathf finding
+and then becoming a manager potentially
+is all in service of a mission or a
+problem like you you see some problem
+maybe em is the best way to solve that
+problem maybe IC is but it's really all
+about the problem.
+>> Exactly. Exactly. And it's kind of like
+your relationship and your commitment to
+the problem, right? Because not every
+problem has to become your mission. Um
+I'm often engaged in projects where I'm
+participating. I'm actively contributing
+and then I say, "Look guys, you're
+you're well on the way. Like you have
+the right vector. Go execute. You have
+everything you need. Like you don't need
+me here." And in fact, that's my kind of
+measure of success as a as a principal
+engineer often times, right? I don't if
+the team is dependent on me pro that
+means that I'm probably doing something
+wrong because my job is to uplevel the
+team and make sure that they can deliver
+this thing self-sufficiently. So if you
+know the uh the Homer Simpson meme where
+he like disappears into the bushes.
+>> Yeah.
+>> Right. Like it's like kind of like that
+like if I can pull that off successfully
+on a project and the team continues
+executing in the right direction with a
+good velocity like that's success for me
+oftent times. Now, occasionally I
+stumble into a problem where I'm like
+either I'm like just it's in my bones
+and I feel like I need to be like I want
+to own that problem and see it to it
+logical conclusion. um or I have some
+unique position or leverage in it where
+like yes I'm the right person to take on
+the broader responsibility and kind of
+execution of the team to see it through
+completion and it's a judgment call for
+which you know when you pull that off
+and when you say okay this is going to
+be my tour of duty like my job is over
+the next I know that I'm committing for
+the next two years or something to like
+really run this thing own this ship and
+that's my responsibility and you know
+what at the end of it I'm gonna do the
+same thing I did before. I'm gonna like
+my success I have I need a succession
+plan and my succession plan is either we
+solve the problem and it's done or I've
+set it on a trajectory where I can
+successfully pull back and focus on the
+next thing and to focus on next thing.
+I'm going to become an IC again and go
+find the next thing to solve. I know
+later the story continues with you went
+to Shopify, you became an IC and you
+went from a principal engineer to a
+distinguished engineer. I'm curious what
+is the tour of duty there that got you
+promoted? One of the I think
+underappreciated or misunderstood
+aspects of being a principal engineer is
+when people ask
+what what does what do you do like you
+know g give me give me a job description
+because I want to become a principal
+engineer like what are the boxes I need
+to tick and the answer is actually
+embedded in the question because people
+that have to ask that question by
+definition are not principal engineers
+right because the problems become
+ambiguous enough at that level where you
+kind of have to figure it out yourself.
+Like my expectation for I I mentor a lot
+of uh principal engineers that come into
+Shopify. Uh my expectation for someone
+coming in that level is look uh you're
+basically to use an analogy here, you're
+going to be dropped parachuted into
+foreign terrain. You're on a
+reconnaissance reconnaissance mission
+and within the first seven days you
+should figure out the lay of the land
+and figure out where the problems are.
+Build alliances with your directors,
+VPs, whoever it needs to be. figure out
+what their problems are and then kind of
+understand the situation and figure out
+where you can apply your particular
+skill set to help them. Right? I don't
+have a prescription for you. Like it it
+is your agency. It is your problem to
+figure this out. And that requires a
+particular kind of skill set and a
+toolkit that you have to develop to
+figure that out, right? Because there's
+a lot of ambiguity in that. um going to
+a level above that uh kind of as a
+distinguished engineer it's even more
+amorphous in many ways there isn't any
+shared definition right but I the way I
+think about it is uh proof of the
+dynamic range of the problems that you
+can solve so and then dynamic range kind
+of goes in a couple of different
+directions one is technically u so are
+you able to have you shown a repeatable
+record of being able to oper operate
+kind of at all layers of the stack. If
+you're engaged with the team, are you
+able to kind of go all the way down to
+the bare metal and understand what are
+the constraints, what are the problems
+kind of from ground truth, reconstruct
+the problem. At the same time, are you
+able to operate with the business
+requirements, you know, with your VP and
+product counterparts to actually
+understand what's in their head, how it
+manifests in code and translate that
+into actionable change and like deliver
+the right product. That's the technical
+aspect of it. Um but then there's also
+the uh the execution model uh kind of in
+the middle where you have to be able to
+flex. Uh there are different types of
+projects that you get parachuted into.
+Some projects are uh working at the
+frontier of knowledge or product space
+where there's like just fog of war. You
+don't know what you don't know. And you
+have to be working kind of startup mode
+of look, we're going to fire. We're
+going to see where it lands. Then we're
+going to aim and we're going to fire
+again. And we're going to do that really
+rapidly, really fast, as quickly as we
+can, so we can figure out where the hell
+we are and then we'll figure out what
+we're going to build, right? That
+requires a particular skill set. On the
+other hand, you can be parachuted into
+kind of a slower moving pace pace layer
+of the company where it's like, okay
+guys, we have this uh platform API
+problem, you know, we have a just using
+like a random example, right? Um, and
+it's really important that we think
+through how we design this API because
+it will have second and third order
+repercussions like years down the road
+for our partner ecosystem and all the
+rest. So, we need to engage our slow
+thinking brain to really understand how
+this change at this layer will manifest
+its way through all the others, right?
+And that's a very different mode of
+engagement. That's like that's much more
+in a way academic. But you also need to
+be able to take all of that divergent
+thinking and converge the problem to
+like here here's the actual
+recommendation, right? So it really
+becomes the demonstration of your
+toolkit of being able to execute across
+all of those domains because when you
+talk to like the expectation for a
+distinguished engineer is kind of
+similar to a VP like it is a VP
+equivalent role, right? Like write me a
+description for a VP.
+The job of a VP is to solve every
+problem that lands on their plate,
+right? It's like and by definition all
+the easy problems have been solved
+before like at layers below them so they
+only get the hard problems with
+incomplete information or imperfect
+decisions. So, uh, show me the volume
+and show me the versatility of your
+toolkit.
+That gives me confidence that I could
+parachute you into like I can give you
+this weird shaped problem next and with
+reasonable success you'll be able to
+navigate yourself out of it. One thing
+that I I share often with u folks that I
+coach and work with is I I I have this
+belief that a better way a more
+resilient way to build your career is to
+optimize for being the only person as
+opposed to the best person. So
+what does that actually mean? There
+there are two different paths that you
+could take. You could say, look, I'm
+gonna pick a particular domain and I'm
+going to be the best person that will
+know the most about a particular thing.
+So I'm going to like take security as an
+example, right? I'm going to learn
+everything there is to know and that's
+going to be my life life calling. And
+that's great. There's absolutely nothing
+wrong with that. Um you you can optimize
+for that. My personal philosophy is um
+that is one way to success but it is not
+the most resilient way to success. Uh
+because what if you pick the wrong
+field? What if the world changes under
+you? What if um your particular company
+does not need that particular skill set?
+Be the only to me is is about building a
+talent stack or a portfolio of skills
+that you can juggle and be effective.
+And I think this is actually um reflects
+back in the dynamic range conversation
+that we were just having, right? Were
+you able to say look uh and maybe this
+is actually me justifying my own career
+track because when I look back on my
+career, I could say like look, I was a
+mediocre designer. I was a mediocre um
+salesperson.
+I was okay at support, but like come on.
+Like that that's not my life calling
+either. But you know what I did really
+well? I combine all of those things into
+a unique toolkit that other people could
+not do. Like I could look at a problem
+and I could say, "Yeah, I could sling
+together website. I know Photoshop well
+enough and I know how to host it and I
+know how to secure it and I can stand
+all that up for you in, you know, in the
+next two days." You don't have to hire a
+team for that and I have I have the
+dynamic range to do that. Now, if it
+turns out that um we now hired a graphic
+designer, that's excellent. But great,
+I'm just going to take that particular
+skill set out of my quiver, hand it over
+to them, and I'm going to focus on the
+other things, right? And I think
+generally uh you can acquire very high
+competence like 80 90% uh competence
+very quickly in a domain. You can get to
+80% in a matter of days to weeks and
+especially now with the tools that we
+have access to with LLMs and all the
+rest like the ability to acquire context
+is uh just amazing.
+you can spend the next year to get
+yourself to 90%.
+And now if you optimize for that, you
+have resilience because I'm able to
+converse
+with our marketing team because you know
+what? I took the time like I I literally
+remember going on Amazon and I bought
+15 books on marketing and I spent a week
+nothing but reading marketing books so I
+could understand the lexicon, the jargon
+and and speak the right words when I
+talk to marketing teams.
+I'm also adept enough at uh working with
+our PR teams because like I've written a
+lot, right? And I've practiced that
+muscle. I'm also an engineer. So I now
+I'm able to bridge. So oftent times when
+I find myself in conversations at
+Shopify or elsewhere, I'm the translator
+between all of these different parts of
+the company and organs of the body where
+I'm able to kind of synthesize that
+information and bring it together. And
+that gives me a lot of versatility,
+right? It doesn't mean that I'm the
+smartest person in in the room.
+Oftenimes it's far from the uh from the
+truth. I'm often the most senior person,
+but rarely am I the most knowledgeable.
+And that's actually very important
+because part of my skill set is to
+figure out who are the most
+knowledgeable people and figure out how
+to leverage them in the most effective
+way. Right? My contribution is I
+understand kind of the fundamentals of
+the platform and what you can do with um
+our APIs or our platform. I understand
+the business requirements. There's a
+very messy middle in the middle of how
+you actually implement the solution with
+a number of variants.
+That's not my responsibility. My
+responsibility is to help the people
+that know the most about that messy
+middle through that decision space. And
+I have a toolkit to help them facilitate
+that.
+But it's not it doesn't mean that you
+know the most senior person in the room
+knows all the answers which I think is a
+mistake that a lot of engineers make
+when they think about principal
+engineers like oh if you're a principal
+you know everything there is to know
+about the web platform. It's like well
+not really right like what I've learned
+is a lot of pattern matching. I've
+learned how to find answers. I know
+where to find answers and I know how to
+navigate out of tricky situations. But
+it doesn't mean that I know every API
+and every quirk. Now, some people do
+because that's what they make their life
+calling. And that's I think that that's
+perfectly fine. But as a general
+strategy, I think it's not as resilient.
+Antifragile career is where you have a
+set of these capabilities where you can
+just swap out any given moment and say,
+"Okay, well, I guess I'm solving a go to
+market problem right now, so let me pull
+out my
+other quiver of capabilities."
+>> I see. So when you say don't be the
+best, be the only, you're saying that
+generalists have an advantage because
+they can put together a bunch of skill
+sets, get most of the way there, and be
+the only because the intersection of all
+those skill sets is more special and
+more resilient because you have such a
+wide toolbox. Is that right?
+>> Yeah. This is this is literally
+probability math, right? It's like how
+many people if you multiply out the
+probabilities of how many people know
+this particular have this particular
+skill set like you know enough about
+databases you know enough about graphics
+you know about you do you know enough
+about all these other components who is
+the person that is the only person that
+has sufficient domain expertise and
+connective tissue to solve this problem
+right so the being the only is about
+having a wide range of tools that you
+can reach into and say hey I can combine
+them in any particular way which is what
+makes you versatile and makes you
+effective in these kind of ambiguous
+situations where you can based on the
+situation adapt how you work, right?
+Because I can shift gears and say,
+"Look, I've I've been a manager before.
+I understand what it means to do
+performance management. I understand how
+to coach people." Um, so I can even if
+I'm working as an IC, I can take an
+engineer aside and say, "Look, like
+here's some feedback or here's some
+recommendations here. I know how to
+conduct myself. I know what things to
+say, what not to say and and help them
+along the way, right? It doesn't mean
+that I'm exercising that skill all the
+time, but I'm able to be parachuted into
+situation where I can act as that
+temporarily. And that's turned out to be
+incredibly helpful. I had one mentor who
+did seesaw as well. And he said that
+management always appreciates an IC that
+understands management because it's much
+easier to partner with them.
+>> Yes, absolutely. So I would absolutely
+encourage um if you're an IC track and
+you've never tried management like def
+like being a TL is a great learning
+wheels um you should definitely try if
+it if it suits you to do management as
+well but don't assume that it's a
+one-way path right you can go back and
+forth and there isn't a stigma I think
+historically there has been in some
+organizations because also we've kind of
+painted this picture of hey the path to
+success is you grow to be a manager
+right but That's not like when I talk to
+a lot of managers in like high roles,
+directors and all the rest, you know,
+after you sit at a bar and and have a
+couple of drinks, they're like you
+reflect back on what was when were you
+happiest in your career? They say, "Huh,
+you know, it was a couple years back
+before I became an ex because I had like
+I was really competent at that thing and
+I was loving it, but I was told that in
+order for me to like grow quote unquote,
+I needed to take on this other thing."
+It's like well huh well that's that's an
+interesting reflection right and at the
+same time they will reflect and say but
+I've also learned a lot in this new role
+I appreciate what it means to run a team
+the complexity the interpersonal
+dynamics the performance management and
+all the rest and that's an amazing tool
+to have in your toolkit great now um
+let's set up our organizations in a way
+where that is okay for people to transit
+between those roles you're not penalized
+and let's not as an industry positioned
+as some sort of like demotion, right?
+Because often times it's like, oh,
+you're a manager. You became an IC. What
+happened? What do you mean what
+happened? Like nothing happened. I just
+I I wanted to take on a new challenge.
+Like that's not a demotion.
+>> When you look over the course of your
+career, were there any points where you
+have regrets that others could learn
+from?
+>> Don't let the pressure of your success
+stop you from trying. Um, let let me
+unpack that a little bit. Uh, I
+reflected on this like as as a writer,
+as a blogger. I remember like when I
+look back, um, and I wonder if you can
+if you can relate to this. When I look
+back on my early writing, I read it now,
+I'm like, oh my god, that is terrible.
+What was it? Like, how could I have
+published that? That is just flatout
+embarrassing. I hope nobody finds this,
+right? Or frankly, if I go on GitHub and
+look at my own projects, like it is
+embarrassing code. But you know what? It
+was the limit of my ability at the time
+when I did it. And I'm so glad that I
+did it, right? Because it was those
+milestones like putting that work out
+there that gave me the right feedback,
+gave me the right encouragement that
+then led me to improve. But the
+challenge that you run into is as you
+level up and as you get like an audience
+and an expectation, it's like, well, you
+know, Ryan's interviews are really good.
+So, in the next one, like I I expected
+to be like an out of the park, better
+than ever. You keep setting a higher and
+higher bar where you start to filter
+like, you know, here's a thing I would
+have published before, but I'm not sure
+if it's up to my standard now. Like, is
+it really interesting? Do I have a
+unique take on it? Whereas before it was
+like, I don't care. like and just a
+thought. Here you go. Keep publishing.
+Like I struggle with this all the time.
+Like keep putting stuff out there
+because don't let that expectation
+become a gate and filter for the work
+that you put out because that feedback
+that you get and exposure is like that
+that is actually the quintessential
+ingredient that you need for growth.
+>> Definitely. Definitely. And yes, I can
+relate. I think there was uh there's a
+year or two where I was writing a
+newsletter and every week I'd publish
+something and at some point the email
+list is growing and it's growing and I
+could tell at the beginning when I'm
+ideulating what am I going to write this
+week a lot more nos coming in my mind I
+go oh no this one this topic's not good
+I've seen this somewhere
+>> yeah it's it's that courage to be wrong
+to be disliked to make a mistake right
+it's like Ryan I thought you're like or
+Ilia like I I thought you were smarter
+than that. Like why did you say that
+thing? It's like well that's what came
+to my mind and like it's fine. I I don't
+claim to be an oracle, right? I I have I
+have other um expertise and and other
+things and this is what I thought at the
+time.
+>> Definitely. Yeah. And I I also wonder if
+that kind of similar thinking as you
+grow in your career, I mean it would
+take some courage for you to step into a
+new area that's completely new to you.
+If everyone knows you as distinguished
+engineer and very knowledgeable in your
+given domain to step into some new area
+where you're going to make a lot of
+mistakes that that feeling of that
+downgrade is is tough for a lot of
+people. Yeah, that's where setting the
+right expectations with yourself and
+others is also very important. Like the
+the way you show up to these
+conversations makes all the difference,
+right? Because I don't show up as hey I
+know all the answers. Rather, I show up
+as hey guys I'm here to help. I'm just
+I'm like really curious and I start
+asking why like what are the
+fundamentals? Help me understand this.
+the way you ask questions becomes very
+important because it's very easy to come
+across as trying to question all the
+things as opposed to being curious right
+like there's a subtle difference between
+them um am I trying to attack your work
+or am I just trying to construct a model
+and just setting clear expectations of
+that um often times when I begin these
+conversations I'm just very open about
+guys I don't know what you what you know
+right and I need to very rapidly build
+my mental model of the space. So I'm
+going to ask a lot of dumb questions
+like excuse me upfront. I also have my
+expertise and I also know some other
+things that you don't. um so help me
+navigate through this and it becomes a
+collaborative exercise right because I
+can uh clear roadblocks and do things
+that they can't but they can bring all
+of the knowledge and this becomes the
+symbiotic relationship of that goes back
+to how do I leverage the expertise of
+people in the room as opposed to trying
+to question their work and that takes a
+lot of that stigma out of that new
+environment um in work but I think
+there's uh an even higher filter for
+when you're like broadcasting because
+there's an expectation and an aura of
+like what what you're expected to be
+saying, right? And I think it's um some
+people do a better job of that than
+others in terms of staying true to
+their thoughts and and less filtering.
+>> Is there a top book that impacted your
+career?
+>> The first thing that comes to mind and
+this is uh this not a book but an author
+uh Sir Ken Robinson.
+uh he has a series of books um on like
+finding your element, creative schools
+and the rest. U if nothing else um go
+on YouTube and search for Ken Robinson
+and watch his TED talks. Uh it is I
+think 20 minutes of your time that is
+going to be the highest ROI if not today
+this week maybe this year. Uh he he's
+been an inspiration to me and I think
+his messages needs to be continued. uh
+unfortunately he passed away but a key
+of it is we need to rethink how we think
+about education and it actually kind of
+circles back to the conversation we're
+having about wateroo his messages
+stop we need to rethink our education
+system from a factoryline model where we
+like put people by age into a certain
+bin and teach them specific skills like
+we all spike in different ways at
+different points in our life right like
+let's have an environment where people
+can choose their own adventure Now that
+how do you execute that turns out to be
+really hard and he dedicated his life to
+trying to figure that out like how do
+you reform the educational system but I
+think his philosophy is very much kind
+of in line and probably informed a lot
+of my thinking for hey it is about
+creativity you should mix things up. You
+should combine skills. uh let's build a
+system that actually allows us to like
+help kids learn these behaviors better
+as opposed to pigeon holing themselves
+into like well no you're in grade five
+in grade five you're only supposed to
+learn this thing thank you very much and
+uh like please don't touch advanced math
+until you like until you get to grade
+six it's like well that's that's
+nonsense right like for some kids they
+can go all the way to grade eight math
+when they're in grade five just to use
+one example
+>> and then the last question is if you
+could go back to yourself at the
+beginning of your career and give
+yourself some advice knowing everything
+you know now what would you say
+>> I would come back to the don't be the
+best be the only um I I think early in
+my career had a lot of fear of
+hey I'm I'm mediocre at a lot of things
+like I I see my friends I would look up
+to my friends who are really good at
+design and I' like oh I wish I could do
+that right or I look to my other friends
+who are just better engineers like I
+wish I could that could do that but the
+thing that I had was ability to
+negotiate across all those themes and
+that's uncomfortable because I wasn't
+sure if that would pan out and it turns
+out that it did um and then the other
+thing is exactly as we were just
+discussed don't like don't don't filter
+be be braver about this stuff um it's
+it's kind of ironic that later in my
+career I part of like my 9 to five
+effectively became public speaking.
+Going through high school, I was deathly
+afraid of public speaking.
+I would run away from class to avoid it.
+Right? Like I I vividly remember those
+stories. And then it dawned on me later
+when I was doing post rank that hey h
+why is it that I was even through
+university like I had cold sweats
+standing out in front of a class trying
+to explain the thing uh but I was
+totally adept and fine when I was
+pitching uh my product to an audience
+and the difference is in one hand I I
+was trying to describe a thing that you
+know I didn't have any particular
+investment in it was a test of my
+knowledge versus here's a thing I'm
+passionate about and I want to like
+enact change in the ecosystem to move it
+to some new direction. So that turned
+out to make all the difference for me.
+And uh maybe that's the key thing like
+if you told me uh early in my college
+career that my future holds public
+speaking, I would I don't know what I
+would do. I would say that you're crazy.
+>> I see. So to be more brave, chase your
+passions.
+>> Yeah. And it's also very different when
+you're chasing your passion. Kind of a a
+lot of things flip in in how you engage
+um as opposed to being told to stand up
+and you know and rehearse a skit. 100%.
+Awesome. Well, thank you so much for
+your time, Ilia. I'm really excited to
+share this one with everyone. Is there
+anything you want to say to the audience
+before we end the the recording?
+>> I think we covered a lot of ground. Um,
+I hope some of it is useful and um, you
+can find me on on the internets and
+please feel feel free to reach out and
+and have a chat.
+>> Awesome. I'll put that in the show
+notes. All right. Thank you.
+>> Thanks, Ryan. Appreciate it.
+>> Thanks for listening to the podcast. I
+don't sell anything or do sponsorships,
+but if you want to help out with the
+podcast, you can support by engaging
+with the content on YouTube or on
+Spotify. If you want to drop a review,
+that'll be super helpful. And if there's
+any guests that you want to bring on to,
+please let me know. I feel like sourcing
+very senior IC's, there's no wellstudied
+list out there on Google that I can just
+search this up. So, if there's someone
+in your org or at your company who you
+really look up to and you want to hear
+their career story, let me know and I'll
+reach out to
