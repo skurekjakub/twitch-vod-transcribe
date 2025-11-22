@@ -57,7 +57,7 @@ Dr. Jane Smith: Mentioned as a key researcher in the field of mRNA vaccines.
 
 Identify and detail all specific arguments, theses, strong opinions, or hypotheses presented by the speakers. **DO NOT simply list bullet points.** Instead, provide a layered, narrative analysis of each major debate or argument.
 
-For each distinct argument or debate:
+For each distinct argument or debate create a separate file and:
 
 ### Structure Each Argument As:
 

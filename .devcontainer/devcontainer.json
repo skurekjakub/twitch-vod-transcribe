@@ -1,6 +1,6 @@
 {
   "name": "Twitch VOD Transcribe (CUDA)",
-  "image": "nvidia/cuda:12.3.2-cudnn9-runtime-ubuntu22.04",
+  "image": "nvidia/cuda:13.0.2-cudnn-runtime-ubuntu24.04",
   
   "runArgs": [
     "--gpus=all",
@@ -28,9 +28,7 @@
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
-      "username": "vscode",
-      "userUid": "1000",
-      "userGid": "1000"
+      "username": "vscode"
     }
   }
 }

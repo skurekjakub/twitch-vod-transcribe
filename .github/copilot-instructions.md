@@ -116,22 +116,65 @@ lib/transcribe-audio.sh <audio.m4a> <output.txt>  # Transcribe audio to text
 python download_vod.py <url>                      # Download Twitch VOD only
 ```
 
+### TwitchDownloader (Advanced Video + Chat Overlay)
+```bash
+# Download VOD with chat overlay at 1080p60 (uses TwitchDownloader CLI)
+./download-video-twitchdownloader.sh https://www.twitch.tv/videos/2588036186
+./download-video-twitchdownloader.sh 2588036186  # VOD ID also works
+
+# Custom quality and chat dimensions
+./download-video-twitchdownloader.sh --quality 720p60 -w 500 -h 720 <url>
+
+# Custom output directory
+./download-video-twitchdownloader.sh --output-dir custom_videos <url>
+```
+
+**TwitchDownloader Options:**
+- `-q, --quality QUALITY` - Video quality (default: 1080p60, NOT 4K)
+  - Examples: `1080p60`, `1080p`, `720p60`, `720p`, `480p`
+  - Downloads highest available if exact quality not found
+- `-w, --chat-width WIDTH` - Chat overlay width in pixels (default: 420)
+- `-h, --chat-height HEIGHT` - Chat overlay height in pixels (default: 1080)
+- `-o, --output-dir DIR` - Output directory (default: videos)
+
+**TwitchDownloader Workflow:**
+1. **Video Download** → Uses TwitchDownloaderCLI to fetch VOD at specified quality (1080p60 by default)
+2. **Chat Download** → Downloads chat with embedded emotes (BTTV, FFZ, 7TV)
+3. **Chat Render** → Renders chat at 60fps with transparent background (#00000000) in MOV/ProRes format
+4. **Composite** → Uses ffmpeg to overlay chat onto video at top-right corner (10px padding)
+
+**Output Files:**
+- `{VOD_ID}.mp4` - Original video
+- `{VOD_ID}_chat.json` - Chat data with embedded emotes
+- `{VOD_ID}_chat.mov` - Transparent chat overlay (ProRes codec with alpha channel)
+- `{VOD_ID}_with_chat.mp4` - Final video with chat overlay composited
+
+**Key Features:**
+- 60fps chat rendering for smooth animations
+- Transparent background (full alpha channel support) for overlay compositing
+- Chat positioned at top-right with customizable dimensions
+- Outline rendering for better text readability
+- Embedded emotes for offline rendering (BTTV, FFZ, 7TV)
+- All operations logged to `logs/twitchdownloader-{timestamp}.log`
+
 ## Project Structure
 ```
 .
-├── batch-transcribe.sh            # Batch processor (main entry point)
-├── vod-transcribe.sh              # Twitch VOD entry point
-├── youtube-transcript-ytdlp.sh    # YouTube entry point
-├── download_vod.py                # Standalone Twitch downloader
-├── urls.txt                       # Default URL list for batch processing
-├── urls-batch.example.txt         # Example URL file format
-├── lib/                           # Reusable helper scripts
-│   ├── extract-audio.sh           # Audio extraction (ffmpeg wrapper)
-│   └── transcribe-audio.sh        # Transcription (Whisper wrapper)
-├── transcripts/                   # Plain text transcripts
-├── vods/                          # Downloaded videos/audio
-├── summaries/                     # AI-generated summaries
-└── logs/                          # Execution logs
+├── batch-transcribe.sh                  # Batch processor (main entry point)
+├── vod-transcribe.sh                    # Twitch VOD entry point
+├── youtube-transcript-ytdlp.sh          # YouTube entry point
+├── download_vod.py                      # Standalone Twitch downloader (twitch-dl)
+├── download-video-twitchdownloader.sh   # Advanced Twitch downloader with chat overlay
+├── urls.txt                             # Default URL list for batch processing
+├── urls-batch.example.txt               # Example URL file format
+├── lib/                                 # Reusable helper scripts
+│   ├── extract-audio.sh                 # Audio extraction (ffmpeg wrapper)
+│   └── transcribe-audio.sh              # Transcription (Whisper wrapper)
+├── transcripts/                         # Plain text transcripts
+├── vods/                                # Downloaded videos/audio
+├── videos/                              # TwitchDownloader outputs (with chat overlays)
+├── summaries/                           # AI-generated summaries
+└── logs/                                # Execution logs
 ```
 
 ## Environment & Dependencies

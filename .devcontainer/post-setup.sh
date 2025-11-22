@@ -9,15 +9,24 @@ apt-get update
 
 # Install system dependencies
 echo "🛠️ Installing system dependencies..."
-apt-get install -y python3-pip ffmpeg git curl
+apt-get install -y python3-pip ffmpeg git curl unzip
 
 # Install Python requirements
 echo "🐍 Installing Python requirements..."
 pip3 install --no-cache-dir -r requirements.txt
 
-# Install additional Python packages
-echo "⚡ Installing faster-whisper..."
-pip3 install --no-cache-dir faster-whisper
+# Install TwitchDownloader CLI
+echo "📥 Installing TwitchDownloader CLI..."
+TWITCH_DL_VERSION="1.56.2"
+TWITCH_DL_URL="https://github.com/lay295/TwitchDownloader/releases/download/${TWITCH_DL_VERSION}/TwitchDownloaderCLI-${TWITCH_DL_VERSION}-Linux-x64.zip"
+cd /tmp
+curl -L "$TWITCH_DL_URL" -o TwitchDownloaderCLI.zip
+unzip -o TwitchDownloaderCLI.zip
+chmod +x TwitchDownloaderCLI
+mv TwitchDownloaderCLI /usr/local/bin/
+rm -f TwitchDownloaderCLI.zip COPYRIGHT.txt THIRD-PARTY-LICENSES.txt
+cd -
+echo "✅ TwitchDownloader CLI installed: $(TwitchDownloaderCLI --version 2>&1 | head -1)"
 
 # Check host swap configuration
 swap_total=$(grep SwapTotal /proc/meminfo | awk '{print $2}')
