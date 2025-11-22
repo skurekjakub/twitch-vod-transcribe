@@ -1,0 +1,662 @@
+keeping characters consistent is one of
+the biggest challenges with AI image
+generation when you also want the
+ability to control camera angles
+character poses or have multiple
+consistent characters interacting with
+each other in the same shot that's where
+most AI tools just give up so we spent
+the last month creating free workflows
+that combine comi with blender to let
+you create AI movies Comics children's
+books virtual influences or company
+mascots with unprecedented control and
+consistency to demonstrate just how well
+this works to tell cinematic stories we
+created a full short film using this
+technique which we'll show at the end of
+this
+video we'll also cover several other
+powerful AI tools and fun techniques
+that might be useful for your work so
+make sure to watch till the
+end traditionally the best way to create
+AI characters is to train aura for the
+flux image model training works best
+when you have a very data set for your
+character so you need your character
+from different angles and different
+lighting conditions with different
+expressions and poses and in my last
+video about the consistent character
+creator I explained how to automatically
+generate this very data set from either
+a basic character prompt or a reference
+image and then how to train a Laura on
+these images we'll use this as the
+foundation for this video's workflow but
+since this approach requires pretty
+decent gpus we've also developed a
+version that runs on the sdxl image
+model without any Lura training
+necessary
+and it also produces some really amazing
+results I'll show you how it works later
+in this video but for now let's say we
+followed the previous tutorial and
+created luras for our two protagonists
+Dave and Diane we generated these
+characters with my consistent Character
+Creator and trained them with flux gym
+and now we want to place them in one
+scene so let's try something this is
+just a basic flux image generation
+workflow and what I will do I will just
+load in both of my luras and create a
+prompt that has the trigger words for
+both of these luras and then some basic
+character descriptions where they are in
+the image and an description for the
+environment and you can see it kind of
+worked but it merged the character's
+appearance so now Dave also has kind of
+her hair the image also looks really
+broken and yeah it's not really
+controllable luckily compi recently
+implemented the option to apply luras
+regionally via a tool called hooks let's
+check out this simple test workflow that
+I created on the left side here you load
+in your flux Dev checkpoint and set the
+dimensions for your image and then you
+load in your character Laura up here
+this one is for the left side of the
+image you create a prompt that has the
+trigger word for that Laura and a
+description of the environment and you
+do the same for the right side of the
+image where I load in my boss Laura
+describe her a little bit as well as the
+background that she's standing in front
+of let's now click Q prompt this will
+create a mask for the left side of the
+image and for the right side of the
+image image and then these luras and
+prompts will only be applied to one side
+of the image and this one worked really
+well it separated our two characters we
+don't have this merging issue anymore
+and the image also looks much cleaner
+but when we change the seat and run this
+workflow a few more times you can see
+that the proportions of the character
+changes and it's still not really as
+controllable as I would wanted to be so
+how do we get them to interact be able
+to control the camera and keep their
+proportion completely consistent to fix
+this we need to build a basic 3D layout
+scene let's start with the characters if
+you want a completely free and local
+option we recommend Hanan 3D this tool
+can be installed as a standalone version
+or as a comi implementation created by
+keyj we primarily used the portable
+version for Windows but beond this one
+is pretty large so I would recommend
+using Key's implementation for com UI
+MDM Z created a very good tutorial on
+how to set that one up and I'll link it
+in the description so let's load up the
+workflow and create one of our
+characters with it let's go to the top
+here and import our frontal character
+image and now we only have to click q
+and after a few seconds or minutes
+depending on your system you should
+already have a really good model but now
+this 3D model also needs some textures
+and that's what the part below here is
+for first the image is delit so Shadows
+are removed the normals are extracted
+and then it will generate multiple views
+of that character and unfortunately
+these are not very good like this would
+probably work fine even with the rest of
+the workflow but this is just not the
+quality that I would like to see so to
+fix this I created this stable Fusion
+upscaling setup right here this one is
+very experimental it's just the first
+version but this one uses Juggernaut XL
+Florence 2 and the control net Union
+control net together with an IP adapter
+an IP adapter basically takes an image
+and transforms it into a sort of prompt
+and I'm using the IP adapter here with
+the original input image which will help
+us bring our character closer to the
+original input image to make sure that
+her proportions and stuff like that
+don't change I'm using a tile control
+net and I would recommend playing with
+these sampler settings with a schul
+settings down here values between
+0.35 and 0.40 work really well this is
+already improved so much like this
+already looks so much better the next
+step is another face detailer that will
+just go through all the faces and make
+them even more beautiful and when you
+now check out the final 3D model you can
+see this is so much better than the
+previous version like now we actually
+have a sort of face here that kind of
+resembled her it's still not looking in
+100% perfect and like her but this will
+be fixed in the next step I get that all
+of this stuff is pretty complicated so
+if you prefer an easy to ouse webbased
+option you have several options we
+tested them all and we were particularly
+impressed with tripo AI while it is a
+commercial tool they offer several free
+Generations so it's worth just testing
+out there are also free hugging face
+demos of hanun 3D and trellis another 3D
+generator from Microsoft that both let
+you generate a few free 3D models a day
+when you have your character no matter
+where you got it from start blender and
+import it next go to edit preferences
+and make sure you have the rigify add-on
+activated add rigify meta rigs human
+align our 3D model then select the bones
+go to edit mode activate xais mirror and
+move the bones so they better fit your
+geometry you can see the model is not
+100% symmetrical so let's deactivate XX
+mirror and just fix that and it really
+does not have to be perfect here once
+you're done you can click on the rig go
+to the data properties and click
+generate rig before we can bind the rig
+we need to select the geometry go to
+edit mode and select all the vertices go
+to mesh clean up merge by distance it
+already removed some vertices but let's
+make this number much bigger here maybe
+let's try something like
+0.002 you see this removed 3,000
+vertices Without Really changing
+anything so there's a lot of broken
+geometry in there now select the model
+select the rig and click contrl p and
+amateur deform with automatic weights
+once that's done we can hide most of the
+phase rig because we don't really need
+it now I can test the rig see if it
+works this all looks pretty good there
+are still some broken parts in there you
+could manually fix them but honestly
+this is good enough our film mainly
+takes place in an office and to build it
+we generated most of the assets using
+honey on 3D but we also threw in some
+free asset packs and traditional
+modeling to create it all if you would
+rather generate your environment you
+could use my 360° image workflow for
+flux this one uses the 360 HDR Laura
+together with a prompt like this to
+generate a 360° image of an environment
+and not only that it will also generate
+a depth map for this environment so in
+blender you can create an icosphere and
+create a Shader like this where you plug
+in the image as an equi rectangular
+emission texture and I'm using the depth
+map down here you need to invert that
+and then I'm using this RGB curves node
+just to shape to be able to shape the
+room a little bit now the room is
+absolutely not looking perfect but if
+you just want to have a basic scene
+where you can posee your characters in
+it is honestly enough and the next part
+of the workflow would clean a lot of the
+stuff
+up but there's also another way to
+create your 3D environments you could
+first model the basic geometry of your
+scene and blender and then have stable
+diffusion or flux texture this 3D model
+and I made a whole video about this
+workflow so make sure to check it out if
+you're interested now that we have our
+characters and environments it's time
+time to bring everything together in one
+scene I append the environment and the
+character RS place them in the same
+scene and create my shot camera the next
+part of the process mirrors traditional
+3D animation we focus on the most
+important poses in each shot and animate
+them without interpolation in a process
+called blocking after creating all the
+necessary poses and camera angles we can
+focus on lighting the scene we spend
+some time perfecting the mood for our
+film creating a late evening of
+atmosphere just after Sunset and the
+next part is where the magic happens
+we'll transform these ugly layouts into
+polished final renderings with my new AI
+rendering workflow let's start with the
+flux version of this workflow simply
+drag and drop that into your comi window
+if you haven't installed comi and the
+comi manager I'll put a link to the
+installation process in the description
+and you can see that we need to install
+a few custom nodes and to install them
+you can just go to the manager
+click on install missing custom nodes
+select all of them and click install
+once it's done you just need to restart
+com UI you need to refresh your comu
+window and you can see that all the noes
+are here now I'll quickly go to the
+manager and activate preview this one
+right here and I also go to the settings
+light graph and switch the link random
+mode to straight but it really doesn't
+matter at all okay next you need a few
+models for example you need the flux def
+checkpoint and you can get that in the
+manager just go to model manager search
+for flux and I'm using this one right
+here just click install next you can use
+the eight-step Laura for flux with this
+workflow this will just reduce the steps
+that flux needs and just will make
+things a lot faster go to this link here
+in the node download this diffusion
+pytorch model right click save link as
+and then go into your comi folder P UI
+modeled luras and I just like to rename
+that to EP Laura the next model here
+will download automatically when you
+first run the workflow below that is the
+control net model you also need to
+install that via the manager so just go
+to model manager search for Union and
+install this first one right here the
+one by instant X and once that's done
+you have everything you need to run this
+workflow now the workflow is quite
+different when we have one character or
+when we have two characters let's start
+with one character so I created this
+image right here of Dave sitting at a
+desk in blender I just drag and drop
+that in right here and then I move over
+to this next group right here I broke
+this prompt up into two parts so the
+first part is the character prompt I
+just describe him and add the trigger
+word for that Lura and then the second
+part is just a description of the office
+in natural language to the right here is
+the Lura you can use that at maximum
+strength and next to that is our control
+net group most of the time I only use
+one control net so I deactivate these
+ones and only use a tile control net and
+the cool thing here for the tile control
+net is that I used a key frame
+interpolation so the strength of the
+control net actually changes during
+image generation so at every step the
+control net gets weaker and weaker
+making sure that the composition of the
+image is exactly the same to the
+original image but the further we go
+with the image generation the more
+freedom flux gets to generate additional
+detail next to that you have the option
+to use like a Cy control net with the
+outlines and you can also load in a
+depth map right here that you could also
+export with blender like 95% of the time
+I only use the tile control net that's
+usually enough and next to that we have
+the final part of the workflow the
+sampler so let's make sure that all the
+models are loaded so I click Q prompt
+and the first time it might take some
+time because it has to download these
+additional models the Sam 2 and the
+Florence 2 model and yeah that just
+worked really really well we can also
+change his expression so right now he's
+looking very tired so let's say he has a
+happy expression maybe even with an open
+mouth and you can see how during image
+generation his mouth starts to open and
+yeah now he's smiling a pretty weird
+smile but I guess it works so when you
+use this workflow don't expect it to
+work like this first try make sure to
+play around with these values here and
+also play around with the seats
+sometimes you're just unlucky with the
+seat and you just need to change that to
+get exactly the image that you want so
+you can see the seat has a huge impact
+on your generated image when you found
+an image that you like but it looks
+weird like for example the hand here
+looks weird what you can also do is just
+deactivate or bypass the eight-step
+Laura increase the steps to maybe like
+TR 25 or something this will take longer
+of course but the quality will also be
+much better you can see the hand is
+still not perfect but it's already much
+better for two characters the process is
+slightly different first of all let's
+deactivate the first group up here and
+then you can activate the two characters
+group down here again we are working
+from left to right and let me just
+deactivate the later groups in the
+workflow so we can go through them one
+by one so let me use this image as an
+example image I just drag and drop that
+into the same place up here and when I
+now click Q
+prompt you can see it automatically
+detects every person in the image and
+using Sam 2 segmentation it creates this
+blurred masks for these characters and
+also for the background and this usually
+works really well even with broken
+characters like this if you have any
+problems of course you could create
+these masks manually in blender and just
+export them with like a mat ID pass for
+example and what you can do then is just
+create a load image as mask node import
+your mask and select the channel like if
+you have a black and right white mask
+you can use the red Channel and then you
+can grab the mask from right here and
+put it here and for the second character
+just put it here but usually I don't
+have any problems with this setup so we
+can move on let me first activate the EP
+L again activate the second group
+click Q prompt it created a preview of
+our two characters and these are stacked
+on top of each other so let's start with
+our first character Dave we need to
+create a prompt for him and this prompt
+of course also needs the trigger word
+for our Laura and then I just described
+what he is doing below that I loaded in
+the Laura and below that the mask is
+brought over from here sometimes when
+you create like a new image a different
+scene these characters might switch and
+then what you can do instead of like
+copying over the prompt to the other
+side and the Laura you could just switch
+out these masks here next you need to
+create a prompt for the environment the
+next group here is the same as above and
+I'm just deactivating these two
+controlers again because I only want to
+use the tile one and finally we can
+activate the sampler and
+output and just run the whole thing
+again this worked really well but keep
+in mind that using two characters
+actually makes the process a bit slower
+now this whole process with like
+training Aur and using flux a pretty
+heavy model can be a bit tedious so
+that's why we also created an sdxl
+version of this workflow that does not
+require Lura training at all is much
+faster and actually produces pretty
+decent quality so let me just drag and
+drop that in there instead of the flux
+checkpoint here we are loading the
+Juggernaut XL checkpoint and you can
+find the link to where I got that and
+where you need to put that right here in
+the Noe segment anything is the same
+this time we're using a different
+control net so make sure you get that
+different one for this one you just need
+to go to the model manager and search
+for Promax and download this one right
+here and the rest is the same when you
+install this workflow you also need to
+install the comi IP adapter plus um
+custom not pack and I'll put the link to
+the installation process uh into the
+video description you basically just
+install it via the manager and then you
+can also download all these models via
+the com VI manager or you download them
+here manually and place them in the
+correct folder so to be able to compare
+the results let let me actually take the
+same image that we used before here we
+have the prompt group and you can see
+the Laura is deactivated of course you
+could also if you have like an sdxl
+Laura of your character you could put
+that in right here but I don't so I
+deactivated that and now let's create a
+prompt for the character you can see I'm
+using the list style format for a prompt
+because that's what stable diffusion XM
+L likes this time with sdxl we can
+actually use a negative prompt so
+there's one right here and with stable
+Fusion XL I recommend using two control
+Nets and I like to use the tile control
+net right here together with a canny
+control net right here a cany control
+net will extract the outlines from the
+original image and then use them to
+guide image generation next to that we
+have a new group and this is the IP
+adapter and here you're going to load in
+the frontal image of the character that
+you are using and yeah that's pretty
+much it so I can just click Q prompt
+here are the extracted
+outlines and you can see this is the
+final image I would say it doesn't look
+as good or precise as the fleux version
+but we didn't have to train aura for
+this right so I think that's pretty cool
+and we can do the same thing for two
+characters so let me activate the two
+character group here use the image for
+our two characters we can deactivate
+these luras because we don't have any
+luras again we are creating a simple
+prompt here and we're also creating a
+prompt for the
+environment this time we can use a
+negative prompt next to that the control
+Nets I'm deactivating the depth one I
+would like to use these two these are
+set pretty high so let's maybe reduce
+the strength a little bit here we have
+our IP adapter group and this time we
+have two characters our character one we
+can check right here our character one
+mask is day
+and currently for our character one mask
+we have Diane so what we can do is we
+can load in the images in the other um
+way or we can just switch out the mask
+right here this is number two and this
+is number one and this one just looks
+really nice and the IP adapter is also
+pretty good at keeping the character
+consistent our mission on this channel
+is to create workflows that push the
+boundary of what is currently possible
+with open source free AI tools if you
+want to support our work and get access
+to exclusive sample files and our
+fantastic Discord Community consider
+supporting us on patreon as an
+additional thank you you also get access
+to the advanced versions of these
+workflows so let's quickly take a look
+at them now they work in the exact same
+way but they are a little bit longer so
+let me quickly import an image and just
+run it again this just worked really
+well and the second group here is a face
+detailer so this one will enhance the
+phas which is not really necessary
+because the shot is so close but for
+shots where the face is further away
+this one can really help bring out the
+best from the face and finally we have
+an upscaler here this one will upscale
+the image by in this case two so it's
+double the size yeah this will just add
+lots and lots of detail I really like
+the detail it added especially for the
+pupils here and of course we can also do
+that for two characters activate the two
+character group and here is actually a
+good example of how the face detailer
+can fix a broken phas like this is not
+terrible but look at that left pupil see
+the face detailer fixed that very very
+nicely and her face also got just a
+little bit better next to that we have
+the upscaler and here we have two
+options so the first option is to set
+this to two in this case a prompt will
+be created for that image and you have
+the option to add for example what style
+it should be down here as well and then
+it uses this combined prompt to upscale
+the image usually works well for most
+images and it's pretty fast but what
+what you can also do for even better and
+precise upscales is to set that to one
+and what that means it will actually use
+the regional luras the regional
+conditioning and the regional prompts to
+upscale the image the problem is that
+this is a lot slower so that's why I
+mostly recommend using two here because
+it's just so much faster but if you
+really want the precise characters and
+maybe give it some more freedom during
+upscale by by bumping up the D noise
+value here you should probably use
+number one here now if you're creating
+an AI comic or a mascot for a company or
+something you would be finished here
+because you only need the images right
+but since we want to create a full short
+film we need to animate these images and
+we've looked at all the open-source
+video tools out there but unfortunately
+at the moment none of them really
+achieved the desired quality but the
+real problem is we are lacking one
+crucial function and that is
+interpolation we want to be able to give
+a start and end frame and interpolate
+the movement in between when we created
+the chart film the best option for us
+was cling here you can just go to image
+to video click on frames and upload your
+start and end frame and then you can
+describe the action that is supposed to
+happen in between in natural language I
+usually bumped up the relevance to 0.7
+so it more closely follows the images
+and is not so creative one problem was
+that cling really likes to add mouth
+movement whenever it sees like a face
+but you can usually fix that by entering
+talking screaming stuff like that into
+the negative prompt and that was pretty
+much the entire process for the entire
+film we pretty much worked from one post
+to the next interpolating the movement
+in between and then editing everything
+together I used the 11 Labs voice
+changer to change my performance into
+different voices almost done boss just
+need to print the handers report almost
+done boss just need to print the handers
+report and then we use the cling lip
+sync tool to add lip movements to our
+characters yeah let me align it head
+generating the sound effects was
+actually really cool because we tried
+out a tool called mm audio this one will
+generate audio based on a prompt and the
+video so it actually looks at the video
+and generates a fitting soundscape for
+that as a Finishing Touch we also had
+this action sequence That was supposed
+to look a bit different than the rest of
+of the movie and I had the idea to use a
+very old school very early AI imageo
+image workflow where we just look at
+each individual image and change it with
+a prompt and you can also get this
+workflow if you ever need that for some
+reason so I generated the full movie in
+this style and then I cut in some of
+these frames and specific moments just
+to add to the intensity of the scene all
+in all we needed 10 days to create the
+full movie but this also includes a lot
+of the research and development of the
+workflows so it could be done much
+faster and now I am excited to present
+our newest AI short film paper
+jam heading out you almost done boss
+just need to print the heners and Report
+good luck with
+that okay just print
+error huh what was
+that
+error oh come on come on come on come on
+error error error error error error err
+what is wrong eror well you just shut
+up what is going on in
+here I see
+time for a hard reset calibrating please
+wait paper jam and tray
+two printer head alignment required yeah
+let me align the head
+start Monday we're going
+paperless I hope you enjoyed this video
+and the workflows were inspiring and
+useful to you if you create something
+with them please send it to me or tag me
+in your work I always love to see what
+you come up with thanks for watching and
+thank you to our lovely patreon
+supporters who make these deep Dives
+possible see you next time

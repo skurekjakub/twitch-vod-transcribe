@@ -1,0 +1,240 @@
+hello and welcome to another video my
+name is Runner xbt and today we will
+talk about Vel dat again this is second
+tutorial but the purpose of the second
+video is to update new functionality and
+new tools so let's get straight into it
+so this is a website all the links will
+be in
+description
+V.A also I want to mention I not
+affiliated with vataa I not paid to make
+this video this is just a me recording a
+video that was popular and done well so
+here at the main page you have official
+email address you have their official
+Twitter
+accounts it is verified so don't be
+fooled and also you can check the
+documentation which I highly recommend
+before you start using the
+app there's two big buttons
+API which you can read all about I'm not
+the developer
+so and open app what is also worth
+mentioning is that site works well on
+mobile and when you bookmark it you can
+add it to your home screen so it pretty
+much uh works as an app on your phone to
+use the Vel data you need to have an
+account or you can sign up there's a
+link in the
+description your screen should look
+something like this you can switch
+between
+light and dark
+mode I'll stick to dark because I'm not
+a sociopath
+and there is as you can see five buttons
+so I'll start from Trad FY and I'll work
+my way
+up here as you can see there's six
+windows and all show CME data for either
+Bitcoin or
+E so I'll stick with
+Bitcoin there's Bitcoin CME Futures open
+interest CME Futures volume annualized
+basis options open interest options
+volume and gbtc premium all these charts
+but will by default show you one year
+time frame which you can change over
+here so if I change it to 3 month it
+will change for all six of them but if
+maybe for some reason you want to have
+only one of them edited you just do it
+individually above each
+window you can also have the charts
+displayed in coins instead of
+dollars because as price of Bitcoin goes
+up it might eventually be benefit IAL to
+look at open interest in coins instead
+of dollars as it's less noisy and above
+each chart there are three
+buttons so first one is to save a
+screenshot to your computer second one
+is to save a copy so if I was to then
+paste it anywhere I would upload this
+image and third one is via API
+access so let's move
+on to
+Market in this section you can see eight
+different windows
+date Windows being return buckets price
+changes open interest change that's very
+useful for Traders to see what the
+activity actually is oi normalized cvd
+funding APR heat map funding as a table
+Market volume and total open
+interest by default you'll see large cap
+and one we time frame you can choose
+whatever option you like by clicking on
+this drop- down menu
+for this video I'll go with top gainers
+and 1
+hour again these settings can be very
+useful for day Traders because they can
+see top performing coins of the last 60
+Minutes third third part is
+options since I'm not an options Trader
+and do not actively utilize options data
+I will simply screw scroll through this
+tab you can add Greeks over
+here you can you can look at most traded
+options in the last 24 hours and you can
+see all sorts of IV meaning implied
+volatility
+data button number four
+Futures here you can pick between all
+coins available on
+Vel those are all binance usdt
+futures for this example I'll pick a c
+currently popular coin
+salana Vel shows you over here market
+cap fdv and also category where the coin
+belongs in this case Solana being a
+layer one if I do sets just to Showcase
+it will show
+brc2 so over here we can see 24 hours
+volume open interest snapshot by Ma
+major exchanges funding rate open
+interest price chart cvd oi normalized
+liquidations historical volumes average
+returns by r& day cumulative return
+returns
+possession so in this example I can see
+that in the last 7
+Days uh Solana went up mostly during us
+session most volume is done on binance
+there is no
+surprise and Biggest Gainer has been
+around actually around this time as I'm
+recording right
+now so Lana price again you can change
+all the
+settings as you
+want above and
+beyond and last but not least
+chart this is the part I personally
+utilize the most firstly I want to talk
+about the watch list on the right side
+you can do this by dragging in here from
+the right to the
+left as you can see fully
+adjustable here if you click on this
+button these are settings and you can CH
+choose up to eight columns here as a day
+trader you can you might want to choose
+the columns that are very useful for you
+so as a day somebody trading alt coins
+intraday 10- minute change 7-Day change
+10 minute volume and if I keep adding
+columns as you can see it will give me
+error maximum eight so I can save it I
+can drag it out and if I click at the
+top it will filter the biggest gainer
+from layer once in last seven
+days what I can also do is create my own
+new watch
+list and I can add start adding coins so
+let's do
+salana
+and I can save
+it as you can see I can only see the
+coins from the uh from the watch list I
+created when it comes to watch
+list and you click on the settings and
+then you uncheck either you uncheck all
+the watch list and favorites only then
+it will show you all the pirs listed in
+here so that can be handy if maybe you
+don't want to have any watch list you
+just want to have all the coins
+available
+market and if I scroll down I can now
+here select from top gainers I can
+collect my Val tutorial so I can
+basically utilize my personal watch list
+in this section as
+well I hope that makes sense let's go
+back to
+chart okay let me close these for a
+second when it comes to the chart alone
+this is the classic trading view layout
+by clicking settings tab you can change
+the color of the candles body swix and
+background so this over here you can
+change the colors as you like I
+personally like this color
+scheme the chart is we're currently on
+is Bitcoin usdt binance Futures if you
+want to change it you can either start
+typing or you can click here and do the
+same
+now I will walk you through how to add
+most commonly used orderflow indicators
+because that's what I do so to add
+indicators you click on indicators over
+here and I'll give you a list of
+indicators I use and in order I
+personally use them so for the most part
+we will use all the aggregator
+aggregated
+data aggregated
+liquidations open interest spot
+volume volume and
+funding where is
+it some of you might recognize that
+there's there are cvds missing so I'll
+show you these are actually volume and
+spot volume spot volume being the spot
+cvd so I'll show you how to change it so
+you have to hover over it
+settings and click view change view to
+cumulative
+Delta now this is your spot
+cvd I'll do the same for this one
+and often you might have seen on CT a
+lot of people having them over each
+other so you go over three
+dots visual order sorry move on existing
+pain above and here we go here is the
+look I wanted to
+have if you want to move some of the
+paints around you can just use these
+arrows up and
+down and if if I personally am pretty
+annoyed by these text at the left you
+can click at this arrow and this is much
+cleaner
+look
+they're also adjustable by size like
+this also when it comes to indicators
+it's not just volumes and cvds that are
+adjustable there's a lot of settings and
+functionality with within most of them
+so let me go ahead and add open interest
+and I'll show you around so as of right
+now it's showing me open interest in
+coins I can click on settings and I can
+click it to dollars I can you know
+there's basically a lot of flexibility
+when it comes to pretty much all
+indicators
+available one thing I would also like to
+highlight is here you can have up to you
+can have several charts at the same time
+so maybe you want to have Bitcoin at
+left and right ethereum or any other
+altcoin as many as you
+like and that's it for the tutorial
+thanks for watching
