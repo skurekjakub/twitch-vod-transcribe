@@ -3,5 +3,8 @@ logs/*
 vods/*
 
 urls.txt
+urls-vods
 
 videos/
+
+.venv/
