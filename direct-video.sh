@@ -76,7 +76,7 @@ else
 fi
 
 # Clean up channel and title for filenames
-channel_clean=$(echo "$channel_name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+channel_clean=$(echo "$channel_name" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
 title_clean=$(echo "$video_title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 ]/-/g' | sed 's/ /-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
 title_short="${title_clean:0:20}"
 
@@ -90,7 +90,7 @@ else
 fi
 mkdir -p "$video_dir"
 
-base_name="${channel_clean}-${date_part}-${title_short}"
+base_name="${date_part}-${title_short}"
 
 if [ -n "$URL_PREFIX" ]; then
   # Sanitize prefix
