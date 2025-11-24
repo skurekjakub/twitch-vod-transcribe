@@ -102,12 +102,15 @@ while IFS= read -r line || [ -n "$line" ]; do
     continue
   fi
   
-  # Trim whitespace
-  url=$(echo "$line" | xargs)
+  # Parse URL and optional prefix
+  read -r url prefix <<< "$(echo "$line" | xargs)"
   
   processed=$((processed + 1))
   log ""
   log "[$processed/$total_urls] Processing: $url"
+  if [ -n "$prefix" ]; then
+    log "Prefix: $prefix"
+  fi
   
   # Validate URL format (basic check)
   if [[ ! "$url" =~ ^https?:// ]]; then
@@ -118,7 +121,7 @@ while IFS= read -r line || [ -n "$line" ]; do
   
   # Download video
   if [ "$CONTINUE_ON_ERROR" = true ]; then
-    if ./direct-video.sh "$url"; then
+    if ./direct-video.sh "$url" "$prefix"; then
       successful=$((successful + 1))
       log "✓ Successfully downloaded video"
     else
@@ -126,7 +129,7 @@ while IFS= read -r line || [ -n "$line" ]; do
       log "✗ Failed to download video (continuing)"
     fi
   else
-    ./direct-video.sh "$url"
+    ./direct-video.sh "$url" "$prefix"
     successful=$((successful + 1))
     log "✓ Successfully downloaded video"
   fi

@@ -76,6 +76,54 @@ yt-dlp --list-subs https://www.youtube.com/watch?v=VIDEO_ID
 
 ---
 
+## Batch Video Downloading
+
+Use `batch-download.sh` to download multiple videos without transcription. This is useful for archiving content to your NAS.
+
+### Usage
+
+```bash
+./batch-download.sh [url_file]
+```
+
+### URL File Format (`urls-vods`)
+
+Supports optional prefixes to organize files:
+
+```text
+https://www.twitch.tv/videos/123456789
+https://youtu.be/abcdefg my-prefix
+https://www.youtube.com/watch?v=xyz123 archive-2025
+```
+
+- **No prefix**: Saved as `{channel}-{date}-{title}.mp4`
+- **With prefix**: Saved as `{prefix}-{channel}-{date}-{title}.mp4`
+
+---
+
+## NAS Configuration
+
+The project supports automatic downloading to a Network Attached Storage (NAS) via CIFS/SMB.
+
+### Setup
+
+1. Create a `.env.local` file in the project root:
+   ```bash
+   NAS_HOST="192.168.1.XX"      # IP address of your NAS
+   NAS_SHARE="share_name"       # Share name (e.g., "video", "public")
+   NAS_USER="your_username"     # SMB username
+   NAS_PASS="your_password"     # SMB password
+   ```
+
+2. Rebuild the dev container. The NAS will be automatically mounted at `/nas`.
+
+### Behavior
+
+- **If NAS is mounted**: Videos are downloaded to `/nas/vods/{channel_name}/`.
+- **If NAS is NOT mounted**: Videos are downloaded to the local `videos/` directory.
+
+---
+
 ## Library Scripts (Advanced)
 
 The following helper scripts are located in `lib/` and can be used standalone:

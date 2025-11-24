@@ -13,6 +13,14 @@ Modular bash/Python pipeline that downloads and transcribes Twitch VODs and YouT
 4. **Smart Retry** → For YouTube: tries caption fetch first, auto-retries with download if no captions
 5. **Progress Tracking** → Logs all operations to `logs/batch-{timestamp}.log`
 
+### Batch Download Workflow (via `batch-download.sh`)
+**Archival entry point** - downloads videos without transcription:
+1. **Read URLs** → Parses `urls-vods` (or specified file)
+2. **Parse Prefixes** → Extracts optional filename prefixes (e.g., `url prefix`)
+3. **NAS Detection** → Checks if `/nas` is mounted
+4. **Download** → Calls `direct-video.sh` to download via `yt-dlp`
+5. **Save** → Saves to `/nas/vods/{channel}/` (if NAS) or `videos/` (local)
+
 ### Twitch Workflow (via `vod-transcribe.sh`)
 1. **Download** → Uses `twitch-dl` to fetch VOD at specified quality (default 480p)
 2. **Extract Audio** → Calls `lib/extract-audio.sh` (ffmpeg) to extract AAC audio from MP4
@@ -39,6 +47,9 @@ vods/
     {channel}-{YYYY-MM-DD}-{title-prefix}.m4a  (--download)
     {channel}-{YYYY-MM-DD}-{title-prefix}.mp4  (--download-video)
     {channel}-{YYYY-MM-DD}-{title-prefix}.aac  (--download-video)
+/nas/vods/                      # NAS Storage (if mounted)
+  {channel}/
+    {prefix}-{channel}-{date}-{title}.mp4
 transcripts/
   {channel}/                    # Twitch transcripts by channel
     {channel}-{YYYY-MM-DD}-{title-prefix}-en.txt
@@ -74,6 +85,15 @@ logs/
 ./batch-transcribe.sh --quality 720p --download-video-youtube --youtube-lang es --continue-on-error
 ```
 
+### Batch Downloading (Archival)
+```bash
+# Download videos from urls-vods to NAS (if available)
+./batch-download.sh
+
+# Use custom file
+./batch-download.sh my-list.txt
+```
+
 **Batch Options:**
 - `--quality QUALITY` - Twitch video quality (default: 480p)
 - `--download-youtube` - Force audio download for YouTube (skips caption check)
@@ -81,12 +101,12 @@ logs/
 - `--youtube-lang LANG` - Caption language preference (default: en)
 - `--continue-on-error` - Don't stop on individual URL failures
 
-**URL File Format** (`urls.txt`):
+**URL File Format** (`urls.txt` or `urls-vods`):
 ```
 # Comments start with #
 https://www.twitch.tv/videos/2588036186
 https://www.youtube.com/watch?v=dQw4w9WgXcQ
-https://youtu.be/jNQXAC9IVRw
+https://youtu.be/jNQXAC9IVRw my-prefix  # Supports optional filename prefix
 
 # Blank lines ignored
 ```

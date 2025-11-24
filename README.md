@@ -27,11 +27,12 @@ Process multiple URLs from a file:
 # Example urls.txt
 https://www.twitch.tv/videos/2588036186
 https://www.youtube.com/watch?v=dQw4w9WgXcQ
-https://youtu.be/jNQXAC9IVRw
+https://youtu.be/jNQXAC9IVRw my-custom-prefix
 ```
 
 The batch script:
 - Auto-detects URL type (Twitch/YouTube)
+- Supports optional **filename prefixes** (e.g., `url prefix`)
 - Tries caption fetch first for YouTube (fast)
 - **Automatically falls back to audio download + transcription if no captions**
 - Processes sequentially with progress tracking
@@ -39,10 +40,18 @@ The batch script:
 
 See [USAGE.md](USAGE.md) for detailed instructions and options.
 
+## NAS Support
+This project supports automatic downloading to a NAS (Network Attached Storage).
+- Configure credentials in `.env.local`
+- If NAS is detected, videos are saved to `/nas/vods/{channel_name}/`
+- If not detected, falls back to local `videos/` directory
+
 ## Project Structure
 ```
 .
 ├── batch-transcribe.sh            # Batch processor for multiple URLs
+├── batch-download.sh              # Batch video downloader (no transcription)
+├── direct-video.sh                # Direct video downloader with NAS support
 ├── vod-transcribe.sh              # Twitch VOD downloader + transcriber
 ├── youtube-transcript-ytdlp.sh    # YouTube transcript fetcher + transcriber
 ├── download_vod.py                # Standalone VOD downloader
@@ -59,6 +68,7 @@ See [USAGE.md](USAGE.md) for detailed instructions and options.
 
 ### Entry Points
 - **`batch-transcribe.sh`**: Batch processor - reads URLs from file, auto-detects type, routes to appropriate script
+- **`batch-download.sh`**: Batch video downloader - downloads videos from list to NAS/local without transcription
 - **`vod-transcribe.sh`**: Twitch VOD pipeline - downloads VOD, extracts audio, transcribes to text
 - **`youtube-transcript-ytdlp.sh`**: YouTube pipeline - fetches captions OR downloads/transcribes audio
 - **`download_vod.py`**: Standalone Twitch VOD downloader

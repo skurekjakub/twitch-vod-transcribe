@@ -17,12 +17,13 @@ cd "$(dirname "$0")"
 # Parse arguments
 if [[ $# -eq 0 ]]; then
   echo "Error: Missing video URL!"
-  echo "Usage: $0 <video_url>"
-  echo "Example: $0 https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  echo "Usage: $0 <video_url> [prefix]"
+  echo "Example: $0 https://www.youtube.com/watch?v=dQw4w9WgXcQ my-prefix"
   exit 1
 fi
 
 VIDEO_URL="$1"
+URL_PREFIX="$2"
 
 # Validate URL (basic check)
 if [[ ! "$VIDEO_URL" =~ ^https?:// ]]; then
@@ -91,6 +92,12 @@ mkdir -p "$video_dir"
 
 base_name="${channel_clean}-${date_part}-${title_short}"
 
+if [ -n "$URL_PREFIX" ]; then
+  # Sanitize prefix
+  prefix_clean=$(echo "$URL_PREFIX" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+  base_name="${prefix_clean}-${base_name}"
+fi
+
 echo "Download - $timestamp - Video: $video_title" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download - $timestamp - Channel: $channel_name" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download - $timestamp - Published: $date_part" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -106,11 +113,11 @@ video_file_base="${video_dir}/${base_name}"
 # --merge-output-format mp4 = "Merge to MP4 format"
 # Note: No output redirection here to avoid "I/O operation on closed file" error
 yt-dlp \
-  # -f "bestvideo+bestaudio/best" \
   -S "vcodec:h264,res,acodec:m4a" \
-  # --merge-output-format mp4 \
   --output "${video_file_base}.%(ext)s" \
   "$VIDEO_URL"
+   # -f "bestvideo+bestaudio/best" \
+    # --merge-output-format mp4 \
 
 echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
 

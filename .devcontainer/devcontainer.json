@@ -20,6 +20,7 @@
   },
   
   "postCreateCommand": "chmod +x .devcontainer/post-setup.sh && .devcontainer/post-setup.sh",
+  "postStartCommand": ".devcontainer/mount-nas.sh",
   
   "remoteUser": "root",
   
