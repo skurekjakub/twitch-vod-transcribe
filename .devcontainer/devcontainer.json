@@ -5,7 +5,9 @@
   "runArgs": [
     "--gpus=all",
     "--ipc=host",
-    "--memory-swap=-1"
+    "--memory-swap=-1",
+    "--cap-add=SYS_ADMIN",
+    "--cap-add=DAC_READ_SEARCH"
   ],
   
   "customizations": {

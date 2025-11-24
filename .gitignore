@@ -8,3 +8,5 @@ urls-vods
 videos/
 
 .venv/
+
+.env.local

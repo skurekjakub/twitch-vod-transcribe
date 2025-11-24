@@ -9,11 +9,19 @@ apt-get update
 
 # Install system dependencies
 echo "🛠️ Installing system dependencies..."
-apt-get install -y python3-pip ffmpeg git curl unzip
+apt-get install -y python3-pip python3-venv ffmpeg git curl unzip cifs-utils
+
+# Set up Python virtual environment
+echo "🐍 Setting up Python virtual environment..."
+cd /workspaces/twitch-vod-transcribe
+rm -rf .venv
+python3 -m venv .venv
+source .venv/bin/activate
 
 # Install Python requirements
 echo "🐍 Installing Python requirements..."
-pip3 install --no-cache-dir -r requirements.txt
+pip install --upgrade pip
+pip install --no-cache-dir -r requirements.txt
 
 # Install TwitchDownloader CLI
 echo "📥 Installing TwitchDownloader CLI..."
@@ -27,6 +35,31 @@ mv TwitchDownloaderCLI /usr/local/bin/
 rm -f TwitchDownloaderCLI.zip COPYRIGHT.txt THIRD-PARTY-LICENSES.txt
 cd -
 echo "✅ TwitchDownloader CLI installed: $(TwitchDownloaderCLI --version 2>&1 | head -1)"
+
+# Load NAS credentials from .env.local if it exists
+if [ -f /workspaces/twitch-vod-transcribe/.env.local ]; then
+    echo "🔐 Loading NAS credentials from .env.local..."
+    export $(grep -v '^#' /workspaces/twitch-vod-transcribe/.env.local | xargs)
+fi
+
+# Mount NAS if credentials available
+if [ -n "$NAS_HOST" ] && [ -n "$NAS_SHARE" ]; then
+    echo "🗄️  Mounting NAS..."
+    mkdir -p /nas
+    
+    MOUNT_OPTS="vers=3.0"
+    if [ -n "$NAS_USER" ] && [ -n "$NAS_PASS" ]; then
+        MOUNT_OPTS="${MOUNT_OPTS},username=${NAS_USER},password=${NAS_PASS}"
+    else
+        MOUNT_OPTS="${MOUNT_OPTS},guest"
+    fi
+    
+    if mount -t cifs "//${NAS_HOST}/${NAS_SHARE}" /nas -o "${MOUNT_OPTS}"; then
+        echo "✅ NAS mounted at /nas"
+    else
+        echo "⚠️  Failed to mount NAS (will continue without it)"
+    fi
+fi
 
 # Check host swap configuration
 swap_total=$(grep SwapTotal /proc/meminfo | awk '{print $2}')
@@ -55,3 +88,14 @@ else
     echo "✅ Host swap: ${swap_gb}GB (sufficient)"
 fi
 echo ""
+
+# Add venv auto-activation to bashrc
+echo "🔄 Configuring automatic venv activation..."
+cat >> /root/.bashrc << 'EOF'
+
+# Auto-activate Python virtual environment
+if [ -f /workspaces/twitch-vod-transcribe/.venv/bin/activate ]; then
+    source /workspaces/twitch-vod-transcribe/.venv/bin/activate
+fi
+EOF
+echo "✅ Virtual environment will auto-activate on shell startup"

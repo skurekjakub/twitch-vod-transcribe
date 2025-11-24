@@ -41,9 +41,8 @@ fi
 timestamp=$(date "+%Y.%m.%d-%H:%M:%S")
 
 # Create directory structures
-video_dir="videos"
 logs_dir="logs"
-mkdir -p "$video_dir" "$logs_dir"
+mkdir -p "$logs_dir"
 
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Video Downloader (yt-dlp)" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -80,6 +79,16 @@ channel_clean=$(echo "$channel_name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z
 title_clean=$(echo "$video_title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 ]/-/g' | sed 's/ /-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
 title_short="${title_clean:0:20}"
 
+# Determine output directory based on NAS availability
+if grep -qs " /nas " /proc/mounts; then
+  video_dir="/nas/vods/${channel_clean}"
+  echo "Download - $timestamp - NAS detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+else
+  video_dir="videos"
+  echo "Download - $timestamp - NAS not detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+fi
+mkdir -p "$video_dir"
+
 base_name="${channel_clean}-${date_part}-${title_short}"
 
 echo "Download - $timestamp - Video: $video_title" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -91,13 +100,15 @@ echo "Download - $timestamp - Downloading video at highest quality" | tee -a "${
 
 video_file_base="${video_dir}/${base_name}"
 
-# Download best quality video+audio (merged)
-# -f bestvideo+bestaudio/best = "Download best video and best audio and merge, or best single file"
+# Download best quality video+audio (merged) with compatible codecs
+# -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
+# Sorts by: H.264 codec preference, then resolution, then AAC audio
 # --merge-output-format mp4 = "Merge to MP4 format"
 # Note: No output redirection here to avoid "I/O operation on closed file" error
 yt-dlp \
-  -f "bestvideo+bestaudio/best" \
-  --merge-output-format mp4 \
+  # -f "bestvideo+bestaudio/best" \
+  -S "vcodec:h264,res,acodec:m4a" \
+  # --merge-output-format mp4 \
   --output "${video_file_base}.%(ext)s" \
   "$VIDEO_URL"
 

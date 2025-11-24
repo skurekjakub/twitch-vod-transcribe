@@ -78,6 +78,13 @@ log() {
 # Start processing
 log "Starting batch video download from: $URL_FILE"
 
+# Check for NAS
+if grep -qs " /nas " /proc/mounts; then
+  log "NAS detected. Videos will be downloaded to /nas/vods/<channel_name>"
+else
+  log "NAS not detected. Videos will be downloaded to local 'videos/' directory"
+fi
+
 # Count total URLs (excluding blank lines and comments)
 total_urls=$(grep -v '^[[:space:]]*$' "$URL_FILE" | grep -v '^[[:space:]]*#' | wc -l)
 log "Found $total_urls URLs to process"
