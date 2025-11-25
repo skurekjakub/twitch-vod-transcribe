@@ -70,9 +70,23 @@ timestamp=$(date +%Y.%m.%d-%H:%M:%S)
 log_file="logs/batch-download-${timestamp}.log"
 ID="BATCH-DL"
 
+# Processed URLs file
+PROCESSED_FILE="${URL_FILE}-processed"
+
 # Function to log messages
 log() {
   echo "$ID - $(date +%Y.%m.%d-%H:%M:%S) - $1" | tee -a "$log_file"
+}
+
+# Function to move a processed line from URL_FILE to PROCESSED_FILE
+mark_processed() {
+  local line_to_remove="$1"
+  # Append the line to processed file with timestamp
+  echo "# Processed: $(date +%Y-%m-%d\ %H:%M:%S)" >> "$PROCESSED_FILE"
+  echo "$line_to_remove" >> "$PROCESSED_FILE"
+  # Remove the line from the URL file (using a temp file for safety)
+  grep -vFx "$line_to_remove" "$URL_FILE" > "${URL_FILE}.tmp" || true
+  mv "${URL_FILE}.tmp" "$URL_FILE"
 }
 
 # Start processing
@@ -95,8 +109,11 @@ successful=0
 failed=0
 skipped=0
 
-# Read URLs line by line
-while IFS= read -r line || [ -n "$line" ]; do
+# Store lines in array first (so we can modify the file while iterating)
+mapfile -t lines < "$URL_FILE"
+
+# Process each line
+for line in "${lines[@]}"; do
   # Skip blank lines and comments
   if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
     continue
@@ -124,17 +141,21 @@ while IFS= read -r line || [ -n "$line" ]; do
     if ./direct-video.sh "$url" "$prefix"; then
       successful=$((successful + 1))
       log "✓ Successfully downloaded video"
+      mark_processed "$line"
+      log "→ Moved to $PROCESSED_FILE"
     else
       failed=$((failed + 1))
-      log "✗ Failed to download video (continuing)"
+      log "✗ Failed to download video (continuing, keeping in queue)"
     fi
   else
     ./direct-video.sh "$url" "$prefix"
     successful=$((successful + 1))
     log "✓ Successfully downloaded video"
+    mark_processed "$line"
+    log "→ Moved to $PROCESSED_FILE"
   fi
   
-done < "$URL_FILE"
+done
 
 # Summary
 log ""

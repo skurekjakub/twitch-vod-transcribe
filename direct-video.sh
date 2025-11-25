@@ -109,36 +109,71 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged) with compatible codecs
 # -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
 # Sorts by: H.264 codec preference, then resolution, then AAC audio
-# --merge-output-format mp4 = "Merge to MP4 format"
+# --split-chapters = Split video into separate files per chapter
+# Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
+# %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
 # Note: No output redirection here to avoid "I/O operation on closed file" error
 yt-dlp \
   -S "vcodec:h264,res,acodec:m4a" \
+  --split-chapters \
   --output "${video_file_base}.%(ext)s" \
+  --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
   "$VIDEO_URL"
-   # -f "bestvideo+bestaudio/best" \
-    # --merge-output-format mp4 \
+
+rm -f "${video_file_base}.mp4"
 
 echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
 
-# Find the downloaded video file
-video_file=$(ls "${video_file_base}".mp4 2>/dev/null | head -n 1)
+# Split any chapter files longer than 5 hours into 5-hour chunks (only if at least 6 hours)
+MAX_DURATION=18000  # 5 hours in seconds
+MIN_DURATION_TO_SPLIT=21600  # 6 hours in seconds - only split if video is at least this long
+echo "Download - $timestamp - Checking for files longer than 6 hours..." | tee -a "${logs_dir}/download-${timestamp}.log"
 
-if [ -z "$video_file" ]; then
-  echo "Download - $timestamp - Error: No video file found matching ${video_file_base}.mp4" | tee -a "${logs_dir}/download-${timestamp}.log"
+for video_file in "${video_file_base}"-*.mp4; do
+  [ -f "$video_file" ] || continue
+  
+  # Get duration in seconds using ffprobe
+  duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$video_file" 2>/dev/null | cut -d. -f1)
+  
+  if [ -n "$duration" ] && [ "$duration" -gt "$MIN_DURATION_TO_SPLIT" ]; then
+    echo "Download - $timestamp - Splitting $video_file (${duration}s) into 5-hour chunks" | tee -a "${logs_dir}/download-${timestamp}.log"
+    
+    # Get base name without extension
+    file_base="${video_file%.mp4}"
+    
+    # Split using ffmpeg segment
+    ffmpeg -i "$video_file" -c copy -map 0 -segment_time $MAX_DURATION -f segment -reset_timestamps 1 "${file_base}-part%02d.mp4" 2>/dev/null
+    
+    if [ $? -eq 0 ]; then
+      # Remove original file after successful split
+      rm -f "$video_file"
+      echo "Download - $timestamp - Split complete, removed original" | tee -a "${logs_dir}/download-${timestamp}.log"
+    else
+      echo "Download - $timestamp - Warning: Failed to split $video_file" | tee -a "${logs_dir}/download-${timestamp}.log"
+    fi
+  fi
+done
+
+# Find all downloaded video files (chapters + split parts)
+video_files=$(ls "${video_file_base}"*.mp4 2>/dev/null)
+
+if [ -z "$video_files" ]; then
+  echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*.mp4" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
 fi
 
-echo "Download - $timestamp - Download completed: $video_file" | tee -a "${logs_dir}/download-${timestamp}.log"
+file_count=$(echo "$video_files" | wc -l)
+echo "Download - $timestamp - Download completed: $file_count file(s)" | tee -a "${logs_dir}/download-${timestamp}.log"
 
-# Get file size
-file_size=$(du -h "$video_file" | cut -f1)
+# Get total size
+total_size=$(du -ch $video_files 2>/dev/null | tail -n 1 | cut -f1)
 
 # Summary
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download completed successfully!" | tee -a "${logs_dir}/download-${timestamp}.log"
-echo "Output file:" | tee -a "${logs_dir}/download-${timestamp}.log"
-echo "  - Video: $video_file" | tee -a "${logs_dir}/download-${timestamp}.log"
-echo "  - Size: $file_size" | tee -a "${logs_dir}/download-${timestamp}.log"
+echo "Output files ($file_count):" | tee -a "${logs_dir}/download-${timestamp}.log"
+echo "$video_files" | sed 's/^/  - /' | tee -a "${logs_dir}/download-${timestamp}.log"
+echo "Total size: $total_size" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 exit 0
