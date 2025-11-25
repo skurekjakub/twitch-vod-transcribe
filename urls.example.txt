@@ -1,7 +1,0 @@
-# Comments start with #
-https://www.twitch.tv/videos/2588036186
-https://www.youtube.com/watch?v=dQw4w9WgXcQ
-https://youtu.be/jNQXAC9IVRw my-custom-prefix
-
-# Blank lines are ignored
-https://www.twitch.tv/videos/1234567890 archive-2025

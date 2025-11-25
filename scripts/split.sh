@@ -2,23 +2,48 @@
 set -e
 
 # Video Splitter
-# Splits video files longer than 5 hours into 5-hour chunks
+# Splits video files into time-based chunks
 #
-# Usage: ./split-video.sh <video_file> [max_hours]
+# Usage: vod split <video_file> [max_hours]
 # 
 # Examples:
-#   ./split-video.sh video.mp4              # Split into 5-hour chunks (default)
-#   ./split-video.sh video.mp4 3            # Split into 3-hour chunks
-#   ./split-video.sh /path/to/video.mp4     # Absolute path
+#   vod split video.mp4              # Split into 5-hour chunks (default)
+#   vod split video.mp4 3            # Split into 3-hour chunks
+#   vod split /path/to/video.mp4     # Absolute path
 #
 # Dependencies: ffmpeg, ffprobe
 
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
+
 # Parse arguments
-if [[ $# -eq 0 ]]; then
-  echo "Error: Missing video file!"
-  echo "Usage: $0 <video_file> [max_hours]"
-  echo "Example: $0 video.mp4 5"
-  exit 1
+if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+  cat << 'EOF'
+Video Splitter
+
+Usage: vod split <video_file> [max_hours]
+
+Splits video files into time-based chunks using ffmpeg segment.
+
+Arguments:
+  video_file      Path to the video file to split
+  max_hours       Maximum duration per chunk in hours (default: 5)
+
+Options:
+  -h, --help      Show this help message
+
+Examples:
+  vod split video.mp4              # Split into 5-hour chunks
+  vod split video.mp4 3            # Split into 3-hour chunks
+  vod split /path/to/video.mp4 2   # 2-hour chunks with absolute path
+
+Output:
+  Creates files named <original>-part00.mp4, <original>-part01.mp4, etc.
+  Original file is preserved.
+EOF
+  exit 0
 fi
 
 VIDEO_FILE="$1"

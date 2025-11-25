@@ -4,22 +4,19 @@ set -e
 # Twitch VOD Transcriber
 # Downloads a Twitch VOD and optionally transcribes it to English subtitles
 #
-# Usage: ./vod-transcribe.sh [--download-only] [--quality QUALITY] <twitch_vod_url>
+# Usage: vod transcribe [--download-only] [--quality QUALITY] <twitch_vod_url>
 # 
 # Examples:
-#   ./vod-transcribe.sh https://www.twitch.tv/videos/2588036186
-#   ./vod-transcribe.sh --quality 720p https://www.twitch.tv/videos/2588036186
-#   ./vod-transcribe.sh --download-only https://www.twitch.tv/videos/2588036186
-#
-# Options:
-#   --download-only    Only download the video, skip audio extraction and transcription
-#   --quality QUALITY  Video quality to download (default: 480p)
-#                      Available: 160p, 360p, 480p, 720p, 720p60, 1080p, 1080p60, source
+#   vod transcribe https://www.twitch.tv/videos/2588036186
+#   vod transcribe --quality 720p https://www.twitch.tv/videos/2588036186
+#   vod transcribe --download-only https://www.twitch.tv/videos/2588036186
 #
 # Dependencies: twitch-dl, ffmpeg, faster-whisper
-# Models download automatically on first run
 
-cd "$(dirname "$0")"
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Activate Python environment if available
 if [ -z "$CONDA_DEFAULT_ENV" ] && [ -f "venv/bin/activate" ]; then
@@ -33,6 +30,32 @@ DOWNLOAD_ONLY=false
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      cat << 'EOF'
+Twitch VOD Transcriber
+
+Usage: vod transcribe [options] <twitch_vod_url>
+
+Downloads a Twitch VOD using twitch-dl and transcribes it using faster-whisper.
+
+Options:
+  --download-only         Only download the video, skip transcription
+  --quality QUALITY       Video quality (default: 480p)
+                          Available: 160p, 360p, 480p, 720p, 720p60, 1080p, 1080p60, source
+  -h, --help              Show this help message
+
+Examples:
+  vod transcribe https://www.twitch.tv/videos/2588036186
+  vod transcribe --quality 720p https://www.twitch.tv/videos/2588036186
+  vod transcribe --download-only https://www.twitch.tv/videos/2588036186
+
+Output:
+  - Video: vods/<channel>/<channel>-<date>-<title>.mp4
+  - Audio: vods/<channel>/<channel>-<date>-<title>.aac
+  - Transcript: transcripts/<channel>/<channel>-<date>-<title>-en.txt
+EOF
+      exit 0
+      ;;
     --download-only)
       DOWNLOAD_ONLY=true
       shift
@@ -47,9 +70,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo "Error: Unknown argument: $1"
-      echo "Usage: $0 [--download-only] [--quality QUALITY] <twitch_vod_url>"
-      echo "Example: $0 --quality 720p https://www.twitch.tv/videos/2588036186"
-      echo "Example: $0 --download-only https://www.twitch.tv/videos/2588036186"
+      echo "Usage: vod transcribe [--download-only] [--quality QUALITY] <twitch_vod_url>"
       exit 1
       ;;
   esac
@@ -58,9 +79,8 @@ done
 # Validate URL
 if [[ -z "$VOD_URL" ]] || [[ ! "$VOD_URL" =~ ^https://www\.twitch\.tv/videos/[0-9]+$ ]]; then
   echo "Error: Invalid or missing Twitch VOD URL!"
-  echo "Usage: $0 [--download-only] [--quality QUALITY] <twitch_vod_url>"
-  echo "Example: $0 --quality 720p https://www.twitch.tv/videos/2588036186"
-  echo "Example: $0 --download-only https://www.twitch.tv/videos/2588036186"
+  echo "Usage: vod transcribe [--download-only] [--quality QUALITY] <twitch_vod_url>"
+  echo "Example: vod transcribe https://www.twitch.tv/videos/2588036186"
   exit 1
 fi
 

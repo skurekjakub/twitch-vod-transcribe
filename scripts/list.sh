@@ -3,36 +3,48 @@
 # List Twitch VODs for a Channel
 # Scrapes a Twitch channel and lists all available VODs (past broadcasts)
 #
-# Usage: ./list-twitch-vods.sh <channel_name> [options]
+# Usage: vod list <channel_name> [options]
 # 
 # Examples:
-#   ./list-twitch-vods.sh forsen                    # List all VODs
-#   ./list-twitch-vods.sh forsen --urls-only        # Just URLs (for piping to urls-vods)
-#   ./list-twitch-vods.sh forsen --limit 10         # Last 10 VODs only
-#   ./list-twitch-vods.sh forsen --chapters         # Include chapter info
-#   ./list-twitch-vods.sh forsen --urls-only >> urls-vods   # Append to download queue
+#   vod list forsen                    # List all VODs
+#   vod list forsen --urls-only        # Just URLs (for piping to urls-vods)
+#   vod list forsen --limit 10         # Last 10 VODs only
+#   vod list forsen --chapters         # Include chapter info
+#   vod list forsen --urls-only >> urls-vods   # Append to download queue
 #
 # Dependencies: yt-dlp
 
 set -e
 
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
+
 # Parse arguments
-if [[ $# -eq 0 ]]; then
-  echo "Usage: $0 <channel_name> [options]"
-  echo ""
-  echo "Options:"
-  echo "  --urls-only    Output only URLs (one per line)"
-  echo "  --limit N      Limit to N most recent VODs"
-  echo "  --chapters     Show chapters for each VOD (slower, fetches full metadata)"
-  echo "  --json         Output full JSON metadata"
-  echo ""
-  echo "Examples:"
-  echo "  $0 forsen                          # List all VODs with details"
-  echo "  $0 forsen --urls-only              # Just URLs"
-  echo "  $0 forsen --limit 5 --urls-only    # Last 5 VOD URLs"
-  echo "  $0 forsen --chapters --limit 5     # Last 5 with chapter info"
-  echo "  $0 forsen --urls-only >> urls-vods # Add to download queue"
-  exit 1
+if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+  cat << 'EOF'
+List Twitch VODs for a Channel
+
+Usage: vod list <channel_name> [options]
+
+Scrapes a Twitch channel and lists available VODs (past broadcasts).
+
+Options:
+  --urls-only     Output only URLs (one per line)
+  --limit N       Limit to N most recent VODs
+  --chapters      Show chapters for each VOD (slower)
+  --json          Output full JSON metadata
+  -h, --help      Show this help message
+
+Examples:
+  vod list forsen                          # List all VODs with details
+  vod list forsen --urls-only              # Just URLs
+  vod list forsen --limit 5 --urls-only    # Last 5 VOD URLs
+  vod list forsen --chapters --limit 5     # Last 5 with chapter info
+  vod list forsen --urls-only >> urls-vods # Add to download queue
+EOF
+  exit 0
 fi
 
 CHANNEL="$1"

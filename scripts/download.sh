@@ -4,22 +4,48 @@ set -e
 # Video Downloader (using yt-dlp)
 # Downloads video at highest available quality from YouTube or other supported sites
 #
-# Usage: ./download-video.sh <video_url>
+# Usage: vod download <video_url> [prefix]
 # 
 # Examples:
-#   ./download-video.sh https://www.youtube.com/watch?v=dQw4w9WgXcQ
-#   ./download-video.sh https://youtu.be/jNQXAC9IVRw
+#   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+#   vod download https://youtu.be/jNQXAC9IVRw
+#   vod download https://www.twitch.tv/videos/12345 my-prefix
 #
 # Dependencies: yt-dlp (install: pip install yt-dlp)
 
-cd "$(dirname "$0")"
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Parse arguments
-if [[ $# -eq 0 ]]; then
-  echo "Error: Missing video URL!"
-  echo "Usage: $0 <video_url> [prefix]"
-  echo "Example: $0 https://www.youtube.com/watch?v=dQw4w9WgXcQ my-prefix"
-  exit 1
+if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+  cat << 'EOF'
+Video Downloader (using yt-dlp)
+
+Usage: vod download <video_url> [prefix]
+
+Downloads video at highest available quality with chapter splitting.
+Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/
+
+Arguments:
+  video_url       URL of the video to download
+  prefix          Optional filename prefix
+
+Options:
+  -h, --help      Show this help message
+
+Examples:
+  vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod download https://youtu.be/jNQXAC9IVRw my-prefix
+
+Features:
+  - Automatic chapter splitting with sanitized filenames
+  - Auto-split videos >6 hours into 5-hour chunks
+  - H.264/AAC codec selection for TV compatibility
+  - NAS detection for automatic path routing
+EOF
+  exit 0
 fi
 
 VIDEO_URL="$1"

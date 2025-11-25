@@ -4,21 +4,19 @@ set -e
 # YouTube Transcript Fetcher (using yt-dlp)
 # Fetches transcript/captions from a YouTube video without API keys
 #
-# Usage: ./youtube-transcript-ytdlp.sh [--download] [--lang LANG] <youtube_url>
+# Usage: vod youtube [--download] [--lang LANG] <youtube_url>
 # 
 # Examples:
-#   ./youtube-transcript-ytdlp.sh https://www.youtube.com/watch?v=dQw4w9WgXcQ
-#   ./youtube-transcript-ytdlp.sh --lang en https://www.youtube.com/watch?v=dQw4w9WgXcQ
-#   ./youtube-transcript-ytdlp.sh --download https://www.youtube.com/watch?v=dQw4w9WgXcQ
-#
-# Options:
-#   --download         Download video (lowest quality), extract audio, and transcribe
-#   --lang LANG        Preferred caption language (default: en)
-#                      Examples: en, es, fr, de, ja, etc.
+#   vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ
+#   vod youtube --lang en https://www.youtube.com/watch?v=dQw4w9WgXcQ
+#   vod youtube --download https://www.youtube.com/watch?v=dQw4w9WgXcQ
 #
 # Dependencies: yt-dlp (install: pip install yt-dlp), ffmpeg
 
-cd "$(dirname "$0")"
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Default values
 LANG="en"
@@ -27,6 +25,31 @@ DOWNLOAD=false
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      cat << 'EOF'
+YouTube Transcript Fetcher (using yt-dlp)
+
+Usage: vod youtube [options] <youtube_url>
+
+Fetches YouTube captions/transcripts. Falls back to Whisper transcription
+if no captions are available and --download is specified.
+
+Options:
+  --download              Download audio and transcribe with Whisper
+  --lang LANG             Preferred caption language (default: en)
+  -h, --help              Show this help message
+
+Examples:
+  vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod youtube --lang es https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod youtube --download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+Output:
+  - Transcript: transcripts/youtube/<channel>-<date>-<title>-<lang>.txt
+  - Audio (if --download): vods/youtube/<channel>-<date>-<title>.aac
+EOF
+      exit 0
+      ;;
     --download)
       DOWNLOAD=true
       shift
@@ -41,9 +64,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo "Error: Unknown argument: $1"
-      echo "Usage: $0 [--download] [--lang LANG] <youtube_url>"
-      echo "Example: $0 --lang en https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-      echo "Example: $0 --download https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      echo "Usage: vod youtube [--download] [--lang LANG] <youtube_url>"
       exit 1
       ;;
   esac
@@ -52,9 +73,8 @@ done
 # Validate URL
 if [[ -z "$VIDEO_URL" ]]; then
   echo "Error: Missing YouTube video URL!"
-  echo "Usage: $0 [--download] [--lang LANG] <youtube_url>"
-  echo "Example: $0 https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-  echo "Example: $0 --download https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  echo "Usage: vod youtube [--download] [--lang LANG] <youtube_url>"
+  echo "Example: vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   exit 1
 fi
 
@@ -242,22 +262,5 @@ if [ "$transcript_downloaded" = true ]; then
 fi
 if [ "$DOWNLOAD" = true ]; then
   echo "  - Audio: $audio_file" | tee -a "${logs_dir}/run-${timestamp}.log"
-fi
-echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
-
-exit 0
-fi
-
-# Summary
-echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "Processing completed successfully!" | tee -a "${logs_dir}/run-${timestamp}.log"
-echo "Output files:" | tee -a "${logs_dir}/run-${timestamp}.log"
-if [ "$transcript_downloaded" = true ]; then
-  echo "  - Transcript (plain text): $output_file" | tee -a "${logs_dir}/run-${timestamp}.log"
-  echo "  - Language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
-fi
-if [ "$DOWNLOAD" = true ]; then
-  echo "  - Video (mp4): ${vod_dir}/${base_name}.mp4" | tee -a "${logs_dir}/run-${timestamp}.log"
-  echo "  - Audio (aac): ${vod_dir}/${base_name}.aac" | tee -a "${logs_dir}/run-${timestamp}.log"
 fi
 echo "========================================" | tee -a "${logs_dir}/run-${timestamp}.log"

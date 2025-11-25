@@ -2,13 +2,13 @@
 set -e
 
 # Batch Video Downloader
-# Downloads multiple videos from a URL file using direct-video.sh
+# Downloads multiple videos from a URL file
 #
-# Usage: ./batch-download.sh [OPTIONS] [url_file]
+# Usage: vod batch download [OPTIONS] [url_file]
 # 
 # Examples:
-#   ./batch-download.sh urls-vods
-#   ./batch-download.sh --continue-on-error urls-vods
+#   vod batch download urls-vods
+#   vod batch download --continue-on-error urls-vods
 #
 # URL file format (one URL per line):
 #   https://www.youtube.com/watch?v=dQw4w9WgXcQ
@@ -17,12 +17,12 @@ set -e
 #
 # Blank lines and lines starting with # are ignored
 #
-# Options:
-#   --continue-on-error     Continue processing remaining URLs if one fails
-#
 # Dependencies: yt-dlp
 
-cd "$(dirname "$0")"
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Default values
 URL_FILE="urls-vods"
@@ -32,13 +32,41 @@ CONTINUE_ON_ERROR=false
 positional_args=()
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      cat << 'EOF'
+Batch Video Downloader
+
+Usage: vod batch download [OPTIONS] [url_file]
+
+Downloads multiple videos from a URL file. Processes completed URLs by
+moving them to <url_file>-processed.
+
+Options:
+  --continue-on-error     Continue processing remaining URLs if one fails
+  -h, --help              Show this help message
+
+Arguments:
+  url_file                File containing URLs (default: urls-vods)
+
+URL file format:
+  https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  https://youtu.be/jNQXAC9IVRw my-prefix
+  # Comments start with #
+  
+Examples:
+  vod batch download                           # Process urls-vods
+  vod batch download my-urls.txt               # Custom file
+  vod batch download --continue-on-error       # Don't stop on failure
+EOF
+      exit 0
+      ;;
     --continue-on-error)
       CONTINUE_ON_ERROR=true
       shift
       ;;
     -*)
       echo "Error: Unknown option: $1"
-      echo "Usage: $0 [OPTIONS] [url_file]"
+      echo "Usage: vod batch download [OPTIONS] [url_file]"
       exit 1
       ;;
     *)
@@ -56,9 +84,8 @@ fi
 # Validate URL file exists
 if [ ! -f "$URL_FILE" ]; then
   echo "Error: URL file not found: $URL_FILE"
-  echo "Usage: $0 [OPTIONS] [url_file]"
+  echo "Usage: vod batch download [OPTIONS] [url_file]"
   echo "Default file: urls-vods"
-  echo "Example: $0 urls-vods"
   exit 1
 fi
 
@@ -136,9 +163,9 @@ for line in "${lines[@]}"; do
     continue
   fi
   
-  # Download video
+  # Download video using the download script
   if [ "$CONTINUE_ON_ERROR" = true ]; then
-    if ./direct-video.sh "$url" "$prefix"; then
+    if "${SCRIPT_DIR}/download.sh" "$url" "$prefix"; then
       successful=$((successful + 1))
       log "✓ Successfully downloaded video"
       mark_processed "$line"
@@ -148,7 +175,7 @@ for line in "${lines[@]}"; do
       log "✗ Failed to download video (continuing, keeping in queue)"
     fi
   else
-    ./direct-video.sh "$url" "$prefix"
+    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
     successful=$((successful + 1))
     log "✓ Successfully downloaded video"
     mark_processed "$line"

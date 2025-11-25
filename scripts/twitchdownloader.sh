@@ -1,8 +1,23 @@
 #!/usr/bin/env bash
+
 # Downloads Twitch VOD with chat overlay using TwitchDownloader CLI
 # Renders chat as a transparent overlay at 60fps in 1080p60 (or next best quality, NOT 4K)
+#
+# Usage: vod twitchdownloader [OPTIONS] <VOD_URL_OR_ID>
+#
+# Examples:
+#   vod twitchdownloader https://www.twitch.tv/videos/2588036186
+#   vod twitchdownloader 2588036186
+#   vod twitchdownloader --quality 720p60 https://www.twitch.tv/videos/2588036186
+#
+# Dependencies: TwitchDownloaderCLI, ffmpeg
 
 set -euo pipefail
+
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Configuration
 QUALITY="${QUALITY:-1080p60}"
@@ -45,11 +60,13 @@ fi
 # Usage function
 usage() {
     cat << EOF
-Usage: $0 [OPTIONS] <VOD_URL_OR_ID>
+TwitchDownloader - Download VOD with Chat Overlay
+
+Usage: vod twitchdownloader [OPTIONS] <VOD_URL_OR_ID>
 
 Downloads Twitch VOD and renders chat as transparent overlay at 60fps.
 
-OPTIONS:
+Options:
     -q, --quality QUALITY   Video quality (default: 1080p60)
                            Examples: 1080p60, 1080p, 720p60, 720p, 480p
                            Will download highest available if not found
@@ -58,17 +75,18 @@ OPTIONS:
     -o, --output-dir DIR    Output directory (default: videos)
     --help                  Show this help message
 
-EXAMPLES:
-    $0 https://www.twitch.tv/videos/2588036186
-    $0 2588036186
-    $0 --quality 720p60 https://www.twitch.tv/videos/2588036186
-    $0 -w 500 -h 1080 2588036186
+Examples:
+    vod twitchdownloader https://www.twitch.tv/videos/2588036186
+    vod twitchdownloader 2588036186
+    vod twitchdownloader --quality 720p60 https://www.twitch.tv/videos/2588036186
+    vod twitchdownloader -w 500 -h 1080 2588036186
+    vod td 2588036186                    # Short alias
 
-NOTES:
-    - Video is downloaded at specified quality (default 1080p60, NOT 4K)
-    - Chat is rendered at 60fps with transparent background
-    - Output is in MOV format with ProRes codec for alpha channel support
-    - Chat overlay can be composited onto video using external tools
+Output:
+    - {VOD_ID}.mp4           Original video
+    - {VOD_ID}_chat.json     Chat data with embedded emotes
+    - {VOD_ID}_chat.mov      Transparent chat overlay (ProRes)
+    - {VOD_ID}_with_chat.mp4 Final video with chat overlay
 EOF
     exit 0
 }

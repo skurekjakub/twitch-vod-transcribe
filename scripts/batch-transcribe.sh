@@ -4,12 +4,12 @@ set -e
 # Batch VOD Transcriber
 # Processes multiple Twitch/YouTube URLs from a file
 #
-# Usage: ./batch-transcribe.sh [OPTIONS] [url_file]
+# Usage: vod batch transcribe [OPTIONS] [url_file]
 # 
 # Examples:
-#   ./batch-transcribe.sh urls.txt
-#   ./batch-transcribe.sh --download-youtube urls.txt
-#   ./batch-transcribe.sh --quality 720p --download-youtube urls.txt
+#   vod batch transcribe urls.txt
+#   vod batch transcribe --download-youtube urls.txt
+#   vod batch transcribe --quality 720p --download-youtube urls.txt
 #
 # URL file format (one URL per line):
 #   https://www.twitch.tv/videos/2588036186
@@ -18,16 +18,12 @@ set -e
 #
 # Blank lines and lines starting with # are ignored
 #
-# Options:
-#   --quality QUALITY       Video quality for Twitch downloads (default: 480p)
-#   --download-youtube      Download and transcribe YouTube videos (default: fetch captions only)
-#   --download-video-youtube Download video and transcribe YouTube (vs audio-only)
-#   --youtube-lang LANG     YouTube caption language (default: en)
-#   --continue-on-error     Continue processing remaining URLs if one fails
-#
 # Dependencies: twitch-dl, yt-dlp, ffmpeg, faster-whisper
 
-cd "$(dirname "$0")"
+# Get the root directory (parent of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
 
 # Default values
 URL_FILE="urls.txt"
@@ -41,6 +37,40 @@ CONTINUE_ON_ERROR=false
 positional_args=()
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      cat << 'EOF'
+Batch VOD Transcriber
+
+Usage: vod batch transcribe [OPTIONS] [url_file]
+
+Processes multiple Twitch/YouTube URLs from a file, downloading and
+transcribing each video.
+
+Options:
+  --quality QUALITY           Twitch video quality (default: 480p)
+  --download-youtube          Download and transcribe YouTube (default: captions only)
+  --download-video-youtube    Download video + audio for YouTube
+  --youtube-lang LANG         YouTube caption language (default: en)
+  --continue-on-error         Continue processing if one URL fails
+  -h, --help                  Show this help message
+
+Arguments:
+  url_file                    File containing URLs (default: urls.txt)
+
+URL file format:
+  https://www.twitch.tv/videos/2588036186
+  https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  # Comments start with #
+
+Examples:
+  vod batch transcribe                              # Process urls.txt
+  vod batch transcribe my-urls.txt                  # Custom file
+  vod batch transcribe --quality 720p               # Higher quality Twitch
+  vod batch transcribe --download-youtube           # Force YouTube transcription
+  vod batch transcribe --continue-on-error          # Don't stop on failure
+EOF
+      exit 0
+      ;;
     --quality)
       QUALITY="$2"
       shift 2
@@ -64,7 +94,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     -*)
       echo "Error: Unknown option: $1"
-      echo "Usage: $0 [OPTIONS] [url_file]"
+      echo "Usage: vod batch transcribe [OPTIONS] [url_file]"
       exit 1
       ;;
     *)
@@ -82,9 +112,8 @@ fi
 # Validate URL file exists
 if [ ! -f "$URL_FILE" ]; then
   echo "Error: URL file not found: $URL_FILE"
-  echo "Usage: $0 [OPTIONS] [url_file]"
+  echo "Usage: vod batch transcribe [OPTIONS] [url_file]"
   echo "Default file: urls.txt"
-  echo "Example: $0 urls.txt"
   exit 1
 fi
 
@@ -148,7 +177,7 @@ while IFS= read -r line || [ -n "$line" ]; do
     twitch)
       log "Detected Twitch VOD"
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if ./vod-transcribe.sh --quality "$QUALITY" "$url"; then
+        if "${SCRIPT_DIR}/transcribe.sh" --quality "$QUALITY" "$url"; then
           successful=$((successful + 1))
           log "✓ Successfully processed Twitch VOD"
         else
@@ -156,7 +185,7 @@ while IFS= read -r line || [ -n "$line" ]; do
           log "✗ Failed to process Twitch VOD (continuing)"
         fi
       else
-        ./vod-transcribe.sh --quality "$QUALITY" "$url"
+        "${SCRIPT_DIR}/transcribe.sh" --quality "$QUALITY" "$url"
         successful=$((successful + 1))
         log "✓ Successfully processed Twitch VOD"
       fi
@@ -177,14 +206,14 @@ while IFS= read -r line || [ -n "$line" ]; do
       youtube_args+=("--lang" "$YOUTUBE_LANG" "$url")
       
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if ./youtube-transcript-ytdlp.sh "${youtube_args[@]}"; then
+        if "${SCRIPT_DIR}/youtube.sh" "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            if ./youtube-transcript-ytdlp.sh --download --lang "$YOUTUBE_LANG" "$url"; then
+            if "${SCRIPT_DIR}/youtube.sh" --download --lang "$YOUTUBE_LANG" "$url"; then
               successful=$((successful + 1))
               log "✓ Successfully processed YouTube video with audio transcription"
             else
@@ -197,14 +226,14 @@ while IFS= read -r line || [ -n "$line" ]; do
           fi
         fi
       else
-        if ./youtube-transcript-ytdlp.sh "${youtube_args[@]}"; then
+        if "${SCRIPT_DIR}/youtube.sh" "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            ./youtube-transcript-ytdlp.sh --download --lang "$YOUTUBE_LANG" "$url"
+            "${SCRIPT_DIR}/youtube.sh" --download --lang "$YOUTUBE_LANG" "$url"
             successful=$((successful + 1))
             log "✓ Successfully processed YouTube video with audio transcription"
           else

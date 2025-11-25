@@ -1,33 +1,45 @@
 # Usage Guide
 
+## Quick Start
+
+The `vod` CLI provides a unified interface for all video download and transcription operations.
+
+```bash
+# See all available commands
+./vod --help
+
+# Get help for a specific command
+./vod download --help
+./vod batch transcribe --help
+```
+
+---
+
 ## Twitch VOD Transcription
 
 ### Quick Start
 
-Use the `vod-transcribe.sh` script to download and transcribe in one command:
-
 ```bash
-./vod-transcribe.sh https://www.twitch.tv/videos/2588036186
+./vod transcribe https://www.twitch.tv/videos/2588036186
 ```
 
-This script will:
+This will:
 1. Download the VOD at 480p (optimal for audio extraction)
-2. Extract audio from the video using `lib/extract-audio.sh`
-3. Transcribe to plain text using **Whisper large-v3** with `lib/transcribe-audio.sh`
+2. Extract audio using `lib/extract-audio.sh`
+3. Transcribe to plain text using **Whisper large-v3**
 
 ### Options
 
 ```bash
 # Download only (skip transcription)
-./vod-transcribe.sh --download-only https://www.twitch.tv/videos/2588036186
+./vod transcribe --download-only https://www.twitch.tv/videos/2588036186
 
 # Custom video quality
-./vod-transcribe.sh --quality 720p https://www.twitch.tv/videos/2588036186
+./vod transcribe --quality 720p https://www.twitch.tv/videos/2588036186
 ```
 
 ### Output Files
 
-After processing, you'll have:
 - `vods/{channel}/{channel}-{date}-{title}.mp4` - downloaded video
 - `vods/{channel}/{channel}-{date}-{title}.aac` - extracted audio
 - `transcripts/{channel}/{channel}-{date}-{title}-en.txt` - plain text transcript
@@ -38,30 +50,19 @@ After processing, you'll have:
 
 ### Quick Start
 
-Use the `youtube-transcript-ytdlp.sh` script to fetch transcripts from YouTube:
-
 ```bash
 # Fetch existing captions (fastest)
-./youtube-transcript-ytdlp.sh https://www.youtube.com/watch?v=VIDEO_ID
+./vod youtube https://www.youtube.com/watch?v=VIDEO_ID
 
 # Download audio and transcribe if no captions available
-./youtube-transcript-ytdlp.sh --download https://www.youtube.com/watch?v=VIDEO_ID
-
-# Download video, extract audio, and transcribe
-./youtube-transcript-ytdlp.sh --download-video https://www.youtube.com/watch?v=VIDEO_ID
+./vod youtube --download https://www.youtube.com/watch?v=VIDEO_ID
 ```
 
 ### Options
 
 ```bash
 # Specify caption language
-./youtube-transcript-ytdlp.sh --lang es https://www.youtube.com/watch?v=VIDEO_ID
-
-# Download audio-only (m4a format)
-./youtube-transcript-ytdlp.sh --download https://www.youtube.com/watch?v=VIDEO_ID
-
-# Download video (lowest quality), extract audio, transcribe
-./youtube-transcript-ytdlp.sh --download-video https://www.youtube.com/watch?v=VIDEO_ID
+./vod youtube --lang es https://www.youtube.com/watch?v=VIDEO_ID
 
 # List available captions
 yt-dlp --list-subs https://www.youtube.com/watch?v=VIDEO_ID
@@ -71,19 +72,34 @@ yt-dlp --list-subs https://www.youtube.com/watch?v=VIDEO_ID
 
 - `transcripts/youtube/{channel}-{date}-{title}-{lang}.txt` - plain text transcript
 - `vods/youtube/{channel}-{date}-{title}.m4a` - audio file (if --download)
-- `vods/youtube/{channel}-{date}-{title}.mp4` - video file (if --download-video)
-- `vods/youtube/{channel}-{date}-{title}.aac` - extracted audio (if --download-video)
 
 ---
 
-## Batch Video Downloading
+## Video Downloading
 
-Use `batch-download.sh` to download multiple videos without transcription. This is useful for archiving content to your NAS.
-
-### Usage
+### Single Video
 
 ```bash
-./batch-download.sh [url_file]
+# Download with chapter splitting
+./vod download https://www.youtube.com/watch?v=VIDEO_ID
+./vod download https://www.twitch.tv/videos/12345
+
+# With optional filename prefix
+./vod download https://youtu.be/xyz my-prefix
+```
+
+Features:
+- Automatic chapter splitting with sanitized filenames
+- Auto-split videos >6 hours into 5-hour chunks
+- H.264/AAC codec selection for TV compatibility
+- NAS detection for automatic path routing
+
+### Batch Downloading
+
+```bash
+./vod batch download              # Process urls-vods (default)
+./vod batch download my-list.txt  # Custom file
+./vod batch download --continue-on-error
 ```
 
 ### URL File Format (`urls-vods`)
@@ -91,13 +107,86 @@ Use `batch-download.sh` to download multiple videos without transcription. This 
 Supports optional prefixes to organize files:
 
 ```text
+# Comments start with #
 https://www.twitch.tv/videos/123456789
 https://youtu.be/abcdefg my-prefix
 https://www.youtube.com/watch?v=xyz123 archive-2025
 ```
 
-- **No prefix**: Saved as `{channel}-{date}-{title}.mp4`
-- **With prefix**: Saved as `{prefix}-{channel}-{date}-{title}.mp4`
+- **No prefix**: Saved as `{date}-{title}.mp4`
+- **With prefix**: Saved as `{prefix}-{date}-{title}.mp4`
+
+---
+
+## Batch Transcription
+
+Process multiple URLs from a file:
+
+```bash
+./vod batch transcribe                      # Process urls.txt (default)
+./vod batch transcribe my-urls.txt          # Custom file
+./vod batch transcribe --quality 720p       # Higher quality Twitch
+./vod batch transcribe --download-youtube   # Force YouTube transcription
+./vod batch transcribe --continue-on-error  # Don't stop on failure
+```
+
+### URL File Format (`urls.txt`)
+
+```text
+# Comments start with #
+https://www.twitch.tv/videos/2588036186
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+https://youtu.be/jNQXAC9IVRw
+
+# Blank lines are ignored
+```
+
+The batch script:
+- Auto-detects URL type (Twitch/YouTube)
+- For YouTube: tries captions first, auto-falls back to audio transcription
+- Tracks progress with `[X/Y]` format
+- Logs to `logs/batch-{timestamp}.log`
+
+---
+
+## Listing Twitch VODs
+
+```bash
+./vod list forsen                          # Human-readable list
+./vod list forsen --urls-only              # Just URLs (for piping)
+./vod list forsen --limit 10               # Last 10 VODs
+./vod list forsen --chapters               # Include chapter info
+./vod list forsen --urls-only >> urls-vods # Add to download queue
+```
+
+---
+
+## Video Splitting
+
+Split long videos into chunks:
+
+```bash
+./vod split video.mp4              # 5-hour chunks (default)
+./vod split video.mp4 3            # 3-hour chunks
+```
+
+---
+
+## TwitchDownloader (Chat Overlay)
+
+Download VODs with chat overlay using TwitchDownloaderCLI:
+
+```bash
+./vod twitchdownloader https://www.twitch.tv/videos/2588036186
+./vod twitchdownloader --quality 720p60 2588036186
+./vod td -w 500 -h 1080 2588036186    # Short alias
+```
+
+Output files:
+- `{VOD_ID}.mp4` - Original video
+- `{VOD_ID}_chat.json` - Chat data with emotes
+- `{VOD_ID}_chat.mov` - Transparent chat overlay
+- `{VOD_ID}_with_chat.mp4` - Final video with chat
 
 ---
 
@@ -159,8 +248,7 @@ Uses Whisper large-v3 model with CUDA acceleration to transcribe audio to plain 
 
 ### Python Dependencies
 ```bash
-pip install -r requirements.txt  # Installs faster-whisper, twitch-dl
-pip install yt-dlp              # For YouTube downloads
+pip install -r requirements.txt  # Installs faster-whisper, twitch-dl, yt-dlp
 ```
 
 ### Whisper Models
@@ -203,18 +291,29 @@ model = WhisperModel("medium", device="cpu", compute_type="int8")
 
 ```
 twitch-vod-transcribe/
-├── vod-transcribe.sh              # Twitch VOD downloader + transcriber
-├── youtube-transcript-ytdlp.sh    # YouTube transcript fetcher + transcriber
-├── download_vod.py                # Standalone Twitch VOD downloader
-├── lib/                           # Helper scripts
+├── vod                            # Main CLI entrypoint
+├── scripts/                       # Command implementations
+│   ├── download.sh                # vod download
+│   ├── transcribe.sh              # vod transcribe
+│   ├── youtube.sh                 # vod youtube
+│   ├── list.sh                    # vod list
+│   ├── batch-download.sh          # vod batch download
+│   ├── batch-transcribe.sh        # vod batch transcribe
+│   ├── split.sh                   # vod split
+│   └── twitchdownloader.sh        # vod twitchdownloader
+├── lib/                           # Shared helper scripts
 │   ├── extract-audio.sh           # Extract audio from video (ffmpeg)
 │   └── transcribe-audio.sh        # Transcribe audio to text (Whisper)
+├── python/                        # Python utilities
+│   ├── download_vod.py            # Standalone Twitch downloader
+│   └── maya_tts.py                # TTS utility
 ├── vods/                          # Downloaded videos/audio
 │   ├── {channel}/                 # Twitch VODs organized by channel
 │   └── youtube/                   # YouTube videos/audio
 ├── transcripts/                   # All transcripts (plain text)
 │   ├── {channel}/                 # Twitch transcripts by channel
 │   └── youtube/                   # YouTube transcripts
+├── videos/                        # TwitchDownloader outputs
 ├── summaries/                     # AI-generated summaries
 └── logs/                          # Execution logs
 ```
