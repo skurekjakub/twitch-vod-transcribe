@@ -105,12 +105,18 @@ log() {
   echo "$ID - $(date +%Y.%m.%d-%H:%M:%S) - $1" | tee -a "$log_file"
 }
 
-# Function to move a processed line from URL_FILE to PROCESSED_FILE
+# Function to move a processed line from URL_FILE to PROCESSED_FILE (prepend)
 mark_processed() {
   local line_to_remove="$1"
-  # Append the line to processed file with timestamp
-  echo "# Processed: $(date +%Y-%m-%d\ %H:%M:%S)" >> "$PROCESSED_FILE"
-  echo "$line_to_remove" >> "$PROCESSED_FILE"
+  local video_title="$2"
+  # Prepend the line to processed file with timestamp and title (newest at top)
+  local temp_file="${PROCESSED_FILE}.tmp"
+  {
+    echo "# Processed: $(date +%Y-%m-%d\ %H:%M:%S) - $video_title"
+    echo "$line_to_remove"
+    [ -f "$PROCESSED_FILE" ] && cat "$PROCESSED_FILE"
+  } > "$temp_file"
+  mv "$temp_file" "$PROCESSED_FILE"
   # Remove the line from the URL file (using a temp file for safety)
   grep -vFx "$line_to_remove" "$URL_FILE" > "${URL_FILE}.tmp" || true
   mv "${URL_FILE}.tmp" "$URL_FILE"
@@ -163,22 +169,27 @@ for line in "${lines[@]}"; do
     continue
   fi
   
-  # Download video using the download script
+  # Download video using the download script, capture output to extract title
+  video_title=""
   if [ "$CONTINUE_ON_ERROR" = true ]; then
-    if "${SCRIPT_DIR}/download.sh" "$url" "$prefix"; then
+    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr ) || download_failed=true
+    video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
+    if [ "${download_failed:-false}" = false ]; then
       successful=$((successful + 1))
       log "✓ Successfully downloaded video"
-      mark_processed "$line"
+      mark_processed "$line" "$video_title"
       log "→ Moved to $PROCESSED_FILE"
     else
       failed=$((failed + 1))
       log "✗ Failed to download video (continuing, keeping in queue)"
     fi
+    download_failed=false
   else
-    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
+    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr )
+    video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
     successful=$((successful + 1))
     log "✓ Successfully downloaded video"
-    mark_processed "$line"
+    mark_processed "$line" "$video_title"
     log "→ Moved to $PROCESSED_FILE"
   fi
   
