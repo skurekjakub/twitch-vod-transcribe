@@ -102,8 +102,26 @@ else
 fi
 
 # Clean up channel and title for filenames
-channel_clean=$(echo "$channel_name" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
-title_clean=$(echo "$video_title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 ]/-/g' | sed 's/ /-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+# Channel: just sanitize for filesystem (no lowercasing, preserve case)
+# Title: Remove Unicode/emoji characters:
+# 1. LC_ALL=C strips all non-ASCII bytes (raw emoji)
+# 2. Remove escaped \uXXXX sequences
+# 3. Remove yt-dlp sanitized surrogate pairs like "ud83d-udd34" (emoji red circle)
+channel_clean=$(echo "$channel_name" | \
+  sed 's/[^a-zA-Z0-9]/-/g' | \
+  sed 's/--*/-/g' | \
+  sed 's/^-//' | \
+  sed 's/-$//')
+title_clean=$(echo "$video_title" | \
+  LC_ALL=C sed 's/[\x80-\xFF]//g' | \
+  sed 's/\\u[0-9a-fA-F]\{4\}//g' | \
+  sed 's/ud83[cd]-ud[a-f0-9]\{3\}//gi' | \
+  tr '[:upper:]' '[:lower:]' | \
+  sed 's/[^a-z0-9 ]/-/g' | \
+  sed 's/ /-/g' | \
+  sed 's/--*/-/g' | \
+  sed 's/^-//' | \
+  sed 's/-$//')
 
 # Determine output directory based on NAS availability
 if grep -qs " /nas " /proc/mounts; then
@@ -127,6 +145,18 @@ echo "Download - $timestamp - Video: $video_title" | tee -a "${logs_dir}/downloa
 echo "Download - $timestamp - Channel: $channel_name" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download - $timestamp - Published: $date_part" | tee -a "${logs_dir}/download-${timestamp}.log"
 
+# Check if video has chapters
+# Look for "chapters" array with actual chapter entries (has "start_time" keys)
+has_chapters=$(echo "$video_info" | grep -c '"start_time"' 2>/dev/null | head -1 || echo "0")
+has_chapters="${has_chapters//[^0-9]/}"  # Strip any non-numeric characters
+[ -z "$has_chapters" ] && has_chapters=0
+
+if [ "$has_chapters" -gt 0 ]; then
+  echo "Download - $timestamp - Video has $has_chapters chapters, will split" | tee -a "${logs_dir}/download-${timestamp}.log"
+else
+  echo "Download - $timestamp - No chapters found, downloading as single file" | tee -a "${logs_dir}/download-${timestamp}.log"
+fi
+
 # Step 2: Download video at highest quality
 echo "Download - $timestamp - Downloading video at highest quality" | tee -a "${logs_dir}/download-${timestamp}.log"
 
@@ -135,27 +165,36 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged) with compatible codecs
 # -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
 # Sorts by: H.264 codec preference, then resolution, then AAC audio
-# --split-chapters = Split video into separate files per chapter
-# Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
-# %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
-# Note: No output redirection here to avoid "I/O operation on closed file" error
-yt-dlp \
-  -S "vcodec:h264,res,acodec:m4a" \
-  --split-chapters \
-  --output "${video_file_base}.%(ext)s" \
-  --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
-  "$VIDEO_URL"
-
-rm -f "${video_file_base}.mp4"
+if [ "$has_chapters" -gt 0 ]; then
+  # With chapters: use --split-chapters to create separate files per chapter
+  # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
+  # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
+  # || true: yt-dlp sometimes reports "Conversion failed" during chapter split even when output is fine
+  yt-dlp \
+    -S "vcodec:h264,res,acodec:m4a" \
+    --split-chapters \
+    --output "${video_file_base}.%(ext)s" \
+    --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
+    "$VIDEO_URL" || true
+  
+  # Remove the full video file (chapters are in separate files)
+  rm -f "${video_file_base}.mp4"
+else
+  # No chapters: download as single file
+  yt-dlp \
+    -S "vcodec:h264,res,acodec:m4a" \
+    --output "${video_file_base}.%(ext)s" \
+    "$VIDEO_URL" || true
+fi
 
 echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
 
-# Split any chapter files longer than 5 hours into 5-hour chunks (only if at least 6 hours)
-MAX_DURATION=18000  # 5 hours in seconds
+# Split any video files longer than 6 hours into 5-hour chunks
 MIN_DURATION_TO_SPLIT=21600  # 6 hours in seconds - only split if video is at least this long
 echo "Download - $timestamp - Checking for files longer than 6 hours..." | tee -a "${logs_dir}/download-${timestamp}.log"
 
-for video_file in "${video_file_base}"-*.mp4; do
+# Build list of video files to check (both chapter files and single file)
+for video_file in "${video_file_base}"*.mp4; do
   [ -f "$video_file" ] || continue
   
   # Get duration in seconds using ffprobe
@@ -164,13 +203,8 @@ for video_file in "${video_file_base}"-*.mp4; do
   if [ -n "$duration" ] && [ "$duration" -gt "$MIN_DURATION_TO_SPLIT" ]; then
     echo "Download - $timestamp - Splitting $video_file (${duration}s) into 5-hour chunks" | tee -a "${logs_dir}/download-${timestamp}.log"
     
-    # Get base name without extension
-    file_base="${video_file%.mp4}"
-    
-    # Split using ffmpeg segment
-    ffmpeg -i "$video_file" -c copy -map 0 -segment_time $MAX_DURATION -f segment -reset_timestamps 1 "${file_base}-part%02d.mp4" 2>/dev/null
-    
-    if [ $? -eq 0 ]; then
+    # Use the split script (default 5 hours)
+    if "${SCRIPT_DIR}/split.sh" "$video_file" 5; then
       # Remove original file after successful split
       rm -f "$video_file"
       echo "Download - $timestamp - Split complete, removed original" | tee -a "${logs_dir}/download-${timestamp}.log"
