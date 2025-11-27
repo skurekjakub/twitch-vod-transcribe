@@ -95,8 +95,23 @@ if [[ "$duration" -le "$MAX_DURATION" ]]; then
   exit 0
 fi
 
-# Calculate number of parts
+# Calculate number of parts and check for short final chunk
 num_parts=$(( (duration + MAX_DURATION - 1) / MAX_DURATION ))
+remainder=$((duration % MAX_DURATION))
+MIN_FINAL_CHUNK=3600  # 1 hour minimum for final chunk
+
+# If remainder is less than 1 hour (and there's a remainder), merge with previous chunk
+segment_duration=$MAX_DURATION
+if [[ "$remainder" -gt 0 ]] && [[ "$remainder" -lt "$MIN_FINAL_CHUNK" ]] && [[ "$num_parts" -gt 1 ]]; then
+  # Reduce number of parts by 1, recalculate segment time to distribute evenly
+  num_parts=$((num_parts - 1))
+  # Calculate new segment time: divide total duration by new number of parts (round up)
+  segment_duration=$(( (duration + num_parts - 1) / num_parts ))
+  remainder_hours=$((remainder / 60))
+  echo "Final chunk would be ${remainder_hours}min (<1h), merging with previous part"
+  echo "Adjusted segment duration: $((segment_duration / 3600))h $((segment_duration % 3600 / 60))m"
+fi
+
 echo "Will split into $num_parts parts"
 
 # Get file info
@@ -115,7 +130,7 @@ echo "Splitting..."
 ffmpeg -i "$VIDEO_FILE" \
   -c copy \
   -map 0 \
-  -segment_time "$MAX_DURATION" \
+  -segment_time "$segment_duration" \
   -f segment \
   -reset_timestamps 1 \
   "$output_pattern"

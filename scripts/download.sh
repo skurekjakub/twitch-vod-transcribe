@@ -151,7 +151,7 @@ has_chapters=$(echo "$video_info" | grep -c '"start_time"' 2>/dev/null | head -1
 has_chapters="${has_chapters//[^0-9]/}"  # Strip any non-numeric characters
 [ -z "$has_chapters" ] && has_chapters=0
 
-if [ "$has_chapters" -gt 0 ]; then
+if [ "$has_chapters" -gt 1 ]; then
   echo "Download - $timestamp - Video has $has_chapters chapters, will split" | tee -a "${logs_dir}/download-${timestamp}.log"
 else
   echo "Download - $timestamp - No chapters found, downloading as single file" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -165,7 +165,7 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged) with compatible codecs
 # -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
 # Sorts by: H.264 codec preference, then resolution, then AAC audio
-if [ "$has_chapters" -gt 0 ]; then
+if [ "$has_chapters" -gt 1 ]; then
   # With chapters: use --split-chapters to create separate files per chapter
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)

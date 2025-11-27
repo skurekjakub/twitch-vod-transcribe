@@ -59,6 +59,9 @@ Commands:
   list <channel>              List Twitch channel VODs
                               Options: --urls-only, --limit N, --chapters
 
+  list-youtube <channel>      List YouTube channel videos (no shorts)
+                              Options: --urls-only, --limit N
+
   batch download [file]       Batch download from URL file
                               Default file: urls-vods
 
@@ -80,6 +83,7 @@ Examples:
   vod transcribe https://www.twitch.tv/videos/2588036186
   vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ --download
   vod list forsen --urls-only --limit 10
+  vod list-youtube @MrBeast --urls-only --limit 20
   vod batch download urls-vods
   vod batch transcribe --continue-on-error
   vod split video.mp4 4
@@ -158,6 +162,10 @@ main() {
     list)
       check_scripts_dir
       run_script "list.sh" "$@"
+      ;;
+    list-youtube|list-yt|lyt)
+      check_scripts_dir
+      run_script "list-youtube.sh" "$@"
       ;;
     batch)
       # Handle batch subcommands
