@@ -26,7 +26,7 @@ cd "$ROOT_DIR"
 
 # Default values
 URL_FILE="urls-vods"
-CONTINUE_ON_ERROR=false
+CONTINUE_ON_ERROR=true
 
 # Parse arguments
 positional_args=()
