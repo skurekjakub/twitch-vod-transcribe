@@ -60,7 +60,10 @@ Commands:
                               Options: --urls-only, --limit N, --chapters
 
   list-youtube <channel>      List YouTube channel videos (no shorts)
-                              Options: --urls-only, --limit N
+                              Options: --urls-only, --limit N, -o
+
+  list-playlist <playlist>    List YouTube playlist videos
+                              Options: --urls-only, --limit N, -o
 
   batch download [file]       Batch download from URL file
                               Default file: urls-vods
@@ -84,6 +87,7 @@ Examples:
   vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ --download
   vod list forsen --urls-only --limit 10
   vod list-youtube @MrBeast --urls-only --limit 20
+  vod list-playlist PLxxxxx -o
   vod batch download urls-vods
   vod batch transcribe --continue-on-error
   vod split video.mp4 4
@@ -166,6 +170,10 @@ main() {
     list-youtube|list-yt|lyt)
       check_scripts_dir
       run_script "list-youtube.sh" "$@"
+      ;;
+    list-playlist|lpl)
+      check_scripts_dir
+      run_script "list-playlist.sh" "$@"
       ;;
     batch)
       # Handle batch subcommands

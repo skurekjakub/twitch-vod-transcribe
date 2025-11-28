@@ -185,12 +185,19 @@ for line in "${lines[@]}"; do
     fi
     download_failed=false
   else
-    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr )
+    download_exit_code=0
+    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr ) || download_exit_code=$?
     video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
-    successful=$((successful + 1))
-    log "✓ Successfully downloaded video"
-    mark_processed "$line" "$video_title"
-    log "→ Moved to $PROCESSED_FILE"
+    if [ "$download_exit_code" -eq 0 ]; then
+      successful=$((successful + 1))
+      log "✓ Successfully downloaded video"
+      mark_processed "$line" "$video_title"
+      log "→ Moved to $PROCESSED_FILE"
+    else
+      failed=$((failed + 1))
+      log "✗ Failed to download video (exit code: $download_exit_code)"
+      exit 1
+    fi
   fi
   
 done

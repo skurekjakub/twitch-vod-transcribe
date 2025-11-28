@@ -165,17 +165,19 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged) with compatible codecs
 # -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
 # Sorts by: H.264 codec preference, then resolution, then AAC audio
+# Track if yt-dlp succeeds (we check file existence later as primary validation)
+ytdlp_exit_code=0
+
 if [ "$has_chapters" -gt 1 ]; then
   # With chapters: use --split-chapters to create separate files per chapter
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
-  # || true: yt-dlp sometimes reports "Conversion failed" during chapter split even when output is fine
   yt-dlp \
     -S "vcodec:h264,res,acodec:m4a" \
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
     --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
-    "$VIDEO_URL" || true
+    "$VIDEO_URL" || ytdlp_exit_code=$?
   
   # Remove the full video file (chapters are in separate files)
   rm -f "${video_file_base}.mp4"
@@ -184,7 +186,7 @@ else
   yt-dlp \
     -S "vcodec:h264,res,acodec:m4a" \
     --output "${video_file_base}.%(ext)s" \
-    "$VIDEO_URL" || true
+    "$VIDEO_URL" || ytdlp_exit_code=$?
 fi
 
 echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -219,6 +221,17 @@ video_files=$(ls "${video_file_base}"*.mp4 2>/dev/null)
 
 if [ -z "$video_files" ]; then
   echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*.mp4" | tee -a "${logs_dir}/download-${timestamp}.log"
+  if [ "$ytdlp_exit_code" -ne 0 ]; then
+    echo "Download - $timestamp - yt-dlp exited with code $ytdlp_exit_code" | tee -a "${logs_dir}/download-${timestamp}.log"
+  fi
+  exit 1
+fi
+
+# Also check for partial/incomplete downloads (.part files)
+part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
+if [ -n "$part_files" ]; then
+  echo "Download - $timestamp - Error: Found incomplete .part files - download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
+  echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
 fi
 
