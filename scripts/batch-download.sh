@@ -169,23 +169,15 @@ for line in "${lines[@]}"; do
     continue
   fi
   
-  # Download video using the download script, capture output to extract title
+  # Download video using the download script
   video_title=""
   if [ "$CONTINUE_ON_ERROR" = true ]; then
-    # Use unbuffer/script to preserve colors, or fall back to direct execution
-    download_output_file=$(mktemp)
-    if command -v unbuffer &> /dev/null; then
-      unbuffer "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_failed=true
-    elif command -v script &> /dev/null; then
-      script -q -c "${SCRIPT_DIR}/download.sh \"$url\" \"$prefix\"" "$download_output_file" || download_failed=true
-      cat "$download_output_file"
-    else
-      "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_failed=true
-    fi
-    download_output=$(cat "$download_output_file")
-    rm -f "$download_output_file"
-    video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
-    if [ "${download_failed:-false}" = false ]; then
+    set +e  # Temporarily disable exit on error
+    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
+    download_exit_code=$?
+    set -e  # Re-enable exit on error
+    
+    if [ "$download_exit_code" -eq 0 ]; then
       successful=$((successful + 1))
       log "✓ Successfully downloaded video"
       mark_processed "$line" "$video_title"
@@ -194,31 +186,12 @@ for line in "${lines[@]}"; do
       failed=$((failed + 1))
       log "✗ Failed to download video (continuing, keeping in queue)"
     fi
-    download_failed=false
   else
-    download_exit_code=0
-    download_output_file=$(mktemp)
-    if command -v unbuffer &> /dev/null; then
-      unbuffer "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_exit_code=$?
-    elif command -v script &> /dev/null; then
-      script -q -c "${SCRIPT_DIR}/download.sh \"$url\" \"$prefix\"" "$download_output_file" || download_exit_code=$?
-      cat "$download_output_file"
-    else
-      "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_exit_code=$?
-    fi
-    download_output=$(cat "$download_output_file")
-    rm -f "$download_output_file"
-    video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
-    if [ "$download_exit_code" -eq 0 ]; then
-      successful=$((successful + 1))
-      log "✓ Successfully downloaded video"
-      mark_processed "$line" "$video_title"
-      log "→ Moved to $PROCESSED_FILE"
-    else
-      failed=$((failed + 1))
-      log "✗ Failed to download video (exit code: $download_exit_code)"
-      exit 1
-    fi
+    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
+    successful=$((successful + 1))
+    log "✓ Successfully downloaded video"
+    mark_processed "$line" "$video_title"
+    log "→ Moved to $PROCESSED_FILE"
   fi
   
 done

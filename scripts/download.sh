@@ -196,6 +196,12 @@ fi
 
 echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${timestamp}.log"
 
+# Check if yt-dlp reported an error
+if [ "$ytdlp_exit_code" -ne 0 ]; then
+  echo "Download - $timestamp - ERROR: yt-dlp exited with code $ytdlp_exit_code" | tee -a "${logs_dir}/download-${timestamp}.log"
+  exit 1
+fi
+
 # Split any video files longer than 6 hours into 5-hour chunks
 MIN_DURATION_TO_SPLIT=21600  # 6 hours in seconds - only split if video is at least this long
 echo "Download - $timestamp - Checking for files longer than 6 hours..." | tee -a "${logs_dir}/download-${timestamp}.log"

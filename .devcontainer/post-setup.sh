@@ -11,7 +11,7 @@ apt-get update
 echo "🛠️ Installing system dependencies..."
 export DEBIAN_FRONTEND=noninteractive
 ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils expect
+apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils
 
 # Set up Python virtual environment
 echo "🐍 Setting up Python virtual environment..."
