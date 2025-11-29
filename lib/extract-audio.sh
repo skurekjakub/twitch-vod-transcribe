@@ -14,8 +14,6 @@ set -e
 
 # Get the directory where the script was called from (not where it's located)
 CALL_DIR="$(pwd)"
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Parse arguments
 if [ $# -ne 2 ]; then
@@ -65,7 +63,12 @@ echo "========================================" | tee -a "${logs_dir}/extract-${
 echo "$timestamp - Starting audio extraction" | tee -a "${logs_dir}/extract-${timestamp}.log"
 
 # Extract audio without re-encoding (copy codec)
-ffmpeg -i "$VIDEO_FILE" -vn -acodec copy "$OUTPUT_FILE" -loglevel error -stats 2>&1 | tee -a "${logs_dir}/extract-${timestamp}.log"
+# Use pipefail to capture ffmpeg exit code through pipe
+set -o pipefail
+if ! ffmpeg -i "$VIDEO_FILE" -vn -acodec copy "$OUTPUT_FILE" -loglevel error -stats 2>&1 | tee -a "${logs_dir}/extract-${timestamp}.log"; then
+  echo "$timestamp - Audio extraction failed" | tee -a "${logs_dir}/extract-${timestamp}.log"
+  exit 1
+fi
 
 echo "$timestamp - Audio extraction completed" | tee -a "${logs_dir}/extract-${timestamp}.log"
 echo "========================================" | tee -a "${logs_dir}/extract-${timestamp}.log"

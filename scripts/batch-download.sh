@@ -19,10 +19,13 @@ set -e
 #
 # Dependencies: yt-dlp
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
+
+# Allow overriding download script (for testing)
+DOWNLOAD_SCRIPT="${DOWNLOAD_SCRIPT:-${SCRIPT_DIR}/download.sh}"
 
 # Default values
 URL_FILE="urls-vods"
@@ -133,7 +136,7 @@ else
 fi
 
 # Count total URLs (excluding blank lines and comments)
-total_urls=$(grep -v '^[[:space:]]*$' "$URL_FILE" | grep -v '^[[:space:]]*#' | wc -l)
+total_urls=$(grep -cvE '^[[:space:]]*$|^[[:space:]]*#' "$URL_FILE" || echo 0)
 log "Found $total_urls URLs to process"
 
 # Initialize counters
@@ -170,12 +173,17 @@ for line in "${lines[@]}"; do
   fi
   
   # Download video using the download script
-  video_title=""
+  # Use a temp file to capture the video title from download.sh
+  title_file=$(mktemp)
   if [ "$CONTINUE_ON_ERROR" = true ]; then
     set +e  # Temporarily disable exit on error
-    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
+    TITLE_OUTPUT_FILE="$title_file" "$DOWNLOAD_SCRIPT" "$url" "$prefix"
     download_exit_code=$?
     set -e  # Re-enable exit on error
+    
+    video_title=""
+    [ -f "$title_file" ] && video_title=$(cat "$title_file")
+    rm -f "$title_file"
     
     if [ "$download_exit_code" -eq 0 ]; then
       successful=$((successful + 1))
@@ -187,7 +195,12 @@ for line in "${lines[@]}"; do
       log "✗ Failed to download video (continuing, keeping in queue)"
     fi
   else
-    "${SCRIPT_DIR}/download.sh" "$url" "$prefix"
+    TITLE_OUTPUT_FILE="$title_file" "$DOWNLOAD_SCRIPT" "$url" "$prefix"
+    
+    video_title=""
+    [ -f "$title_file" ] && video_title=$(cat "$title_file")
+    rm -f "$title_file"
+    
     successful=$((successful + 1))
     log "✓ Successfully downloaded video"
     mark_processed "$line" "$video_title"

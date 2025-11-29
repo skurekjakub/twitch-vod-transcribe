@@ -11,11 +11,11 @@ apt-get update
 echo "🛠️ Installing system dependencies..."
 export DEBIAN_FRONTEND=noninteractive
 ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils
+apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils shellcheck
 
 # Set up Python virtual environment
 echo "🐍 Setting up Python virtual environment..."
-cd /workspaces/twitch-vod-transcribe
+cd /workspaces/twitch-vod-transcribe || exit 1
 rm -rf .venv
 python3 -m venv .venv
 source .venv/bin/activate
@@ -29,13 +29,13 @@ pip install --no-cache-dir -r requirements.txt
 echo "📥 Installing TwitchDownloader CLI..."
 TWITCH_DL_VERSION="1.56.2"
 TWITCH_DL_URL="https://github.com/lay295/TwitchDownloader/releases/download/${TWITCH_DL_VERSION}/TwitchDownloaderCLI-${TWITCH_DL_VERSION}-Linux-x64.zip"
-cd /tmp
+cd /tmp || exit 1
 curl -L "$TWITCH_DL_URL" -o TwitchDownloaderCLI.zip
 unzip -o TwitchDownloaderCLI.zip
 chmod +x TwitchDownloaderCLI
 mv TwitchDownloaderCLI /usr/local/bin/
 rm -f TwitchDownloaderCLI.zip COPYRIGHT.txt THIRD-PARTY-LICENSES.txt
-cd -
+cd - || exit 1
 echo "✅ TwitchDownloader CLI installed: $(TwitchDownloaderCLI --version 2>&1 | head -1)"
 
 # Mount NAS

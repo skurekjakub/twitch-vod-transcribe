@@ -11,3 +11,6 @@ videos/
 .venv/
 
 .env.local
+
+test/bats*
+test/test_helper/bats*

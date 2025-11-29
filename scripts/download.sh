@@ -13,9 +13,9 @@ set -e
 #
 # Dependencies: yt-dlp (install: pip install yt-dlp)
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
 
 # Parse arguments
@@ -77,13 +77,14 @@ echo "URL: $VIDEO_URL" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Quality: Best available" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 
+# Title output file for batch processing (allows parent scripts to capture the title)
+TITLE_OUTPUT_FILE="${TITLE_OUTPUT_FILE:-}"
+
 # Step 1: Get video metadata
 echo "Download - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Get video info in JSON format
-video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1)
-
-if [ $? -ne 0 ]; then
+if ! video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/download-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
@@ -145,9 +146,15 @@ echo "Download - $timestamp - Video: $video_title" | tee -a "${logs_dir}/downloa
 echo "Download - $timestamp - Channel: $channel_name" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download - $timestamp - Published: $date_part" | tee -a "${logs_dir}/download-${timestamp}.log"
 
+# Write title to output file if specified (for batch processing)
+if [ -n "$TITLE_OUTPUT_FILE" ]; then
+  echo "$video_title" > "$TITLE_OUTPUT_FILE"
+fi
+
 # Check if video has chapters
 # Look for "chapters" array with actual chapter entries (has "start_time" keys)
-has_chapters=$(echo "$video_info" | grep -c '"start_time"' 2>/dev/null | head -1 || echo "0")
+# Use grep -o to find all occurrences (not just lines), then count with wc -l
+has_chapters=$(echo "$video_info" | grep -o '"start_time"' 2>/dev/null | wc -l || echo "0")
 has_chapters="${has_chapters//[^0-9]/}"  # Strip any non-numeric characters
 [ -z "$has_chapters" ] && has_chapters=0
 
@@ -228,7 +235,16 @@ for video_file in "${video_file_base}"*.mp4; do
 done
 
 # Find all downloaded video files (chapters + split parts)
-video_files=$(ls "${video_file_base}"*.mp4 2>/dev/null)
+video_files=$(ls "${video_file_base}"*.mp4 2>/dev/null || true)
+
+# Check for partial/incomplete downloads (.part files) BEFORE checking for mp4 files
+# This handles interrupted downloads where .part files exist but no complete .mp4
+part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
+if [ -n "$part_files" ]; then
+  echo "Download - $timestamp - Error: Found incomplete .part files - download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
+  echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
+  exit 1
+fi
 
 if [ -z "$video_files" ]; then
   echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*.mp4" | tee -a "${logs_dir}/download-${timestamp}.log"
@@ -238,19 +254,11 @@ if [ -z "$video_files" ]; then
   exit 1
 fi
 
-# Also check for partial/incomplete downloads (.part files)
-part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
-if [ -n "$part_files" ]; then
-  echo "Download - $timestamp - Error: Found incomplete .part files - download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
-  echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
-  exit 1
-fi
-
 file_count=$(echo "$video_files" | wc -l)
 echo "Download - $timestamp - Download completed: $file_count file(s)" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Get total size
-total_size=$(du -ch $video_files 2>/dev/null | tail -n 1 | cut -f1)
+total_size=$(du -ch "$video_files" 2>/dev/null | tail -n 1 | cut -f1)
 
 # Summary
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"

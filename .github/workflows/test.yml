@@ -1,0 +1,56 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install bats-core and helpers
+        run: |
+          git clone --depth 1 https://github.com/bats-core/bats-core.git test/bats-core
+          git clone --depth 1 https://github.com/bats-core/bats-support.git test/bats-support
+          git clone --depth 1 https://github.com/bats-core/bats-assert.git test/bats-assert
+          git clone --depth 1 https://github.com/bats-core/bats-file.git test/bats-file
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Make scripts executable
+        run: |
+          chmod +x vod
+          chmod +x scripts/*.sh
+          chmod +x lib/*.sh
+          chmod +x test/run_tests.sh
+
+      - name: Run tests
+        run: |
+          cd test
+          ./bats-core/bin/bats --verbose-run *.bats
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck on main scripts
+        run: |
+          shellcheck vod
+          shellcheck scripts/*.sh
+          shellcheck lib/*.sh
+        continue-on-error: true  # Don't fail the build on lint warnings

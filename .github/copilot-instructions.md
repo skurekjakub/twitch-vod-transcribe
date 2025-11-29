@@ -367,3 +367,53 @@ Uses `lib/transcribe-audio.sh`:
 - `vad_filter=True` with `min_silence_duration_ms=500`
 - `beam_size=5` for quality vs speed
 - Outputs plain text with consistent formatting
+
+## Testing Requirements
+
+**CRITICAL: Always run tests after modifying any shell script logic.**
+
+### Test Infrastructure
+- Framework: `bats-core` (Bash Automated Testing System)
+- Test location: `test/*.bats`
+- Helper libraries: `bats-support`, `bats-assert`, `bats-file`
+
+### Running Tests
+```bash
+# Run all tests
+./test/run_tests.sh
+
+# Run specific test file
+./test/run_tests.sh vod.bats
+
+# Run with verbose output
+./test/run_tests.sh -v
+
+# Run shellcheck linting
+./test/bats-core/bin/bats test/shellcheck.bats
+```
+
+### When to Run Tests
+**Run the full test suite after ANY of these changes:**
+- Modifying `vod` entrypoint
+- Editing any script in `scripts/` directory
+- Editing any script in `lib/` directory
+- Adding new command-line options
+- Changing URL parsing or validation logic
+- Modifying file path handling
+- Updating error messages or help text
+
+### Test Coverage
+Tests cover:
+- Help/usage text for all commands
+- Argument validation and parsing
+- URL validation (Twitch, YouTube formats)
+- Command routing and aliases
+- Error handling paths
+- ShellCheck linting for all scripts
+
+### Adding New Tests
+When adding new functionality:
+1. Add tests to the appropriate `test/*.bats` file
+2. Use existing mocking patterns from `test/test_helper/common-setup.bash`
+3. Run `./test/run_tests.sh` to verify all tests pass
+4. Ensure `shellcheck.bats` still passes

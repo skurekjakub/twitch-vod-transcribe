@@ -15,9 +15,9 @@
 
 set -e
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
 
 # Parse arguments

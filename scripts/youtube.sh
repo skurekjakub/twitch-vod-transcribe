@@ -13,10 +13,13 @@ set -e
 #
 # Dependencies: yt-dlp (install: pip install yt-dlp), ffmpeg
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
+
+# Lib script paths - can be overridden for testing
+TRANSCRIBE_AUDIO_SCRIPT="${TRANSCRIBE_AUDIO_SCRIPT:-./lib/transcribe-audio.sh}"
 
 # Default values
 LANG="en"
@@ -120,9 +123,7 @@ echo "========================================" | tee -a "${logs_dir}/run-${time
 echo "$VIDEO_ID - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Get video info in JSON format
-video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1)
-
-if [ $? -ne 0 ]; then
+if ! video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/run-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/run-${timestamp}.log"
   exit 1
@@ -176,7 +177,7 @@ yt-dlp \
   "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Find the downloaded subtitle file
-subtitle_file=$(ls "${transcript_dir}/${base_name}."*".srt" 2>/dev/null | head -n 1)
+subtitle_file=$(find "${transcript_dir}" -maxdepth 1 -name "${base_name}.*.srt" -type f 2>/dev/null | head -n 1)
 
 if [ -z "$subtitle_file" ]; then
   echo "$VIDEO_ID - $timestamp - Warning: No subtitles found for language: $LANG" | tee -a "${logs_dir}/run-${timestamp}.log"
@@ -226,7 +227,7 @@ if [ "$DOWNLOAD" = true ]; then
     "$VIDEO_URL"
   
   # Find the actual audio file created (could be .aac, .m4a, etc.)
-  audio_file=$(ls "${audio_file_base}".{aac,m4a,opus,webm} 2>/dev/null | head -n 1)
+  audio_file=$(find "$(dirname "$audio_file_base")" -maxdepth 1 -name "$(basename "$audio_file_base").*" -type f \( -name "*.aac" -o -name "*.m4a" -o -name "*.opus" -o -name "*.webm" \) 2>/dev/null | head -n 1)
   
   if [ -z "$audio_file" ]; then
     echo "$VIDEO_ID - $timestamp - Error: No audio file found matching ${audio_file_base}.*" | tee -a "${logs_dir}/run-${timestamp}.log"
@@ -245,7 +246,7 @@ if [ "$DOWNLOAD" = true ]; then
         exit 1
     fi
 
-    ./lib/transcribe-audio.sh "$audio_file" "$output_file"
+    "$TRANSCRIBE_AUDIO_SCRIPT" "$audio_file" "$output_file"
     
     transcript_downloaded=true
     echo "$VIDEO_ID - $timestamp - Audio transcription completed" | tee -a "${logs_dir}/run-${timestamp}.log"

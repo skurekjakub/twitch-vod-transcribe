@@ -13,9 +13,9 @@ set -e
 #
 # Dependencies: ffmpeg, ffprobe
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
 
 # Parse arguments
@@ -127,6 +127,8 @@ echo "Output pattern: $output_pattern"
 echo "Splitting..."
 
 # Split using ffmpeg segment
+# Temporarily disable set -e to capture exit code
+set +e
 ffmpeg -i "$VIDEO_FILE" \
   -c copy \
   -map 0 \
@@ -135,11 +137,14 @@ ffmpeg -i "$VIDEO_FILE" \
   -reset_timestamps 1 \
   "$output_pattern"
 
-if [[ $? -eq 0 ]]; then
+ffmpeg_status=$?
+set -e
+
+if [[ $ffmpeg_status -eq 0 ]]; then
   echo "========================================"
   echo "Split completed successfully!"
   echo "Output files:"
-  ls -lh "${video_dir}/${video_name}-part"*.${video_ext} 2>/dev/null | awk '{print "  - " $NF " (" $5 ")"}'
+  find "${video_dir}" -maxdepth 1 -name "${video_name}-part*.${video_ext}" -type f -exec ls -lh {} \; 2>/dev/null | awk '{print "  - " $NF " (" $5 ")"}'
   echo ""
   echo "Original file preserved: $VIDEO_FILE"
   echo "To remove original: rm \"$VIDEO_FILE\""

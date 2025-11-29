@@ -13,13 +13,18 @@ set -e
 #
 # Dependencies: twitch-dl, ffmpeg, faster-whisper
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
+
+# Lib script paths - can be overridden for testing
+EXTRACT_AUDIO_SCRIPT="${EXTRACT_AUDIO_SCRIPT:-./lib/extract-audio.sh}"
+TRANSCRIBE_AUDIO_SCRIPT="${TRANSCRIBE_AUDIO_SCRIPT:-./lib/transcribe-audio.sh}"
 
 # Activate Python environment if available
 if [ -z "$CONDA_DEFAULT_ENV" ] && [ -f "venv/bin/activate" ]; then
+  # shellcheck source=/dev/null
   source venv/bin/activate
 fi
 
@@ -119,7 +124,7 @@ twitch-dl download -q "$QUALITY" "$VOD_URL" --max-workers 3 2>&1 | tee -a "${log
 sleep 2
 
 # Find downloaded file with twitch-dl naming pattern: YYYY-MM-DD_VODID_channel_title.mp4
-downloaded_file=$(ls -t *"_${VOD_ID}_"*.mp4 2>/dev/null | head -n 1)
+downloaded_file=$(find . -maxdepth 1 -name "*_${VOD_ID}_*.mp4" -type f -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -n 1 | cut -d' ' -f2-)
 if [ -z "$downloaded_file" ]; then
   echo "$VOD_ID - $timestamp - Error: Could not find downloaded file!" | tee -a "${logs_dir}/run-${timestamp}.log"
   exit 1
@@ -127,8 +132,11 @@ fi
 
 echo "$VOD_ID - $timestamp - Found downloaded file: $downloaded_file" | tee -a "${logs_dir}/run-${timestamp}.log"
 
+# Extract just the filename (remove leading ./)
+downloaded_basename=$(basename "$downloaded_file")
+
 # Extract components from twitch-dl filename and create organized structure
-if [[ "$downloaded_file" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})_${VOD_ID}_([^_]+)_(.+)\.mp4$ ]]; then
+if [[ "$downloaded_basename" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})_${VOD_ID}_([^_]+)_(.+)\.mp4$ ]]; then
   date_part="${BASH_REMATCH[1]}"
   channel_part="${BASH_REMATCH[2]}"
   title_part="${BASH_REMATCH[3]}"
@@ -176,7 +184,7 @@ fi
 echo "$VOD_ID - $timestamp - Starting audio extraction" | tee -a "${logs_dir}/run-${timestamp}.log"
 trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred. Deleting current file..."; rm -f "$audio_filename"' EXIT
 
-./lib/extract-audio.sh "$mp4_filename" "$audio_filename"
+"$EXTRACT_AUDIO_SCRIPT" "$mp4_filename" "$audio_filename"
 
 trap - EXIT
 echo "$VOD_ID - $timestamp - Audio extraction completed" | tee -a "${logs_dir}/run-${timestamp}.log"
@@ -185,7 +193,7 @@ echo "$VOD_ID - $timestamp - Audio extraction completed" | tee -a "${logs_dir}/r
 echo "$VOD_ID - $timestamp - Starting English transcription" | tee -a "${logs_dir}/run-${timestamp}.log"
 trap 'echo "$VOD_ID - $(date "+%Y.%m.%d-%H:%M:%S") - An error occurred. Deleting current file..."; rm -f "$txt_filename_en"' EXIT
 
-./lib/transcribe-audio.sh "$audio_filename" "$txt_filename_en"
+"$TRANSCRIBE_AUDIO_SCRIPT" "$audio_filename" "$txt_filename_en"
 
 trap - EXIT
 echo "$VOD_ID - $timestamp - English transcription completed" | tee -a "${logs_dir}/run-${timestamp}.log"

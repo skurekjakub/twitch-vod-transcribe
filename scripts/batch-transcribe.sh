@@ -20,10 +20,14 @@ set -e
 #
 # Dependencies: twitch-dl, yt-dlp, ffmpeg, faster-whisper
 
-# Get the root directory (parent of scripts/)
+# Get the root directory (parent of scripts/) - can be overridden for testing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
+
+# Allow overriding scripts (for testing)
+TRANSCRIBE_SCRIPT="${TRANSCRIBE_SCRIPT:-${SCRIPT_DIR}/transcribe.sh}"
+YOUTUBE_SCRIPT="${YOUTUBE_SCRIPT:-${SCRIPT_DIR}/youtube.sh}"
 
 # Default values
 URL_FILE="urls.txt"
@@ -147,7 +151,7 @@ log "Starting batch transcription from: $URL_FILE"
 log "Options: Twitch quality=$QUALITY, YouTube download=$DOWNLOAD_YOUTUBE, YouTube lang=$YOUTUBE_LANG"
 
 # Count total URLs (excluding blank lines and comments)
-total_urls=$(grep -v '^[[:space:]]*$' "$URL_FILE" | grep -v '^[[:space:]]*#' | wc -l)
+total_urls=$(grep -cvE '^[[:space:]]*$|^[[:space:]]*#' "$URL_FILE" || echo 0)
 log "Found $total_urls URLs to process"
 
 # Initialize counters
@@ -177,7 +181,7 @@ while IFS= read -r line || [ -n "$line" ]; do
     twitch)
       log "Detected Twitch VOD"
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if "${SCRIPT_DIR}/transcribe.sh" --quality "$QUALITY" "$url"; then
+        if "$TRANSCRIBE_SCRIPT" --quality "$QUALITY" "$url"; then
           successful=$((successful + 1))
           log "✓ Successfully processed Twitch VOD"
         else
@@ -185,7 +189,7 @@ while IFS= read -r line || [ -n "$line" ]; do
           log "✗ Failed to process Twitch VOD (continuing)"
         fi
       else
-        "${SCRIPT_DIR}/transcribe.sh" --quality "$QUALITY" "$url"
+        "$TRANSCRIBE_SCRIPT" --quality "$QUALITY" "$url"
         successful=$((successful + 1))
         log "✓ Successfully processed Twitch VOD"
       fi
@@ -206,14 +210,14 @@ while IFS= read -r line || [ -n "$line" ]; do
       youtube_args+=("--lang" "$YOUTUBE_LANG" "$url")
       
       if [ "$CONTINUE_ON_ERROR" = true ]; then
-        if "${SCRIPT_DIR}/youtube.sh" "${youtube_args[@]}"; then
+        if "$YOUTUBE_SCRIPT" "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            if "${SCRIPT_DIR}/youtube.sh" --download --lang "$YOUTUBE_LANG" "$url"; then
+            if "$YOUTUBE_SCRIPT" --download --lang "$YOUTUBE_LANG" "$url"; then
               successful=$((successful + 1))
               log "✓ Successfully processed YouTube video with audio transcription"
             else
@@ -226,14 +230,14 @@ while IFS= read -r line || [ -n "$line" ]; do
           fi
         fi
       else
-        if "${SCRIPT_DIR}/youtube.sh" "${youtube_args[@]}"; then
+        if "$YOUTUBE_SCRIPT" "${youtube_args[@]}"; then
           successful=$((successful + 1))
           log "✓ Successfully processed YouTube video"
         else
           # If caption fetch failed and download wasn't already enabled, try with --download
           if [ "$DOWNLOAD_YOUTUBE" = false ] && [ "$DOWNLOAD_VIDEO_YOUTUBE" = false ]; then
             log "⚠ Caption fetch failed, retrying with --download (audio transcription)"
-            "${SCRIPT_DIR}/youtube.sh" --download --lang "$YOUTUBE_LANG" "$url"
+            "$YOUTUBE_SCRIPT" --download --lang "$YOUTUBE_LANG" "$url"
             successful=$((successful + 1))
             log "✓ Successfully processed YouTube video with audio transcription"
           else
