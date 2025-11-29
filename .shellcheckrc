@@ -1,0 +1,15 @@
+# ShellCheck configuration for twitch-vod-transcribe
+# https://github.com/koalaman/shellcheck/wiki/shellcheckrc
+
+# Use bash as the default shell
+shell=bash
+
+# Follow source statements
+external-sources=true
+
+# Severity: error, warning, info, style (default: style)
+# Using warning to focus on actual issues, not style preferences
+severity=warning
+
+# Disable specific checks if needed:
+# disable=SC2034  # Example: unused variables

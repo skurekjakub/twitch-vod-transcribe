@@ -1,0 +1,6 @@
+{
+  "shellcheck.ignorePatterns": {
+    "**/*.bats": true
+  },
+  "shellcheck.logLevel": "warn"
+}

@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
 # ShellCheck linting tests for all shell scripts
-# Runs shellcheck on vod CLI and all scripts
-# Uses severity level "warning" to ignore info/style hints
+# Dynamically discovers and tests all shell scripts in the project
+# Configuration in .shellcheckrc at project root
 
 setup() {
   load 'test_helper/common-setup'
@@ -23,132 +23,57 @@ teardown() {
 }
 
 # ============================================================================
-# Main CLI
+# All Shell Scripts (Dynamic Discovery)
 # ============================================================================
 
-@test "shellcheck: vod entrypoint passes" {
-  run shellcheck -x -s bash "${PROJECT_ROOT}/vod"
-  assert_success
-}
-
-# ============================================================================
-# Scripts Directory
-# ============================================================================
-
-@test "shellcheck: scripts/download.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/download.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/transcribe.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/transcribe.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/youtube.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/youtube.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/batch-download.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/batch-download.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/batch-transcribe.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/batch-transcribe.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/list.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/list.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/list-youtube.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/list-youtube.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/list-playlist.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/list-playlist.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/split.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/split.sh"
-  assert_success
-}
-
-@test "shellcheck: scripts/twitchdownloader.sh passes" {
-  run shellcheck -x -s bash "${SCRIPTS_DIR}/twitchdownloader.sh"
-  assert_success
-}
-
-# ============================================================================
-# Lib Directory
-# ============================================================================
-
-@test "shellcheck: lib/extract-audio.sh passes" {
-  run shellcheck -x -s bash "${LIB_DIR}/extract-audio.sh"
-  assert_success
-}
-
-@test "shellcheck: lib/transcribe-audio.sh passes" {
-  run shellcheck -x -s bash "${LIB_DIR}/transcribe-audio.sh"
-  assert_success
-}
-
-# ============================================================================
-# Test Helper
-# ============================================================================
-
-@test "shellcheck: test/test_helper/common-setup.bash passes" {
-  run shellcheck -x -s bash "${PROJECT_ROOT}/test/test_helper/common-setup.bash"
-  assert_success
-}
-
-# ============================================================================
-# Test Runner
-# ============================================================================
-
-@test "shellcheck: test/run_tests.sh passes" {
-  run shellcheck -x -s bash "${PROJECT_ROOT}/test/run_tests.sh"
-  assert_success
-}
-
-# ============================================================================
-# All Scripts Combined (warning level only)
-# ============================================================================
-
-@test "shellcheck: all shell scripts pass (warning level)" {
+@test "shellcheck: all scripts pass" {
   local failed=0
   local failed_files=""
+  local checked=0
   
-  # Check main CLI
-  if ! shellcheck -x -s bash "${PROJECT_ROOT}/vod" 2>/dev/null; then
-    failed=$((failed + 1))
-    failed_files="${failed_files}\n  - vod"
+  # Check main CLI entrypoint
+  if [[ -f "${PROJECT_ROOT}/vod" ]]; then
+    checked=$((checked + 1))
+    if ! shellcheck "${PROJECT_ROOT}/vod" 2>&1; then
+      failed=$((failed + 1))
+      failed_files="${failed_files}\n  - vod"
+    fi
   fi
   
-  # Check all scripts
+  # Check scripts directory
   for script in "${SCRIPTS_DIR}"/*.sh; do
-    if ! shellcheck -x -s bash "$script" 2>/dev/null; then
+    [[ -f "$script" ]] || continue
+    checked=$((checked + 1))
+    if ! shellcheck "$script" 2>&1; then
       failed=$((failed + 1))
-      failed_files="${failed_files}\n  - $(basename "$script")"
+      failed_files="${failed_files}\n  - scripts/$(basename "$script")"
     fi
   done
   
-  # Check lib scripts
-  for script in "${LIB_DIR}"/*.sh; do
-    if ! shellcheck -x -s bash "$script" 2>/dev/null; then
+  # Check lib directory (recursive)
+  while IFS= read -r -d '' script; do
+    checked=$((checked + 1))
+    if ! shellcheck "$script" 2>&1; then
       failed=$((failed + 1))
       failed_files="${failed_files}\n  - lib/$(basename "$script")"
     fi
-  done
+  done < <(find "${LIB_DIR}" -type f -name "*.sh" -print0 2>/dev/null)
+  
+  # Check test helpers (not .bats files)
+  while IFS= read -r -d '' script; do
+    [[ "$script" == */bats-*/* ]] && continue
+    checked=$((checked + 1))
+    local rel_path="${script#"${PROJECT_ROOT}/"}"
+    if ! shellcheck "$script" 2>&1; then
+      failed=$((failed + 1))
+      failed_files="${failed_files}\n  - ${rel_path}"
+    fi
+  done < <(find "${PROJECT_ROOT}/test" -type f \( -name "*.sh" -o -name "*.bash" \) -print0 2>/dev/null)
+  
+  echo "Checked ${checked} shell scripts"
   
   if [[ $failed -gt 0 ]]; then
-    echo "ShellCheck found issues in $failed files:${failed_files}"
+    echo -e "ShellCheck found issues in ${failed} files:${failed_files}"
     return 1
   fi
 }
