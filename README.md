@@ -97,6 +97,17 @@ Download Twitch VOD with chat overlay using TwitchDownloaderCLI.
 ./vod td -w 500 -h 1080 2588036186
 ```
 
+### `vod web`
+Start the web interface for queue management.
+```bash
+./vod web
+```
+Opens a web UI at http://localhost:8080 with:
+- View and manage download/transcription queues
+- Add/remove URLs with optional prefixes
+- System status (NAS mount, GPU availability)
+- Real-time queue counts
+
 ## URL File Format
 
 Both `urls.txt` (transcription) and `urls-vods` (downloads) use the same format:
@@ -130,6 +141,8 @@ If `/nas` is mounted, videos are automatically saved to `/nas/vods/{channel}/`. 
 │   ├── batch-transcribe.sh        # vod batch transcribe
 │   ├── split.sh                   # vod split
 │   └── twitchdownloader.sh        # vod twitchdownloader
+├── web/                           # Web interface
+│   └── app.py                     # FastAPI app (vod web)
 ├── lib/                           # Shared helper scripts
 │   ├── extract-audio.sh           # Extract audio from video (ffmpeg)
 │   └── transcribe-audio.sh        # Transcribe audio to text (Whisper)
@@ -174,6 +187,7 @@ Core: `faster-whisper`, `twitch-dl`, `yt-dlp`
 - ✅ **Progress tracking** - Move completed URLs to processed file
 - ✅ **CUDA acceleration** - GPU-powered transcription with Whisper
 - ✅ **Chat overlay** - TwitchDownloader integration for chat rendering
+- ✅ **Web interface** - Browser-based queue management at localhost:8080
 
 ## Help
 

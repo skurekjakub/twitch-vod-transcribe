@@ -7,9 +7,11 @@ echo "🔧 Starting post-setup configuration..."
 echo "📦 Updating package lists..."
 apt-get update
 
-# Install system dependencies
+# Install system dependencies (non-interactive to avoid tzdata prompts)
 echo "🛠️ Installing system dependencies..."
-apt-get install -y python3-pip python3-venv ffmpeg git curl unzip cifs-utils
+export DEBIAN_FRONTEND=noninteractive
+ln -fs /usr/share/zoneinfo/UTC /etc/localtime
+apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils
 
 # Set up Python virtual environment
 echo "🐍 Setting up Python virtual environment..."
