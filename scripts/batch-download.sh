@@ -172,7 +172,18 @@ for line in "${lines[@]}"; do
   # Download video using the download script, capture output to extract title
   video_title=""
   if [ "$CONTINUE_ON_ERROR" = true ]; then
-    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr ) || download_failed=true
+    # Use unbuffer/script to preserve colors, or fall back to direct execution
+    download_output_file=$(mktemp)
+    if command -v unbuffer &> /dev/null; then
+      unbuffer "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_failed=true
+    elif command -v script &> /dev/null; then
+      script -q -c "${SCRIPT_DIR}/download.sh \"$url\" \"$prefix\"" "$download_output_file" || download_failed=true
+      cat "$download_output_file"
+    else
+      "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_failed=true
+    fi
+    download_output=$(cat "$download_output_file")
+    rm -f "$download_output_file"
     video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
     if [ "${download_failed:-false}" = false ]; then
       successful=$((successful + 1))
@@ -186,7 +197,17 @@ for line in "${lines[@]}"; do
     download_failed=false
   else
     download_exit_code=0
-    download_output=$( "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee /dev/stderr ) || download_exit_code=$?
+    download_output_file=$(mktemp)
+    if command -v unbuffer &> /dev/null; then
+      unbuffer "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_exit_code=$?
+    elif command -v script &> /dev/null; then
+      script -q -c "${SCRIPT_DIR}/download.sh \"$url\" \"$prefix\"" "$download_output_file" || download_exit_code=$?
+      cat "$download_output_file"
+    else
+      "${SCRIPT_DIR}/download.sh" "$url" "$prefix" 2>&1 | tee "$download_output_file" || download_exit_code=$?
+    fi
+    download_output=$(cat "$download_output_file")
+    rm -f "$download_output_file"
     video_title=$(echo "$download_output" | grep -oP 'Video: \K.*' | head -1)
     if [ "$download_exit_code" -eq 0 ]; then
       successful=$((successful + 1))

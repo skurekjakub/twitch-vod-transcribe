@@ -174,6 +174,7 @@ if [ "$has_chapters" -gt 1 ]; then
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
   yt-dlp \
+    --color always \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 6 \
     --split-chapters \
@@ -186,6 +187,7 @@ if [ "$has_chapters" -gt 1 ]; then
 else
   # No chapters: download as single file
   yt-dlp \
+    --color always \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
