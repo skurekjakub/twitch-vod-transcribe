@@ -1,6 +1,9 @@
 {
   "name": "Twitch VOD Transcribe (CUDA)",
-  "image": "nvidia/cuda:13.0.2-cudnn-runtime-ubuntu24.04",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
   
   "runArgs": [
     "--gpus=all",

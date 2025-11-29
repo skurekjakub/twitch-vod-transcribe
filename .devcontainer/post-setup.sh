@@ -1,42 +1,8 @@
 #!/bin/bash
 
 # Post-setup script for Twitch VOD Transcribe devcontainer
+# Note: System deps, Python packages, and TwitchDownloader are pre-installed in the Docker image
 echo "🔧 Starting post-setup configuration..."
-
-# Update package lists
-echo "📦 Updating package lists..."
-apt-get update
-
-# Install system dependencies (non-interactive to avoid tzdata prompts)
-echo "🛠️ Installing system dependencies..."
-export DEBIAN_FRONTEND=noninteractive
-ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-apt-get install -y --no-install-recommends python3-pip python3-venv ffmpeg git curl unzip cifs-utils shellcheck
-
-# Set up Python virtual environment
-echo "🐍 Setting up Python virtual environment..."
-cd /workspaces/twitch-vod-transcribe || exit 1
-rm -rf .venv
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install Python requirements
-echo "🐍 Installing Python requirements..."
-pip install --upgrade pip
-pip install --no-cache-dir -r requirements.txt
-
-# Install TwitchDownloader CLI
-echo "📥 Installing TwitchDownloader CLI..."
-TWITCH_DL_VERSION="1.56.2"
-TWITCH_DL_URL="https://github.com/lay295/TwitchDownloader/releases/download/${TWITCH_DL_VERSION}/TwitchDownloaderCLI-${TWITCH_DL_VERSION}-Linux-x64.zip"
-cd /tmp || exit 1
-curl -L "$TWITCH_DL_URL" -o TwitchDownloaderCLI.zip
-unzip -o TwitchDownloaderCLI.zip
-chmod +x TwitchDownloaderCLI
-mv TwitchDownloaderCLI /usr/local/bin/
-rm -f TwitchDownloaderCLI.zip COPYRIGHT.txt THIRD-PARTY-LICENSES.txt
-cd - || exit 1
-echo "✅ TwitchDownloader CLI installed: $(TwitchDownloaderCLI --version 2>&1 | head -1)"
 
 # Mount NAS
 .devcontainer/mount-nas.sh
@@ -68,14 +34,4 @@ else
     echo "✅ Host swap: ${swap_gb}GB (sufficient)"
 fi
 echo ""
-
-# Add venv auto-activation to bashrc
-echo "🔄 Configuring automatic venv activation..."
-cat >> /root/.bashrc << 'EOF'
-
-# Auto-activate Python virtual environment
-if [ -f /workspaces/twitch-vod-transcribe/.venv/bin/activate ]; then
-    source /workspaces/twitch-vod-transcribe/.venv/bin/activate
-fi
-EOF
-echo "✅ Virtual environment will auto-activate on shell startup"
+echo "✅ Python venv is pre-configured at /opt/venv"

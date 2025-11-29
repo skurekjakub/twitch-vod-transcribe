@@ -19,12 +19,6 @@ CALL_DIR="$(pwd)"
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Activate Python environment if available (check from project root)
-if [ -z "$CONDA_DEFAULT_ENV" ] && [ -f "${SCRIPT_DIR}/../venv/bin/activate" ]; then
-  # shellcheck source=/dev/null
-  source "${SCRIPT_DIR}/../venv/bin/activate"
-fi
-
 # Default model
 WHISPER_MODEL="large-v3"
 

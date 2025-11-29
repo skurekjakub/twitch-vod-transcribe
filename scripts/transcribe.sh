@@ -22,12 +22,6 @@ cd "$ROOT_DIR"
 EXTRACT_AUDIO_SCRIPT="${EXTRACT_AUDIO_SCRIPT:-./lib/extract-audio.sh}"
 TRANSCRIBE_AUDIO_SCRIPT="${TRANSCRIBE_AUDIO_SCRIPT:-./lib/transcribe-audio.sh}"
 
-# Activate Python environment if available
-if [ -z "$CONDA_DEFAULT_ENV" ] && [ -f "venv/bin/activate" ]; then
-  # shellcheck source=/dev/null
-  source venv/bin/activate
-fi
-
 # Default values
 QUALITY="480p"
 DOWNLOAD_ONLY=false
