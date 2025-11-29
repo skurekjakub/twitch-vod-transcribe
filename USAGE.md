@@ -190,6 +190,27 @@ Output files:
 
 ---
 
+## Web Interface
+
+Start a browser-based UI for managing queues:
+
+```bash
+./vod web
+```
+
+Opens at **http://localhost:8080** with:
+
+- **Status bar** - Shows NAS mount status and GPU availability
+- **Download queue** - View/manage `urls-vods` file
+- **Transcribe queue** - View/manage `urls.txt` file
+- **Add URLs** - Paste URL + optional prefix
+- **Remove URLs** - One-click removal from queue
+- **Auto-refresh** - Updates every 30 seconds
+
+The web interface directly reads/writes the same queue files used by the CLI, so changes are immediately reflected in both.
+
+---
+
 ## NAS Configuration
 
 The project supports automatic downloading to a Network Attached Storage (NAS) via CIFS/SMB.
@@ -301,6 +322,8 @@ twitch-vod-transcribe/
 │   ├── batch-transcribe.sh        # vod batch transcribe
 │   ├── split.sh                   # vod split
 │   └── twitchdownloader.sh        # vod twitchdownloader
+├── web/                           # Web interface
+│   └── app.py                     # FastAPI app (vod web)
 ├── lib/                           # Shared helper scripts
 │   ├── extract-audio.sh           # Extract audio from video (ffmpeg)
 │   └── transcribe-audio.sh        # Transcribe audio to text (Whisper)

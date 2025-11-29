@@ -19,8 +19,8 @@
     }
   },
   
-  "postCreateCommand": "chmod +x .devcontainer/post-setup.sh && .devcontainer/post-setup.sh",
-  "postStartCommand": "chmod +x .devcontainer/mount-nas.sh && .devcontainer/mount-nas.sh",
+  "postCreateCommand": "chmod +x /workspaces/twitch-vod-transcribe/.devcontainer/post-setup.sh && /workspaces/twitch-vod-transcribe/.devcontainer/post-setup.sh",
+  "postAttachCommand": "/workspaces/twitch-vod-transcribe/.devcontainer/mount-nas.sh",
   
   "remoteUser": "root",
   

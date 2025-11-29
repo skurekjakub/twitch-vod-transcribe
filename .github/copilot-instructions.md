@@ -11,10 +11,13 @@ The project uses a single entrypoint `./vod` with subcommands:
 - `vod transcribe` - Download Twitch VOD + transcribe
 - `vod youtube` - YouTube caption/transcribe
 - `vod list` - List Twitch channel VODs
+- `vod list-youtube` (aliases: `list-yt`, `lyt`) - List YouTube channel videos
+- `vod list-playlist` (alias: `lpl`) - List YouTube playlist videos
 - `vod batch download` - Batch download from file
 - `vod batch transcribe` - Batch transcribe from file
 - `vod split` - Split video into chunks
 - `vod twitchdownloader` (alias: `vod td`) - Download with chat overlay
+- `vod web` - Start web interface for queue management
 
 ### Batch Transcribe Workflow (`vod batch transcribe`)
 **Primary entry point for daily use** - processes videos from a URL list:
@@ -32,6 +35,7 @@ The project uses a single entrypoint `./vod` with subcommands:
 4. **Download** → Calls `scripts/download.sh` to download via `yt-dlp`
 5. **Track Progress** → Moves completed URLs to `{file}-processed`
 6. **Save** → Saves to `/nas/vods/{channel}/` (if NAS) or `videos/` (local)
+7. **Error Handling** → Continues on error by default, detects incomplete `.part` files
 
 ### Twitch Workflow (`vod transcribe`)
 1. **Download** → Uses `twitch-dl` to fetch VOD at specified quality (default 480p)
@@ -119,6 +123,21 @@ logs/
 ./vod list forsen --urls-only >> urls-vods # Add to download queue
 ```
 
+### List YouTube Videos
+```bash
+./vod list-youtube @MrBeast                # List channel videos
+./vod list-youtube @MrBeast --urls-only    # Just URLs
+./vod list-youtube @MrBeast --limit 20     # Last 20 videos
+./vod lyt @MrBeast -o                      # Short alias
+```
+
+### List YouTube Playlist
+```bash
+./vod list-playlist PLxxxxxxx              # List playlist videos
+./vod list-playlist PLxxxxxxx --urls-only  # Just URLs
+./vod lpl PLxxxxxxx -o                     # Short alias
+```
+
 ### Batch Processing
 ```bash
 # Batch transcription (default: urls.txt)
@@ -127,10 +146,9 @@ logs/
 ./vod batch transcribe --quality 720p --download-youtube
 ./vod batch transcribe --continue-on-error
 
-# Batch download (default: urls-vods)
+# Batch download (default: urls-vods, continues on error by default)
 ./vod batch download
 ./vod batch download my-list.txt
-./vod batch download --continue-on-error
 ```
 
 ### Video Splitting
@@ -145,6 +163,16 @@ logs/
 ./vod twitchdownloader --quality 720p60 2588036186
 ./vod td -w 500 -h 1080 2588036186    # Short alias
 ```
+
+### Web Interface
+```bash
+./vod web                              # Start web UI at http://localhost:8080
+```
+Features:
+- View/manage download queue (`urls-vods`) and transcribe queue (`urls.txt`)
+- Add/remove URLs with optional prefixes
+- System status (NAS mount, GPU availability)
+- Real-time queue counts
 
 ### Library Scripts (Direct Use)
 ```bash
@@ -172,10 +200,14 @@ https://youtu.be/jNQXAC9IVRw my-prefix  # Optional filename prefix
 │   ├── transcribe.sh              # vod transcribe
 │   ├── youtube.sh                 # vod youtube
 │   ├── list.sh                    # vod list
+│   ├── list-youtube.sh            # vod list-youtube
+│   ├── list-playlist.sh           # vod list-playlist
 │   ├── batch-download.sh          # vod batch download
 │   ├── batch-transcribe.sh        # vod batch transcribe
 │   ├── split.sh                   # vod split
 │   └── twitchdownloader.sh        # vod twitchdownloader
+├── web/                           # Web interface
+│   └── app.py                     # FastAPI app (vod web)
 ├── lib/                           # Shared helper scripts
 │   ├── extract-audio.sh           # Audio extraction (ffmpeg)
 │   └── transcribe-audio.sh        # Transcription (Whisper)
@@ -196,6 +228,7 @@ https://youtu.be/jNQXAC9IVRw my-prefix  # Optional filename prefix
 ### Python Environment
 - Auto-activates `venv/` if present, falls back to system Python
 - Core dependencies: `faster-whisper`, `twitch-dl`, `yt-dlp`
+- Web interface: `fastapi`, `uvicorn`
 
 ### System Dependencies
 - `ffmpeg` / `ffprobe` - Audio/video processing

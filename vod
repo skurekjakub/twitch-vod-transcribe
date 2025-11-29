@@ -77,6 +77,9 @@ Commands:
   twitchdownloader <url>      Download Twitch VOD with chat overlay
                               Uses TwitchDownloaderCLI
 
+  web                         Start web interface for queue management
+                              Runs on http://localhost:8080
+
 Options:
   -h, --help                  Show this help message
   -v, --version               Show version information
@@ -209,6 +212,11 @@ main() {
     twitchdownloader|td)
       check_scripts_dir
       run_script "twitchdownloader.sh" "$@"
+      ;;
+    web)
+      # Start web interface
+      cd "$SCRIPT_DIR"
+      exec python web/app.py "$@"
       ;;
     *)
       print_error "Unknown command: $command"
