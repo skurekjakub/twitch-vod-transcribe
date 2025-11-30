@@ -1,0 +1,14 @@
+# Netscape HTTP Cookie File
+# This file can be used with yt-dlp's --cookies option
+# 
+# To use:
+# 1. Copy this file to cookies.txt
+# 2. Export cookies from your browser using a cookie export extension
+# 3. Paste the exported cookies here
+# 4. The format should be tab-separated values as shown below:
+#
+# .youtube.com	TRUE	/	TRUE	0	CONSENT	YES+1
+# .youtube.com	TRUE	/	FALSE	1234567890	VISITOR_INFO1_LIVE	abcdefghijk
+#
+# For Twitch cookies, export from twitch.tv domain
+# For YouTube cookies, export from youtube.com domain
