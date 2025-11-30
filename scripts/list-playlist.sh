@@ -35,6 +35,7 @@ Options:
   --urls-only     Output only URLs (one per line)
   --limit N       Limit to N videos
   --output, -o    Save URLs to file named after playlist
+  --prefix TEXT   Add prefix to all URLs (for batch download filenames)
   --json          Output full JSON metadata
   -h, --help      Show this help message
 
@@ -43,6 +44,7 @@ Examples:
   vod list-playlist PLxxxxx --urls-only              # Just URLs
   vod list-playlist PLxxxxx --limit 20               # First 20 videos
   vod list-playlist PLxxxxx -o                       # Save to urls-{playlist_name}
+  vod list-playlist PLxxxxx -o --prefix "swampletics" # URLs with prefix
   vod list-playlist PLxxxxx --urls-only >> urls-vods # Add to download queue
 EOF
   exit 0
@@ -56,6 +58,7 @@ URLS_ONLY=false
 LIMIT=""
 JSON_OUTPUT=false
 OUTPUT_TO_FILE=false
+URL_PREFIX=""
 
 # Parse remaining arguments
 while [[ $# -gt 0 ]]; do
@@ -76,6 +79,10 @@ while [[ $# -gt 0 ]]; do
       OUTPUT_TO_FILE=true
       URLS_ONLY=true  # Implies urls-only
       shift
+      ;;
+    --prefix)
+      URL_PREFIX="$2"
+      shift 2
       ;;
     *)
       echo "Error: Unknown option: $1"
@@ -126,12 +133,24 @@ elif [ "$URLS_ONLY" = true ]; then
   if [ "$OUTPUT_TO_FILE" = true ]; then
     # Save to file
     echo "Fetching video URLs..."
-    yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL" > "$OUTPUT_FILE"
+    if [ -n "$URL_PREFIX" ]; then
+      yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL" | while read -r url; do
+        echo "$url $URL_PREFIX"
+      done > "$OUTPUT_FILE"
+    else
+      yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL" > "$OUTPUT_FILE"
+    fi
     count=$(wc -l < "$OUTPUT_FILE")
     echo "Saved $count URLs to $OUTPUT_FILE"
   else
     # Just URLs to stdout
-    yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL"
+    if [ -n "$URL_PREFIX" ]; then
+      yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL" | while read -r url; do
+        echo "$url $URL_PREFIX"
+      done
+    else
+      yt-dlp "${YT_DLP_ARGS[@]}" --flat-playlist --print url "$YOUTUBE_URL"
+    fi
   fi
 else
   # Human-readable format: index, duration, title, URL

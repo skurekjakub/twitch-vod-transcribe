@@ -19,45 +19,6 @@ The project uses a single entrypoint `./vod` with subcommands:
 - `vod twitchdownloader` (alias: `vod td`) - Download with chat overlay
 - `vod web` - Start web interface for queue management
 
-### Batch Transcribe Workflow (`vod batch transcribe`)
-**Primary entry point for daily use** - processes videos from a URL list:
-1. **Read URLs** → Parses `urls.txt` (or specified file) line-by-line
-2. **Auto-detect** → Identifies Twitch vs YouTube URLs via regex
-3. **Route** → Calls appropriate script (`scripts/transcribe.sh` or `scripts/youtube.sh`)
-4. **Smart Retry** → For YouTube: tries caption fetch first, auto-retries with download if no captions
-5. **Progress Tracking** → Logs all operations to `logs/batch-{timestamp}.log`
-
-### Batch Download Workflow (`vod batch download`)
-**Archival entry point** - downloads videos without transcription:
-1. **Read URLs** → Parses `urls-vods` (or specified file)
-2. **Parse Prefixes** → Extracts optional filename prefixes (e.g., `url prefix`)
-3. **NAS Detection** → Checks if `/nas` is mounted
-4. **Download** → Calls `scripts/download.sh` to download via `yt-dlp`
-5. **Track Progress** → Moves completed URLs to `{file}-processed`
-6. **Save** → Saves to `/nas/vods/{channel}/` (if NAS) or `videos/` (local)
-7. **Error Handling** → Continues on error by default, detects incomplete `.part` files
-
-### Twitch Workflow (`vod transcribe`)
-1. **Download** → Uses `twitch-dl` to fetch VOD at specified quality (default 480p)
-2. **Extract Audio** → Calls `lib/extract-audio.sh` (ffmpeg) to extract AAC audio from MP4
-3. **Transcribe** → Calls `lib/transcribe-audio.sh` (faster-whisper) to generate plain text transcript
-4. **Organize** → Files stored in channel-specific directories
-
-### YouTube Workflow (`vod youtube`)
-1. **Fetch Captions** → Uses `yt-dlp` to download existing YouTube captions (if available)
-2. **Convert to Text** → Strips timestamps/formatting from SRT to plain text
-3. **Smart Fallback** → If no captions exist and `--download` specified:
-   - Downloads audio → Calls `lib/transcribe-audio.sh`
-4. **Fallback Modes**:
-   - Audio-only (`--download`): Downloads m4a → Calls `lib/transcribe-audio.sh`
-
-### Download Workflow (`vod download`)
-1. **Fetch Metadata** → Gets video info via yt-dlp
-2. **Download** → Downloads with `--split-chapters` for automatic chapter splitting
-3. **Sanitize** → Uses `%(section_title)#S` for filesystem-safe chapter names
-4. **Auto-Split** → Splits videos >6 hours into 5-hour chunks
-5. **NAS Routing** → Saves to `/nas/vods/{channel}/` if mounted, else `videos/`
-
 ### File Organization Pattern
 ```
 vods/
@@ -135,6 +96,7 @@ logs/
 ```bash
 ./vod list-playlist PLxxxxxxx              # List playlist videos
 ./vod list-playlist PLxxxxxxx --urls-only  # Just URLs
+./vod list-playlist PLxxxxxxx -o --prefix "name"  # URLs with prefix for batch download
 ./vod lpl PLxxxxxxx -o                     # Short alias
 ```
 
@@ -191,38 +153,6 @@ https://youtu.be/jNQXAC9IVRw my-prefix  # Optional filename prefix
 # Blank lines ignored
 ```
 
-## Project Structure
-```
-.
-├── vod                            # Main CLI entrypoint
-├── scripts/                       # Command implementations
-│   ├── download.sh                # vod download
-│   ├── transcribe.sh              # vod transcribe
-│   ├── youtube.sh                 # vod youtube
-│   ├── list.sh                    # vod list
-│   ├── list-youtube.sh            # vod list-youtube
-│   ├── list-playlist.sh           # vod list-playlist
-│   ├── batch-download.sh          # vod batch download
-│   ├── batch-transcribe.sh        # vod batch transcribe
-│   ├── split.sh                   # vod split
-│   └── twitchdownloader.sh        # vod twitchdownloader
-├── web/                           # Web interface
-│   └── app.py                     # FastAPI app (vod web)
-├── lib/                           # Shared helper scripts
-│   ├── extract-audio.sh           # Audio extraction (ffmpeg)
-│   └── transcribe-audio.sh        # Transcription (Whisper)
-├── python/                        # Python utilities
-│   ├── download_vod.py            # Standalone Twitch downloader
-│   └── maya_tts.py                # TTS utility
-├── urls.txt                       # Default transcription URL list
-├── urls-vods                      # Default download URL list
-├── transcripts/                   # Output transcripts
-├── vods/                          # Downloaded videos/audio
-├── videos/                        # TwitchDownloader outputs
-├── summaries/                     # AI-generated summaries
-└── logs/                          # Execution logs
-```
-
 ## Environment & Dependencies
 
 ### Python Environment
@@ -234,19 +164,6 @@ https://youtu.be/jNQXAC9IVRw my-prefix  # Optional filename prefix
 - `ffmpeg` / `ffprobe` - Audio/video processing
 - `TwitchDownloaderCLI` (optional) - Chat overlay rendering
 
-### GPU Acceleration
-- **CUDA auto-detection**: `lib/transcribe-audio.sh` uses `device="cuda"` with `float16` compute type
-- **RTX A2000 (8GB VRAM)**: Runs `large-v3` model successfully
-- Whisper models cached in `~/.cache/huggingface/hub/` (~3GB download on first run)
-- Performance: ~30-60 min for 4-hour VOD with CUDA, ~2-4 hours on CPU
-
-### Model Configuration
-Located in `lib/transcribe-audio.sh` Python block:
-```python
-model = WhisperModel("large-v3", device="cuda", compute_type="float16")
-```
-Change to `"medium"` or `"small"` for lower VRAM GPUs.
-
 ## Critical Implementation Details
 
 ### Script Path Resolution
@@ -255,23 +172,6 @@ All scripts use this pattern to find the project root:
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$ROOT_DIR"
-```
-
-### Error Handling & Cleanup
-- Uses bash `trap` to clean up partial files on failure
-- Separate traps for download, audio extraction, and transcription phases
-- All operations logged to `logs/{operation}-{timestamp}.log`
-
-### Chapter Splitting (vod download)
-- Uses `--split-chapters` with yt-dlp
-- Output template: `%(section_number)02d-%(section_title)#S.%(ext)s`
-- `#S` flag sanitizes filenames (restricted character set)
-- Removes the "full" video file, keeps only chapters
-
-### Auto-Split for Long Videos
-Videos >6 hours are split into 5-hour chunks:
-```bash
-ffmpeg -i "$video_file" -c copy -map 0 -segment_time 18000 -f segment -reset_timestamps 1 "${file_base}-part%02d.mp4"
 ```
 
 ### URL Processing Tracking
@@ -303,74 +203,20 @@ log() {
 }
 ```
 
-### URL Validation
-- Twitch VOD: `^https://www\.twitch\.tv/videos/[0-9]+$`
-- YouTube: `youtube.com/watch?v=` and `youtu.be/` formats
-- General: `^https?://` for downloads
-
-### Help Text Pattern
-All scripts support `-h` and `--help`:
-```bash
-case $1 in
-  -h|--help)
-    cat << 'EOF'
-Command Name
-
-Usage: vod command [options] <args>
-
-Description...
-
-Options:
-  --option    Description
-  -h, --help  Show this help
-
-Examples:
-  vod command example
-EOF
-    exit 0
-    ;;
-esac
-```
-
 ## Common Patterns
-
-### Daily Workflow
-1. Add URLs to `urls.txt` (one per line, mix Twitch/YouTube)
-2. Run `./vod batch transcribe` (or with `--continue-on-error`)
-3. Check `logs/batch-{timestamp}.log` for results
-4. Find transcripts in `transcripts/{channel}/` or `transcripts/youtube/`
-5. Generate summaries using `.github/summary-generation-prompt.md`
-
-### Archival Workflow
-1. List VODs: `./vod list channelname --urls-only >> urls-vods`
-2. Run `./vod batch download`
-3. Completed URLs move to `urls-vods-processed`
-4. Videos saved to `/nas/vods/{channel}/` with chapters
-
-### Transcript Format
-All transcripts are plain text (`.txt`) files with:
-- No timestamps or sequence numbers
-- Text separated by double newlines
-- HTML tags stripped
-- Consistent across Twitch and YouTube sources
-
-### Audio Extraction
-Uses `lib/extract-audio.sh`:
-- Copies audio codec without re-encoding (`-acodec copy`)
-- Preserves original audio quality
-- Outputs AAC format
-
-### Transcription
-Uses `lib/transcribe-audio.sh`:
-- Loads Whisper model once per execution
-- Uses CUDA if available
-- `vad_filter=True` with `min_silence_duration_ms=500`
-- `beam_size=5` for quality vs speed
-- Outputs plain text with consistent formatting
 
 ## Testing Requirements
 
 **CRITICAL: Always run tests after modifying any shell script logic.**
+
+### Todo List for Large-Scale Changes
+**ALWAYS create a todo list when making multi-step changes to track:**
+1. Implementation of the core feature/fix
+2. Update help text if options/usage changed
+3. Add or update tests for new/modified functionality
+4. Update copilot-instructions.md if workflows/commands changed
+5. Run the full test suite before considering work complete
+6. Verify shellcheck passes
 
 ### Test Infrastructure
 - Framework: `bats-core` (Bash Automated Testing System)
@@ -417,3 +263,11 @@ When adding new functionality:
 2. Use existing mocking patterns from `test/test_helper/common-setup.bash`
 3. Run `./test/run_tests.sh` to verify all tests pass
 4. Ensure `shellcheck.bats` still passes
+
+### Updating Tests for Modified Functionality
+**CRITICAL: When modifying existing functionality, always update corresponding tests:**
+1. Add tests for new options/flags before or alongside implementation
+2. Update help text tests if usage/options changed
+3. Verify existing tests still pass with the changes
+4. Add edge case tests for new behavior
+5. Run the full test suite: `./test/run_tests.sh`

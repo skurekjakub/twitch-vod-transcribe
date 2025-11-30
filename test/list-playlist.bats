@@ -328,3 +328,86 @@ exit 0
   run cat "${TEST_TEMP_DIR}/yt-dlp.log"
   assert_output --partial "--print url"
 }
+
+# ============================================================================
+# Prefix Option Tests
+# ============================================================================
+
+@test "list-playlist.sh --help shows --prefix option" {
+  run "${SCRIPTS_DIR}/list-playlist.sh" --help
+  assert_success
+  assert_output --partial "--prefix"
+  assert_output --partial "Add prefix to all URLs"
+}
+
+@test "list-playlist.sh accepts --prefix option" {
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--print url"* ]]; then
+  echo "https://www.youtube.com/watch?v=test1"
+  echo "https://www.youtube.com/watch?v=test2"
+fi
+exit 0
+'
+  
+  run "${SCRIPTS_DIR}/list-playlist.sh" "PLtest123" --urls-only --prefix "myprefix"
+  
+  assert_success
+  assert_output --partial "https://www.youtube.com/watch?v=test1 myprefix"
+  assert_output --partial "https://www.youtube.com/watch?v=test2 myprefix"
+}
+
+@test "list-playlist.sh --prefix adds prefix to all URLs in stdout" {
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--print url"* ]]; then
+  echo "https://www.youtube.com/watch?v=video1"
+  echo "https://www.youtube.com/watch?v=video2"
+  echo "https://www.youtube.com/watch?v=video3"
+fi
+exit 0
+'
+  
+  run "${SCRIPTS_DIR}/list-playlist.sh" "PLtest123" --urls-only --prefix "swampletics"
+  
+  assert_success
+  # Each line should have the prefix appended
+  assert_line --index 0 "https://www.youtube.com/watch?v=video1 swampletics"
+  assert_line --index 1 "https://www.youtube.com/watch?v=video2 swampletics"
+  assert_line --index 2 "https://www.youtube.com/watch?v=video3 swampletics"
+}
+
+@test "list-playlist.sh -o --prefix saves URLs with prefix to file" {
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"playlist_title"* ]]; then
+  echo "TestPlaylist"
+elif [[ "$*" == *"--print url"* ]]; then
+  echo "https://www.youtube.com/watch?v=test1"
+  echo "https://www.youtube.com/watch?v=test2"
+fi
+exit 0
+'
+  
+  run "${SCRIPTS_DIR}/list-playlist.sh" "PLtest123" -o --prefix "myprefix"
+  
+  assert_success
+  assert_output --partial "Saved 2 URLs"
+  
+  # Check the file contents
+  run cat "urls-testplaylist"
+  assert_line --index 0 "https://www.youtube.com/watch?v=test1 myprefix"
+  assert_line --index 1 "https://www.youtube.com/watch?v=test2 myprefix"
+}
+
+@test "list-playlist.sh without --prefix outputs URLs without suffix" {
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--print url"* ]]; then
+  echo "https://www.youtube.com/watch?v=test1"
+fi
+exit 0
+'
+  
+  run "${SCRIPTS_DIR}/list-playlist.sh" "PLtest123" --urls-only
+  
+  assert_success
+  assert_output "https://www.youtube.com/watch?v=test1"
+  refute_output --partial " "
+}

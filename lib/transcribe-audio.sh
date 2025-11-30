@@ -17,6 +17,7 @@ set -e
 # Get the directory where the script was called from (not where it's located)
 CALL_DIR="$(pwd)"
 # Get the directory where this script is located
+# shellcheck disable=SC2034  # SCRIPT_DIR kept for potential future use
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Default model
