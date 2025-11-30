@@ -99,6 +99,56 @@ teardown() {
 }
 
 # ============================================================================
+# Cookie Authentication Tests
+# ============================================================================
+
+@test "download.sh uses cookies.txt from project root when present" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
+  
+  # Create cookies.txt in the test temp directory (simulates project root)
+  echo "# Netscape HTTP Cookie File" > "${TEST_TEMP_DIR}/cookies.txt"
+  echo ".youtube.com	TRUE	/	TRUE	1234567890	SID	testvalue" >> "${TEST_TEMP_DIR}/cookies.txt"
+  
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  
+  # Check that yt-dlp was called with --cookies argument
+  assert_mock_called_with "yt-dlp" "--cookies.*cookies.txt"
+}
+
+@test "download.sh works without cookies when no cookie file exists" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
+  
+  # Make sure no cookies.txt exists
+  rm -f "${TEST_TEMP_DIR}/cookies.txt"
+  
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  
+  # yt-dlp should be called without --cookies argument
+  run grep -E "\-\-cookies" "${TEST_TEMP_DIR}/yt-dlp.calls"
+  assert_failure  # grep should fail = no --cookies found
+}
+
+# ============================================================================
 # Metadata Extraction Tests (with mocked yt-dlp)
 # ============================================================================
 

@@ -130,7 +130,7 @@ assert_mock_called_with() {
   local cmd_name="$1"
   local pattern="$2"
   assert_file_exists "${TEST_TEMP_DIR}/${cmd_name}.calls"
-  run grep -E "$pattern" "${TEST_TEMP_DIR}/${cmd_name}.calls"
+  run grep -E -- "$pattern" "${TEST_TEMP_DIR}/${cmd_name}.calls"
   assert_success
 }
 

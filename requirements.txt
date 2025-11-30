@@ -1,6 +1,7 @@
 faster-whisper
 twitch-dl
 yt-dlp
+yt-dlp-ejs
 torch
 transformers
 accelerate

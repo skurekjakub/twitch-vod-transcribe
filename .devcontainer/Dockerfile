@@ -29,6 +29,10 @@ RUN cd /tmp && \
     mv TwitchDownloaderCLI /usr/local/bin/ && \
     rm -f TwitchDownloaderCLI.zip COPYRIGHT.txt THIRD-PARTY-LICENSES.txt
 
+# Install Deno (JavaScript runtime for yt-dlp YouTube challenge solving)
+RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
+ENV PATH="/usr/local/bin:$PATH"
+
 # Create virtual environment
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"

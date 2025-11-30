@@ -101,6 +101,13 @@ if ! command -v yt-dlp &> /dev/null; then
   exit 1
 fi
 
+# Build cookie arguments for yt-dlp (for YouTube Premium, age-restricted videos, etc.)
+# Auto-detect cookies.txt in project root
+YTDLP_COOKIE_ARGS=()
+if [[ -f "${ROOT_DIR}/cookies.txt" ]]; then
+  YTDLP_COOKIE_ARGS=(--cookies "${ROOT_DIR}/cookies.txt")
+fi
+
 timestamp=$(date "+%Y.%m.%d-%H:%M:%S")
 
 # Create directory structures
@@ -123,7 +130,7 @@ echo "========================================" | tee -a "${logs_dir}/run-${time
 echo "$VIDEO_ID - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Get video info in JSON format
-if ! video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
+if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/run-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/run-${timestamp}.log"
   exit 1
@@ -155,7 +162,7 @@ echo "$VIDEO_ID - $timestamp - Published: $date_part" | tee -a "${logs_dir}/run-
 # Step 2: List available subtitles
 echo "$VIDEO_ID - $timestamp - Checking available subtitles" | tee -a "${logs_dir}/run-${timestamp}.log"
 
-yt-dlp --list-subs "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
+yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --list-subs "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Step 3: Download subtitles
 temp_srt_file="${transcript_dir}/${base_name}-${LANG}.srt"
@@ -167,6 +174,7 @@ echo "$VIDEO_ID - $timestamp - Downloading subtitles" | tee -a "${logs_dir}/run-
 # Download subtitles in SRT format
 # Try manual subtitles first, then auto-generated
 yt-dlp \
+  "${YTDLP_COOKIE_ARGS[@]}" \
   --write-subs \
   --write-auto-subs \
   --sub-lang "${LANG}" \
@@ -220,6 +228,7 @@ if [ "$DOWNLOAD" = true ]; then
   # Download the best audio-only stream and convert it to AAC
   # -x --audio-format aac = "Extract audio and *force convert* to AAC"
   yt-dlp \
+    "${YTDLP_COOKIE_ARGS[@]}" \
     -x \
     --audio-format aac \
     --output "${audio_file_base}.%(ext)s" \

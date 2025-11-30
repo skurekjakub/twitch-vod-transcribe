@@ -170,6 +170,28 @@ Core: `faster-whisper`, `twitch-dl`, `yt-dlp`
 - `ffprobe` - Duration detection
 - `TwitchDownloaderCLI` (optional) - Chat overlay rendering
 
+## YouTube Premium Authentication
+
+To access higher quality streams, age-restricted videos, or members-only content with YouTube Premium:
+
+### Export cookies from your browser
+
+Install the **"Get cookies.txt LOCALLY"** browser extension:
+- [Chrome](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc)
+- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/)
+
+Then:
+1. Go to https://www.youtube.com and make sure you're logged in
+2. Click the extension icon → "Export" or "Current Site"
+3. Save the contents to `cookies.txt` in the project root
+
+The scripts will automatically detect and use `cookies.txt` if it exists.
+
+### Security Notes
+- `cookies.txt` is in `.gitignore` - never commit it
+- Treat this file like a password
+- Cookies expire periodically - re-export when authentication fails
+
 ### GPU Acceleration
 - CUDA auto-detection for faster-whisper
 - RTX A2000 (8GB VRAM) runs `large-v3` model

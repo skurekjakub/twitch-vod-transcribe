@@ -65,6 +65,13 @@ if ! command -v yt-dlp &> /dev/null; then
   exit 1
 fi
 
+# Build cookie arguments for yt-dlp (for YouTube Premium, age-restricted videos, etc.)
+# Auto-detect cookies.txt in project root
+YTDLP_COOKIE_ARGS=()
+if [[ -f "${ROOT_DIR}/cookies.txt" ]]; then
+  YTDLP_COOKIE_ARGS=(--cookies "${ROOT_DIR}/cookies.txt")
+fi
+
 timestamp=$(date "+%Y.%m.%d-%H:%M:%S")
 
 # Create directory structures
@@ -84,7 +91,7 @@ TITLE_OUTPUT_FILE="${TITLE_OUTPUT_FILE:-}"
 echo "Download - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Get video info in JSON format
-if ! video_info=$(yt-dlp --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
+if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/download-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
@@ -181,6 +188,7 @@ if [ "$has_chapters" -gt 1 ]; then
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
   yt-dlp \
+    "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 6 \
@@ -194,6 +202,7 @@ if [ "$has_chapters" -gt 1 ]; then
 else
   # No chapters: download as single file
   yt-dlp \
+    "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 4 \

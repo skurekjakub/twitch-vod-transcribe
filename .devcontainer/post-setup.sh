@@ -16,6 +16,7 @@ required_gb=32
 echo ""
 echo "🚀 Container setup complete!"
 echo "💡 Run 'nvidia-smi' to check GPU access."
+echo "💡 Run 'deno --version' to verify Deno (required for YouTube downloads)."
 echo "ℹ️  If GPU not available, faster-whisper will automatically use CPU mode."
 echo ""
 
