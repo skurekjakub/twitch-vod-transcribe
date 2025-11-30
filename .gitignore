@@ -2,6 +2,8 @@
 logs/*
 vods/*
 
+cookies.txt
+
 urls.txt
 urls-vods
 urls-vods-processed
