@@ -28,7 +28,7 @@ teardown() {
   assert_success
   assert_output --partial "Video Downloader"
   assert_output --partial "Usage: vod download"
-  assert_output --partial "chapter splitting"
+  assert_output --partial "chapter splitting for Twitch"
 }
 
 @test "download.sh -h shows help" {
@@ -279,7 +279,25 @@ fi
 # Chapter Detection Tests
 # ============================================================================
 
-@test "download.sh detects video with chapters" {
+@test "download.sh detects video with chapters (Twitch)" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json_with_chapters "Test Video" "TestChannel" "20251129" > "$json_file"
+  
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.twitch.tv/videos/12345"
+  
+  assert_output --partial "chapters, will split"
+}
+
+@test "download.sh disables chapter splitting for YouTube" {
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json_with_chapters "Test Video" "TestChannel" "20251129" > "$json_file"
   
@@ -294,10 +312,10 @@ fi
   
   run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
   
-  assert_output --partial "chapters, will split"
+  assert_output --partial "YouTube video, downloading as single file (chapter splitting disabled)"
 }
 
-@test "download.sh detects video without chapters" {
+@test "download.sh detects video without chapters (Twitch)" {
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
   
@@ -310,7 +328,7 @@ else
 fi
 '
   
-  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  run "${SCRIPTS_DIR}/download.sh" "https://www.twitch.tv/videos/12345"
   
   assert_output --partial "No chapters found"
 }
@@ -465,7 +483,30 @@ fi
   fi
 }
 
-@test "download.sh uses chapter output template with chapters" {
+@test "download.sh uses chapter output template with chapters (Twitch)" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json_with_chapters "Test Video" "TestChannel" "20251129" > "$json_file"
+  
+  create_conditional_mock "yt-dlp" '
+echo "$*" >> "'"${TEST_TEMP_DIR}"'/yt-dlp-args.txt"
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.twitch.tv/videos/12345"
+  
+  if [[ -f "${TEST_TEMP_DIR}/yt-dlp-args.txt" ]]; then
+    run cat "${TEST_TEMP_DIR}/yt-dlp-args.txt"
+    # Should have split-chapters flag
+    assert_output --partial "split-chapters"
+  fi
+}
+
+@test "download.sh does NOT use chapter template for YouTube" {
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json_with_chapters "Test Video" "TestChannel" "20251129" > "$json_file"
   
@@ -483,8 +524,8 @@ fi
   
   if [[ -f "${TEST_TEMP_DIR}/yt-dlp-args.txt" ]]; then
     run cat "${TEST_TEMP_DIR}/yt-dlp-args.txt"
-    # Should have split-chapters flag
-    assert_output --partial "split-chapters"
+    # Should NOT have split-chapters flag for YouTube
+    refute_output --partial "split-chapters"
   fi
 }
 

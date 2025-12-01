@@ -7,7 +7,7 @@ Unified CLI tool (`vod`) for downloading and transcribing Twitch VODs and YouTub
 
 ### CLI Structure
 The project uses a single entrypoint `./vod` with subcommands:
-- `vod download` - Download video with chapter splitting
+- `vod download` - Download video (chapter splitting for Twitch only)
 - `vod transcribe` - Download Twitch VOD + transcribe
 - `vod youtube` - YouTube caption/transcribe
 - `vod list` - List Twitch channel VODs
@@ -54,11 +54,14 @@ logs/
 
 ### Download Videos
 ```bash
-# Download with chapter splitting
+# Download videos (chapter splitting enabled for Twitch only)
 ./vod download https://www.youtube.com/watch?v=VIDEO_ID
 ./vod download https://www.twitch.tv/videos/12345 my-prefix
 
-# Features: chapter splitting, 5-hour auto-split, NAS detection, H.264/AAC codecs
+# Features: 
+# - Chapter splitting for Twitch videos (disabled for YouTube)
+# - 5-hour auto-split for long videos
+# - NAS detection, H.264/AAC codecs
 ```
 
 ### Transcribe Twitch VODs

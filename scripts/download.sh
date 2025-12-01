@@ -25,7 +25,7 @@ Video Downloader (using yt-dlp)
 
 Usage: vod download <video_url> [prefix]
 
-Downloads video at highest available quality with chapter splitting.
+Downloads video at highest available quality.
 Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/
 
 Arguments:
@@ -38,9 +38,10 @@ Options:
 Examples:
   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
   vod download https://youtu.be/jNQXAC9IVRw my-prefix
+  vod download https://www.twitch.tv/videos/12345 my-prefix
 
 Features:
-  - Automatic chapter splitting with sanitized filenames
+  - Automatic chapter splitting for Twitch videos (disabled for YouTube)
   - Auto-split videos >6 hours into 5-hour chunks
   - H.264/AAC codec selection for TV compatibility
   - NAS detection for automatic path routing
@@ -50,6 +51,12 @@ fi
 
 VIDEO_URL="$1"
 URL_PREFIX="$2"
+
+# Detect if this is a YouTube URL
+IS_YOUTUBE=false
+if [[ "$VIDEO_URL" =~ youtube\.com|youtu\.be ]]; then
+  IS_YOUTUBE=true
+fi
 
 # Validate URL (basic check)
 if [[ ! "$VIDEO_URL" =~ ^https?:// ]]; then
@@ -158,17 +165,25 @@ if [ -n "$TITLE_OUTPUT_FILE" ]; then
   echo "$video_title" > "$TITLE_OUTPUT_FILE"
 fi
 
-# Check if video has chapters
+# Check if video has chapters (only for non-YouTube videos)
+# YouTube chapter splitting is disabled to get single file downloads
 # Look for "chapters" array with actual chapter entries (has "start_time" keys)
 # Use grep -o to find all occurrences (not just lines), then count with wc -l
-has_chapters=$(echo "$video_info" | grep -o '"start_time"' 2>/dev/null | wc -l || echo "0")
-has_chapters="${has_chapters//[^0-9]/}"  # Strip any non-numeric characters
-[ -z "$has_chapters" ] && has_chapters=0
+has_chapters=0
+if [ "$IS_YOUTUBE" = false ]; then
+  has_chapters=$(echo "$video_info" | grep -o '"start_time"' 2>/dev/null | wc -l || echo "0")
+  has_chapters="${has_chapters//[^0-9]/}"  # Strip any non-numeric characters
+  [ -z "$has_chapters" ] && has_chapters=0
+fi
 
 if [ "$has_chapters" -gt 1 ]; then
   echo "Download - $timestamp - Video has $has_chapters chapters, will split" | tee -a "${logs_dir}/download-${timestamp}.log"
 else
-  echo "Download - $timestamp - No chapters found, downloading as single file" | tee -a "${logs_dir}/download-${timestamp}.log"
+  if [ "$IS_YOUTUBE" = true ]; then
+    echo "Download - $timestamp - YouTube video, downloading as single file (chapter splitting disabled)" | tee -a "${logs_dir}/download-${timestamp}.log"
+  else
+    echo "Download - $timestamp - No chapters found, downloading as single file" | tee -a "${logs_dir}/download-${timestamp}.log"
+  fi
 fi
 
 # Step 2: Download video at highest quality
@@ -197,8 +212,15 @@ if [ "$has_chapters" -gt 1 ]; then
     --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
     "$VIDEO_URL" || ytdlp_exit_code=$?
   
-  # Remove the full video file (chapters are in separate files)
-  rm -f "${video_file_base}.mp4"
+  # Only remove the full video file if chapter files actually exist
+  # (yt-dlp may fail to split chapters even if metadata says they exist)
+  chapter_count=$(ls "${video_file_base}"-[0-9][0-9]-*.mp4 2>/dev/null | wc -l || echo "0")
+  if [ "$chapter_count" -gt 0 ]; then
+    echo "Download - $timestamp - Found $chapter_count chapter files, removing full video" | tee -a "${logs_dir}/download-${timestamp}.log"
+    rm -f "${video_file_base}.mp4"
+  else
+    echo "Download - $timestamp - Warning: No chapter files created despite metadata indicating chapters exist" | tee -a "${logs_dir}/download-${timestamp}.log"
+  fi
 else
   # No chapters: download as single file
   yt-dlp \
