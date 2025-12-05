@@ -194,7 +194,7 @@ video_file_base="${video_dir}/${base_name}"
 # Download best quality video+audio (merged) with compatible codecs
 # -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
 # Sorts by: H.264 codec preference, then resolution, then AAC audio
-# --concurrent-fragments 4 = Download 4 fragments in parallel for faster speeds
+# --concurrent nts 4 = Download 4 fragments in parallel for faster speeds
 # Track if yt-dlp succeeds (we check file existence later as primary validation)
 ytdlp_exit_code=0
 
@@ -203,6 +203,7 @@ if [ "$has_chapters" -gt 1 ]; then
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
   yt-dlp \
+    -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
     -S "vcodec:h264,res,acodec:m4a" \
@@ -224,6 +225,7 @@ if [ "$has_chapters" -gt 1 ]; then
 else
   # No chapters: download as single file
   yt-dlp \
+    -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
     -S "vcodec:h264,res,acodec:m4a" \
