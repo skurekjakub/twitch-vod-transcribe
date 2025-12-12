@@ -38,6 +38,12 @@ Features:
 - H.264/AAC codec selection for TV compatibility
 - NAS detection: saves to `/nas/vods/<channel>/` if available
 
+### `vod unmount-nas`
+Unmount the NAS mount at `/nas` (if mounted).
+```bash
+./vod unmount-nas
+```
+
 ### `vod transcribe <url>`
 Download and transcribe Twitch VODs using twitch-dl + faster-whisper.
 ```bash
@@ -127,6 +133,11 @@ Optional prefixes are appended to filenames (useful for organization).
 
 If `/nas` is mounted, videos are automatically saved to `/nas/vods/{channel}/`. Otherwise, they go to the local `videos/` directory.
 
+To unmount the NAS:
+```bash
+./vod unmount-nas
+```
+
 ## Project Structure
 
 ```
@@ -134,6 +145,7 @@ If `/nas` is mounted, videos are automatically saved to `/nas/vods/{channel}/`. 
 ├── vod                            # Main CLI entrypoint
 ├── scripts/                       # Command implementations
 │   ├── download.sh                # vod download
+│   ├── unmount-nas.sh             # vod unmount-nas
 │   ├── transcribe.sh              # vod transcribe
 │   ├── youtube.sh                 # vod youtube
 │   ├── list.sh                    # vod list

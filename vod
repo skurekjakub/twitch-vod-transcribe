@@ -12,6 +12,7 @@
 #   transcribe        Download Twitch VOD and transcribe to text
 #   youtube           Fetch YouTube captions or transcribe
 #   list              List Twitch channel VODs
+#   unmount-nas       Unmount /nas (if mounted)
 #   batch download    Batch download from URL file
 #   batch transcribe  Batch transcribe from URL file
 #   split             Split video into time-based chunks
@@ -50,6 +51,8 @@ Commands:
                               Supports YouTube, Twitch, and other yt-dlp sites
                               Outputs to /nas/vods/<channel>/ or videos/
 
+  unmount-nas                 Unmount NAS at /nas (if mounted)
+
   transcribe <url>            Download Twitch VOD and transcribe to text
                               Uses twitch-dl + faster-whisper
 
@@ -86,6 +89,7 @@ Options:
 
 Examples:
   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod unmount-nas
   vod transcribe https://www.twitch.tv/videos/2588036186
   vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ --download
   vod list forsen --urls-only --limit 10
@@ -169,6 +173,10 @@ main() {
     list)
       check_scripts_dir
       run_script "list.sh" "$@"
+      ;;
+    unmount-nas)
+      check_scripts_dir
+      run_script "unmount-nas.sh" "$@"
       ;;
     list-youtube|list-yt|lyt)
       check_scripts_dir

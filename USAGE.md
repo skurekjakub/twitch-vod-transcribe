@@ -232,6 +232,14 @@ The project supports automatic downloading to a Network Attached Storage (NAS) v
 - **If NAS is mounted**: Videos are downloaded to `/nas/vods/{channel_name}/`.
 - **If NAS is NOT mounted**: Videos are downloaded to the local `videos/` directory.
 
+### Unmount
+
+To unmount the NAS at `/nas`:
+
+```bash
+./vod unmount-nas
+```
+
 ---
 
 ## Library Scripts (Advanced)

@@ -215,7 +215,7 @@ if [ "$has_chapters" -gt 1 ]; then
   
   # Only remove the full video file if chapter files actually exist
   # (yt-dlp may fail to split chapters even if metadata says they exist)
-  chapter_count=$(ls "${video_file_base}"-[0-9][0-9]-*.mp4 2>/dev/null | wc -l || echo "0")
+  chapter_count=$(find "$(dirname "$video_file_base")" -maxdepth 1 -type f -name "$(basename "$video_file_base")-[0-9][0-9]-*.mp4" -print 2>/dev/null | wc -l | tr -d '[:space:]')
   if [ "$chapter_count" -gt 0 ]; then
     echo "Download - $timestamp - Found $chapter_count chapter files, removing full video" | tee -a "${logs_dir}/download-${timestamp}.log"
     rm -f "${video_file_base}.mp4"
