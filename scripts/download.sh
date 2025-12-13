@@ -206,7 +206,7 @@ if [ "$has_chapters" -gt 1 ]; then
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -S "res,acodec:m4a" \
+    -S "vcodec:h264,ress,acodec:m4a" \
     --concurrent-fragments 6 \
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
@@ -228,7 +228,7 @@ else
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -S "res,acodec:m4a" \
+    -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
     "$VIDEO_URL" || ytdlp_exit_code=$?

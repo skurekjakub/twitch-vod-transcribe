@@ -55,7 +55,21 @@ if ! grep -qs " /nas " "$MOUNTS_FILE"; then
   exit 0
 fi
 
-echo "Unmounting /nas..."
+# Check what's using /nas
+echo "Checking what's using /nas..."
+if command -v lsof >/dev/null 2>&1; then
+  echo ""
+  echo "Processes accessing /nas:"
+  lsof +D /nas 2>/dev/null || echo "  (none found via lsof)"
+  echo ""
+elif command -v fuser >/dev/null 2>&1; then
+  echo ""
+  echo "Processes accessing /nas:"
+  fuser -vm /nas 2>&1 || echo "  (none found via fuser)"
+  echo ""
+fi
+
+echo "Force unmounting /nas (lazy unmount)..."
 
 # Use umount from PATH (mockable in tests)
 if ! command -v umount >/dev/null 2>&1; then
@@ -63,6 +77,8 @@ if ! command -v umount >/dev/null 2>&1; then
   exit 1
 fi
 
-umount /nas
+# Use lazy unmount (-l) which detaches the filesystem immediately
+# and cleans up references when it's no longer busy
+umount /nas --force
 
 echo "NAS unmounted (/nas)"

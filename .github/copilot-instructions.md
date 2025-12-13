@@ -13,6 +13,8 @@ The project uses a single entrypoint `./vod` with subcommands:
 - `vod list` - List Twitch channel VODs
 - `vod list-youtube` (aliases: `list-yt`, `lyt`) - List YouTube channel videos
 - `vod list-playlist` (alias: `lpl`) - List YouTube playlist videos
+- `vod mount-nas` - Mount NAS storage at /nas using .env.local credentials
+- `vod unmount-nas` - Unmount NAS storage at /nas
 - `vod batch download` - Batch download from file
 - `vod batch transcribe` - Batch transcribe from file
 - `vod split` - Split video into chunks
@@ -101,6 +103,20 @@ logs/
 ./vod list-playlist PLxxxxxxx --urls-only  # Just URLs
 ./vod list-playlist PLxxxxxxx -o --prefix "name"  # URLs with prefix for batch download
 ./vod lpl PLxxxxxxx -o                     # Short alias
+```
+
+### NAS Storage Management
+```bash
+./vod mount-nas                            # Mount NAS at /nas using .env.local credentials
+./vod unmount-nas                          # Unmount /nas (if mounted)
+```
+
+Requires `.env.local` with:
+```bash
+NAS_HOST=192.168.1.100    # Hostname or IP
+NAS_SHARE=media           # Share name
+NAS_USER=myuser           # Username (optional, uses guest if not provided)
+NAS_PASS=mypassword       # Password (optional, uses guest if not provided)
 ```
 
 ### Batch Processing

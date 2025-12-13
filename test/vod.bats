@@ -123,6 +123,13 @@ teardown() {
   assert_output --partial "Usage: vod list"
 }
 
+@test "vod mount-nas --help is routed to mount-nas.sh" {
+  run "$VOD" mount-nas --help
+  assert_success
+  assert_output --partial "Mount NAS"
+  assert_output --partial "Usage: vod mount-nas"
+}
+
 @test "vod unmount-nas --help is routed to unmount-nas.sh" {
   run "$VOD" unmount-nas --help
   assert_success

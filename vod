@@ -51,6 +51,8 @@ Commands:
                               Supports YouTube, Twitch, and other yt-dlp sites
                               Outputs to /nas/vods/<channel>/ or videos/
 
+  mount-nas                   Mount NAS at /nas using .env.local credentials
+
   unmount-nas                 Unmount NAS at /nas (if mounted)
 
   transcribe <url>            Download Twitch VOD and transcribe to text
@@ -89,6 +91,7 @@ Options:
 
 Examples:
   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod mount-nas
   vod unmount-nas
   vod transcribe https://www.twitch.tv/videos/2588036186
   vod youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ --download
@@ -173,6 +176,10 @@ main() {
     list)
       check_scripts_dir
       run_script "list.sh" "$@"
+      ;;
+    mount-nas)
+      check_scripts_dir
+      run_script "mount-nas.sh" "$@"
       ;;
     unmount-nas)
       check_scripts_dir

@@ -25,7 +25,6 @@
   },
   
   "postCreateCommand": "chmod +x /workspaces/twitch-vod-transcribe/.devcontainer/post-setup.sh && /workspaces/twitch-vod-transcribe/.devcontainer/post-setup.sh",
-  "postAttachCommand": "/workspaces/twitch-vod-transcribe/.devcontainer/mount-nas.sh",
   
   "remoteUser": "root",
   
