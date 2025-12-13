@@ -43,7 +43,7 @@ Examples:
 Features:
   - Automatic chapter splitting for Twitch videos (disabled for YouTube)
   - Auto-split videos >6 hours into 5-hour chunks
-  - H.264/AAC codec selection for TV compatibility
+  - Highest resolution available (4K when available)
   - NAS detection for automatic path routing
 EOF
   exit 0
@@ -192,9 +192,9 @@ echo "Download - $timestamp - Downloading video at highest quality" | tee -a "${
 video_file_base="${video_dir}/${base_name}"
 
 # Download best quality video+audio (merged) with compatible codecs
-# -S "vcodec:h264,res,acodec:m4a" = "Force H.264 video and AAC audio for TV compatibility"
-# Sorts by: H.264 codec preference, then resolution, then AAC audio
-# --concurrent nts 4 = Download 4 fragments in parallel for faster speeds
+# -S "res,acodec:m4a" = Prioritize highest resolution, then prefer AAC audio
+# Sorts by: resolution first (allows 4K/VP9/AV1), then AAC audio preference
+# --concurrent-fragments = Download fragments in parallel for faster speeds
 # Track if yt-dlp succeeds (we check file existence later as primary validation)
 ytdlp_exit_code=0
 
@@ -206,7 +206,7 @@ if [ "$has_chapters" -gt 1 ]; then
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -S "vcodec:h264,res,acodec:m4a" \
+    -S "res,acodec:m4a" \
     --concurrent-fragments 6 \
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
@@ -228,7 +228,7 @@ else
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -S "vcodec:h264,res,acodec:m4a" \
+    -S "res,acodec:m4a" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
     "$VIDEO_URL" || ytdlp_exit_code=$?
@@ -247,7 +247,8 @@ MIN_DURATION_TO_SPLIT=21600  # 6 hours in seconds - only split if video is at le
 echo "Download - $timestamp - Checking for files longer than 6 hours..." | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Build list of video files to check (both chapter files and single file)
-for video_file in "${video_file_base}"*.mp4; do
+# Check for multiple video extensions (mp4, mkv, webm)
+for video_file in "${video_file_base}"*.{mp4,mkv,webm}; do
   [ -f "$video_file" ] || continue
   
   # Get duration in seconds using ffprobe
@@ -268,19 +269,18 @@ for video_file in "${video_file_base}"*.mp4; do
 done
 
 # Find all downloaded video files (chapters + split parts)
-video_files=$(ls "${video_file_base}"*.mp4 2>/dev/null || true)
+video_files=$(ls "${video_file_base}"*.{mp4,mkv,webm} 2>/dev/null || true)
 
-# Check for partial/incomplete downloads (.part files) BEFORE checking for mp4 files
-# This handles interrupted downloads where .part files exist but no complete .mp4
+# Check for partial/incomplete downloads (.part files) BEFORE checking for video files
+# This handles interrupted downloads where .part files exist but no complete video
 part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
 if [ -n "$part_files" ]; then
   echo "Download - $timestamp - Error: Found incomplete .part files - download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
   echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
 fi
-
 if [ -z "$video_files" ]; then
-  echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*.mp4" | tee -a "${logs_dir}/download-${timestamp}.log"
+  echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*" | tee -a "${logs_dir}/download-${timestamp}.log"
   if [ "$ytdlp_exit_code" -ne 0 ]; then
     echo "Download - $timestamp - yt-dlp exited with code $ytdlp_exit_code" | tee -a "${logs_dir}/download-${timestamp}.log"
   fi
