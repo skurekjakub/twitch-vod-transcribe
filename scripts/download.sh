@@ -18,12 +18,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="${VOD_ROOT_DIR:-$(dirname "$SCRIPT_DIR")}"
 cd "$ROOT_DIR"
 
-# Parse arguments
+# Parse arguments - extract URL, prefix, and any extra args after --
+VIDEO_URL=""
+URL_PREFIX=""
+EXTRA_ARGS=()
+
+# Check for help first
 if [[ $# -eq 0 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
   cat << 'EOF'
 Video Downloader (using yt-dlp)
 
-Usage: vod download <video_url> [prefix]
+Usage: vod download <video_url> [prefix] [-- <yt-dlp args>...]
 
 Downloads video at highest available quality.
 Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/
@@ -31,6 +36,7 @@ Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/
 Arguments:
   video_url       URL of the video to download
   prefix          Optional filename prefix
+  -- <args>       Pass additional arguments directly to yt-dlp
 
 Options:
   -h, --help      Show this help message
@@ -39,18 +45,37 @@ Examples:
   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
   vod download https://youtu.be/jNQXAC9IVRw my-prefix
   vod download https://www.twitch.tv/videos/12345 my-prefix
+  vod download https://example.com/video -- --extractor-args "generic:impersonate"
+  vod download https://site.com/video -- --referer "https://site.com" --user-agent "Mozilla/5.0"
 
 Features:
   - Automatic chapter splitting for Twitch videos (disabled for YouTube)
   - Auto-split videos >6 hours into 5-hour chunks
   - Highest resolution available (4K when available)
   - NAS detection for automatic path routing
+  - Pass arbitrary yt-dlp options via -- separator
 EOF
   exit 0
 fi
 
-VIDEO_URL="$1"
-URL_PREFIX="$2"
+# Parse positional args and -- separator
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --)
+      shift
+      EXTRA_ARGS=("$@")
+      break
+      ;;
+    *)
+      if [[ -z "$VIDEO_URL" ]]; then
+        VIDEO_URL="$1"
+      elif [[ -z "$URL_PREFIX" ]]; then
+        URL_PREFIX="$1"
+      fi
+      shift
+      ;;
+  esac
+done
 
 # Detect if this is a YouTube URL
 IS_YOUTUBE=false
@@ -89,6 +114,9 @@ echo "========================================" | tee -a "${logs_dir}/download-$
 echo "Video Downloader (yt-dlp)" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "URL: $VIDEO_URL" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Quality: Best available" | tee -a "${logs_dir}/download-${timestamp}.log"
+if [[ ${#EXTRA_ARGS[@]} -gt 0 ]]; then
+  echo "Extra args: ${EXTRA_ARGS[*]}" | tee -a "${logs_dir}/download-${timestamp}.log"
+fi
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Title output file for batch processing (allows parent scripts to capture the title)
@@ -97,8 +125,11 @@ TITLE_OUTPUT_FILE="${TITLE_OUTPUT_FILE:-}"
 # Step 1: Get video metadata
 echo "Download - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/download-${timestamp}.log"
 
+# Debug: Show exact command being run
+echo "Download - $timestamp - Running: yt-dlp ${YTDLP_COOKIE_ARGS[*]} --dump-json --no-warnings ${EXTRA_ARGS[*]} $VIDEO_URL" | tee -a "${logs_dir}/download-${timestamp}.log"
+
 # Get video info in JSON format
-if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
+if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "${EXTRA_ARGS[@]}" "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/download-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
@@ -211,6 +242,7 @@ if [ "$has_chapters" -gt 1 ]; then
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
     --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
+    "${EXTRA_ARGS[@]}" \
     "$VIDEO_URL" || ytdlp_exit_code=$?
   
   # Only remove the full video file if chapter files actually exist
@@ -231,6 +263,7 @@ else
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
+    "${EXTRA_ARGS[@]}" \
     "$VIDEO_URL" || ytdlp_exit_code=$?
 fi
 

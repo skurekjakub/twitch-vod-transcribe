@@ -47,9 +47,10 @@ VOD - Unified CLI for Twitch VOD & YouTube Video Processing
 Usage: vod <command> [options]
 
 Commands:
-  download <url>              Download video with chapter splitting
+  download <url> [-- args]    Download video with chapter splitting
                               Supports YouTube, Twitch, and other yt-dlp sites
                               Outputs to /nas/vods/<channel>/ or videos/
+                              Use -- to pass extra args to yt-dlp
 
   mount-nas                   Mount NAS at /nas using .env.local credentials
 
@@ -91,6 +92,7 @@ Options:
 
 Examples:
   vod download https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  vod download https://example.com/video -- --extractor-args "generic:impersonate"
   vod mount-nas
   vod unmount-nas
   vod transcribe https://www.twitch.tv/videos/2588036186
