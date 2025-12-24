@@ -237,6 +237,7 @@ if [ "$has_chapters" -gt 1 ]; then
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
+    -f "bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]" \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 6 \
     --split-chapters \
@@ -260,6 +261,7 @@ else
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
+    -f "bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]" \
     -S "vcodec:h264,res,acodec:m4a" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
