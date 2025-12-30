@@ -9,3 +9,5 @@ snac
 soundfile
 torchaudio
 tensorboard
+fastapi
+uvicorn
