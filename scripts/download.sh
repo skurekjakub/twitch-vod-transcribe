@@ -31,7 +31,7 @@ Video Downloader (using yt-dlp)
 Usage: vod download <video_url> [prefix] [-- <yt-dlp args>...]
 
 Downloads video at highest available quality.
-Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/
+Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/<channel>/
 
 Arguments:
   video_url       URL of the video to download
@@ -174,7 +174,7 @@ if grep -qs " /nas " /proc/mounts; then
   video_dir="/nas/vods/${channel_clean}"
   echo "Download - $timestamp - NAS detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
 else
-  video_dir="videos"
+  video_dir="videos/${channel_clean}"
   echo "Download - $timestamp - NAS not detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
 fi
 mkdir -p "$video_dir"

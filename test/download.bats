@@ -242,8 +242,9 @@ if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create a dummy file to pass file check
-  touch "'"${TEST_TEMP_DIR}"'/videos/my-prefix-2025-11-29-test-video.mp4"
+  # Create a dummy file to pass file check (with channel subdirectory)
+  mkdir -p "'"${TEST_TEMP_DIR}"'/videos/TestChannel"
+  touch "'"${TEST_TEMP_DIR}"'/videos/TestChannel/my-prefix-2025-11-29-test-video.mp4"
   exit 0
 fi
 '
@@ -362,6 +363,52 @@ fi
   assert_output --regexp "(NAS detected|NAS not detected)"
 }
 
+@test "download.sh uses videos/<channel> when NAS is not mounted" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
+  
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  
+  # Output directory should include channel name whether NAS is mounted or not
+  # NAS mounted: /nas/vods/TestChannel, NAS not mounted: videos/TestChannel
+  assert_output --regexp "Output directory:.*(videos/TestChannel|/nas/vods/TestChannel)"
+}
+
+@test "download.sh creates channel subdirectory when NAS not mounted" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json "Test Video" "MyChannel" "20251129" > "$json_file"
+  
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  # Create the file in the expected channel subdirectory (both possible locations)
+  mkdir -p "'"${TEST_TEMP_DIR}"'/videos/MyChannel"
+  touch "'"${TEST_TEMP_DIR}"'/videos/MyChannel/2025-11-29-test-video.mp4"
+  mkdir -p /nas/vods/MyChannel 2>/dev/null || true
+  touch /nas/vods/MyChannel/2025-11-29-test-video.mp4 2>/dev/null || true
+  exit 0
+fi
+'
+  create_mock "ffprobe" 0 "3600"
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  
+  assert_success
+  # Output should include channel name in the path
+  assert_output --regexp "(videos/MyChannel|/nas/vods/MyChannel)"
+}
+
 # ============================================================================
 # Error Handling Tests
 # ============================================================================
@@ -406,11 +453,11 @@ if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create .part files in both possible output directories
+  # Create .part files in both possible output directories (with channel subdirectory)
   mkdir -p /nas/vods/TestChannel 2>/dev/null || true
   touch /nas/vods/TestChannel/2025-11-29-test-video.mp4.part 2>/dev/null || true
-  mkdir -p "'"${TEST_TEMP_DIR}"'/videos" 2>/dev/null || true
-  touch "'"${TEST_TEMP_DIR}"'/videos/2025-11-29-test-video.mp4.part" 2>/dev/null || true
+  mkdir -p "'"${TEST_TEMP_DIR}"'/videos/TestChannel" 2>/dev/null || true
+  touch "'"${TEST_TEMP_DIR}"'/videos/TestChannel/2025-11-29-test-video.mp4.part" 2>/dev/null || true
   exit 0
 fi
 '
@@ -430,8 +477,8 @@ fi
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Long Video" "TestChannel" "20251129" > "$json_file"
   
-  # Create video file
-  local video_file="${TEST_TEMP_DIR}/videos/2025-11-29-long-video.mp4"
+  # Create video file in channel subdirectory
+  local video_file="${TEST_TEMP_DIR}/videos/TestChannel/2025-11-29-long-video.mp4"
   mkdir -p "$(dirname "$video_file")"
   touch "$video_file"
   
@@ -544,13 +591,13 @@ if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create the output file in both possible output directories
+  # Create the output file in both possible output directories (with channel subdirectory)
   mkdir -p /nas/vods/TestChannel 2>/dev/null || true
   rm -f /nas/vods/TestChannel/*.part 2>/dev/null || true
   touch /nas/vods/TestChannel/2025-11-29-test-video.mp4 2>/dev/null || true
-  mkdir -p "'"${TEST_TEMP_DIR}"'/videos" 2>/dev/null || true
-  rm -f "'"${TEST_TEMP_DIR}"'/videos/*.part" 2>/dev/null || true
-  touch "'"${TEST_TEMP_DIR}"'/videos/2025-11-29-test-video.mp4" 2>/dev/null || true
+  mkdir -p "'"${TEST_TEMP_DIR}"'/videos/TestChannel" 2>/dev/null || true
+  rm -f "'"${TEST_TEMP_DIR}"'/videos/TestChannel/*.part" 2>/dev/null || true
+  touch "'"${TEST_TEMP_DIR}"'/videos/TestChannel/2025-11-29-test-video.mp4" 2>/dev/null || true
   exit 0
 fi
 '

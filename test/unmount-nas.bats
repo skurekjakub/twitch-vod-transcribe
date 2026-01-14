@@ -35,7 +35,7 @@ teardown() {
 
   run env PROC_MOUNTS_FILE="$mounts_file" "${SCRIPTS_DIR}/unmount-nas.sh"
   assert_success
-  assert_output --partial "Unmounting /nas..."
+  assert_output --partial "Force unmounting /nas"
   assert_output --partial "NAS unmounted (/nas)"
 
   assert_mock_called "umount"
