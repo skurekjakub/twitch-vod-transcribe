@@ -52,7 +52,7 @@ Features:
   - Automatic chapter splitting for Twitch videos (disabled for YouTube)
   - Auto-split videos >6 hours into 5-hour chunks
   - Highest resolution available (4K when available)
-  - NAS detection for automatic path routing
+  - Downloads locally first, then copies to NAS if mounted (safer for network issues)
   - Pass arbitrary yt-dlp options via -- separator
 EOF
   exit 0
@@ -169,12 +169,15 @@ title_clean=$(echo "$video_title" | \
   sed 's/^-//' | \
   sed 's/-$//')
 
-# Determine output directory based on NAS availability
+# Always download locally first, then copy to NAS if mounted
+video_dir="videos/${channel_clean}"
+nas_mounted=false
+nas_dir=""
 if grep -qs " /nas " /proc/mounts; then
-  video_dir="/nas/vods/${channel_clean}"
-  echo "Download - $timestamp - NAS detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+  nas_mounted=true
+  nas_dir="/nas/vods/${channel_clean}"
+  echo "Download - $timestamp - NAS detected. Will download locally first, then copy to: $nas_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
 else
-  video_dir="videos/${channel_clean}"
   echo "Download - $timestamp - NAS not detected. Output directory: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
 fi
 mkdir -p "$video_dir"
@@ -328,12 +331,49 @@ echo "Download - $timestamp - Download completed: $file_count file(s)" | tee -a 
 # Get total size
 total_size=$(du -ch "$video_files" 2>/dev/null | tail -n 1 | cut -f1)
 
+# Copy to NAS if mounted
+final_output_dir="$video_dir"
+if [ "$nas_mounted" = true ]; then
+  echo "Download - $timestamp - Copying files to NAS: $nas_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+  mkdir -p "$nas_dir"
+  
+  copy_failed=false
+  for video_file in $video_files; do
+    filename=$(basename "$video_file")
+    echo "Download - $timestamp - Copying: $filename" | tee -a "${logs_dir}/download-${timestamp}.log"
+    if cp "$video_file" "$nas_dir/"; then
+      echo "Download - $timestamp - Copied: $filename" | tee -a "${logs_dir}/download-${timestamp}.log"
+    else
+      echo "Download - $timestamp - ERROR: Failed to copy $filename to NAS" | tee -a "${logs_dir}/download-${timestamp}.log"
+      copy_failed=true
+    fi
+  done
+  
+  if [ "$copy_failed" = true ]; then
+    echo "Download - $timestamp - WARNING: Some files failed to copy to NAS. Local files preserved in: $video_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+  else
+    # All files copied successfully, remove local copies
+    echo "Download - $timestamp - All files copied to NAS successfully, removing local copies" | tee -a "${logs_dir}/download-${timestamp}.log"
+    for video_file in $video_files; do
+      rm -f "$video_file"
+    done
+    # Remove local channel directory if empty
+    rmdir "$video_dir" 2>/dev/null || true
+    final_output_dir="$nas_dir"
+    # Update video_files to reflect NAS paths for summary
+    video_files=$(ls "${nas_dir}/${base_name}"*.{mp4,mkv,webm} 2>/dev/null || true)
+  fi
+fi
+
 # Summary
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Download completed successfully!" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Output files ($file_count):" | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "$video_files" | sed 's/^/  - /' | tee -a "${logs_dir}/download-${timestamp}.log"
 echo "Total size: $total_size" | tee -a "${logs_dir}/download-${timestamp}.log"
+if [ "$nas_mounted" = true ] && [ "$copy_failed" != true ]; then
+  echo "Files stored on NAS: $final_output_dir" | tee -a "${logs_dir}/download-${timestamp}.log"
+fi
 echo "========================================" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 exit 0

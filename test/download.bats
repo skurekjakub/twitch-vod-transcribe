@@ -338,13 +338,28 @@ fi
 # NAS Detection Tests
 # ============================================================================
 
-@test "download.sh uses /nas/vods when NAS is mounted" {
+@test "download.sh always downloads locally first" {
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
   
-  # Create a mock /proc/mounts with NAS
-  local mock_mounts="${TEST_TEMP_DIR}/mounts"
-  echo "nas:/share /nas nfs defaults 0 0" > "$mock_mounts"
+  create_conditional_mock "yt-dlp" '
+if [[ "$*" == *"--dump-json"* ]]; then
+  cat "'"$json_file"'"
+  exit 0
+else
+  exit 1
+fi
+'
+  
+  run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
+  
+  # Should always show local download path first (whether NAS mounted or not)
+  assert_output --regexp "(NAS detected.*download locally|NAS not detected.*Output directory.*videos)"
+}
+
+@test "download.sh copies to NAS after local download when NAS mounted" {
+  local json_file="${TEST_TEMP_DIR}/metadata.json"
+  sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
   
   create_conditional_mock "yt-dlp" '
 if [[ "$*" == *"--dump-json"* ]]; then
@@ -378,12 +393,11 @@ fi
   
   run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
   
-  # Output directory should include channel name whether NAS is mounted or not
-  # NAS mounted: /nas/vods/TestChannel, NAS not mounted: videos/TestChannel
-  assert_output --regexp "Output directory:.*(videos/TestChannel|/nas/vods/TestChannel)"
+  # Output directory should be local videos/<channel> (NAS copy happens after download)
+  assert_output --regexp "(Output directory.*videos/TestChannel|download locally first)"
 }
 
-@test "download.sh creates channel subdirectory when NAS not mounted" {
+@test "download.sh creates channel subdirectory locally" {
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Test Video" "MyChannel" "20251129" > "$json_file"
   
@@ -392,11 +406,9 @@ if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create the file in the expected channel subdirectory (both possible locations)
+  # Create the file in the local channel subdirectory
   mkdir -p "'"${TEST_TEMP_DIR}"'/videos/MyChannel"
   touch "'"${TEST_TEMP_DIR}"'/videos/MyChannel/2025-11-29-test-video.mp4"
-  mkdir -p /nas/vods/MyChannel 2>/dev/null || true
-  touch /nas/vods/MyChannel/2025-11-29-test-video.mp4 2>/dev/null || true
   exit 0
 fi
 '
@@ -405,7 +417,7 @@ fi
   run "${SCRIPTS_DIR}/download.sh" "https://www.youtube.com/watch?v=test123"
   
   assert_success
-  # Output should include channel name in the path
+  # Output should include local channel path or NAS channel path (downloads locally first, then copies if NAS mounted)
   assert_output --regexp "(videos/MyChannel|/nas/vods/MyChannel)"
 }
 
@@ -446,16 +458,13 @@ fi
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
   
-  # Script will determine output dir based on NAS mount - create .part file there
-  # Since we can't easily control NAS detection, create in both possible locations
+  # Script always downloads locally first, so create .part file in local directory
   create_conditional_mock "yt-dlp" '
 if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create .part files in both possible output directories (with channel subdirectory)
-  mkdir -p /nas/vods/TestChannel 2>/dev/null || true
-  touch /nas/vods/TestChannel/2025-11-29-test-video.mp4.part 2>/dev/null || true
+  # Create .part file in local output directory (downloads locally first)
   mkdir -p "'"${TEST_TEMP_DIR}"'/videos/TestChannel" 2>/dev/null || true
   touch "'"${TEST_TEMP_DIR}"'/videos/TestChannel/2025-11-29-test-video.mp4.part" 2>/dev/null || true
   exit 0
@@ -584,17 +593,13 @@ fi
   local json_file="${TEST_TEMP_DIR}/metadata.json"
   sample_ytdlp_json "Test Video" "TestChannel" "20251129" > "$json_file"
   
-  # Script determines output dir based on NAS mount, create files in both locations
-  # Also ensure no .part files exist
+  # Script downloads locally first, then copies to NAS if mounted
   create_conditional_mock "yt-dlp" '
 if [[ "$*" == *"--dump-json"* ]]; then
   cat "'"$json_file"'"
   exit 0
 else
-  # Create the output file in both possible output directories (with channel subdirectory)
-  mkdir -p /nas/vods/TestChannel 2>/dev/null || true
-  rm -f /nas/vods/TestChannel/*.part 2>/dev/null || true
-  touch /nas/vods/TestChannel/2025-11-29-test-video.mp4 2>/dev/null || true
+  # Create the output file in local directory (downloads locally first)
   mkdir -p "'"${TEST_TEMP_DIR}"'/videos/TestChannel" 2>/dev/null || true
   rm -f "'"${TEST_TEMP_DIR}"'/videos/TestChannel/*.part" 2>/dev/null || true
   touch "'"${TEST_TEMP_DIR}"'/videos/TestChannel/2025-11-29-test-video.mp4" 2>/dev/null || true
