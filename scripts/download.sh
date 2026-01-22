@@ -236,12 +236,12 @@ if [ "$has_chapters" -gt 1 ]; then
   # With chapters: use --split-chapters to create separate files per chapter
   # Chapter output: date-title-##-chaptername.mp4 (## = zero-padded chapter index)
   # %(section_title)#S = sanitize with restricted characters (replaces spaces and special chars)
+  # Format priority: h264+m4a (preferred) -> any 720p60 -> any 720p -> best available (unrestricted)
   yt-dlp \
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -f "bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]" \
-    -S "vcodec:h264,res,acodec:m4a" \
+    -f "bestvideo[height<=720][fps<=60][vcodec*=avc1]+bestaudio[acodec*=mp4a]/bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]/best[height<=720]/best" \
     --concurrent-fragments 6 \
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
@@ -260,12 +260,12 @@ if [ "$has_chapters" -gt 1 ]; then
   fi
 else
   # No chapters: download as single file
+  # Format priority: h264+m4a (preferred) -> any 720p60 -> any 720p -> best available (unrestricted)
   yt-dlp \
     -v \
     "${YTDLP_COOKIE_ARGS[@]}" \
     --color always \
-    -f "bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]" \
-    -S "vcodec:h264,res,acodec:m4a" \
+    -f "bestvideo[height<=720][fps<=60][vcodec*=avc1]+bestaudio[acodec*=mp4a]/bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]/best[height<=720]/best" \
     --concurrent-fragments 4 \
     --output "${video_file_base}.%(ext)s" \
     "${EXTRA_ARGS[@]}" \
