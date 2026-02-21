@@ -9,9 +9,12 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, satriel]
+    runs-on: [satriel-vod-transcribe]
     
     steps:
+      - name: Clean workspace
+        run: git clean -ffdx || true
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -21,11 +24,6 @@ jobs:
           git clone --depth 1 https://github.com/bats-core/bats-support.git test/bats-support
           git clone --depth 1 https://github.com/bats-core/bats-assert.git test/bats-assert
           git clone --depth 1 https://github.com/bats-core/bats-file.git test/bats-file
-
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get install -y ffmpeg
 
       - name: Make scripts executable
         run: |
@@ -40,14 +38,11 @@ jobs:
           ./bats-core/bin/bats --verbose-run *.bats
 
   lint:
-    runs-on: [self-hosted, satriel]
+    runs-on: [satriel-vod-transcribe]
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install shellcheck
-        run: apt-get install -y shellcheck
 
       - name: Run shellcheck on main scripts
         run: |
