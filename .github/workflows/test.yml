@@ -2,13 +2,13 @@ name: Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, satriel]
     
     steps:
       - name: Checkout repository
@@ -23,8 +23,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          apt-get update
+          apt-get install -y ffmpeg
 
       - name: Make scripts executable
         run: |
@@ -39,14 +39,14 @@ jobs:
           ./bats-core/bin/bats --verbose-run *.bats
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, satriel]
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install shellcheck
-        run: sudo apt-get install -y shellcheck
+        run: apt-get install -y shellcheck
 
       - name: Run shellcheck on main scripts
         run: |
