@@ -253,17 +253,15 @@ log() {
 - Framework: `bats-core` (Bash Automated Testing System)
 - Test location: `test/*.bats`
 - Helper libraries: `bats-support`, `bats-assert`, `bats-file`
+- **Test runner:** `./run-tests.sh` — installs bats helpers automatically if missing, then runs all tests
 
 ### Running Tests
 ```bash
-# Run all tests
-./test/run_tests.sh
-
-# Run specific test file
-./test/run_tests.sh vod.bats
+# Run all tests (installs bats helpers if needed)
+./run-tests.sh
 
 # Run with verbose output
-./test/run_tests.sh -v
+./run-tests.sh --verbose-run
 
 # Run shellcheck linting
 ./test/bats-core/bin/bats test/shellcheck.bats

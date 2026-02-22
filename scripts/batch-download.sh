@@ -195,16 +195,25 @@ for line in "${lines[@]}"; do
       log "✗ Failed to download video (continuing, keeping in queue)"
     fi
   else
+    set +e
     TITLE_OUTPUT_FILE="$title_file" "$DOWNLOAD_SCRIPT" "$url" "$prefix"
-    
+    download_exit_code=$?
+    set -e
+
     video_title=""
     [ -f "$title_file" ] && video_title=$(cat "$title_file")
     rm -f "$title_file"
-    
-    successful=$((successful + 1))
-    log "✓ Successfully downloaded video"
-    mark_processed "$line" "$video_title"
-    log "→ Moved to $PROCESSED_FILE"
+
+    if [ "$download_exit_code" -eq 0 ]; then
+      successful=$((successful + 1))
+      log "✓ Successfully downloaded video"
+      mark_processed "$line" "$video_title"
+      log "→ Moved to $PROCESSED_FILE"
+    else
+      failed=$((failed + 1))
+      log "✗ Failed to download video (exit $download_exit_code)"
+      exit 1
+    fi
   fi
   
 done

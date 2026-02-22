@@ -130,7 +130,7 @@ echo "Download - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/dow
 echo "Download - $timestamp - Running: yt-dlp ${YTDLP_COOKIE_ARGS[*]} --dump-json --no-warnings ${EXTRA_ARGS[*]} $VIDEO_URL" | tee -a "${logs_dir}/download-${timestamp}.log"
 
 # Get video info in JSON format
-if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "${EXTRA_ARGS[@]}" "$VIDEO_URL" 2>&1); then
+if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings --socket-timeout 60 --retries 5 "${EXTRA_ARGS[@]}" "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/download-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
@@ -245,6 +245,11 @@ if [ "$has_chapters" -gt 1 ]; then
     --color always \
     -f "bestvideo[height<=720][fps<=60][vcodec*=avc1]+bestaudio[acodec*=mp4a]/bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]/best[height<=720]/best" \
     --concurrent-fragments 6 \
+    --retries 10 \
+    --fragment-retries 10 \
+    --retry-sleep 5 \
+    --socket-timeout 60 \
+    --continue \
     --split-chapters \
     --output "${video_file_base}.%(ext)s" \
     --output "chapter:${video_file_base}-%(section_number)02d-%(section_title)#S.%(ext)s" \
@@ -269,6 +274,11 @@ else
     --color always \
     -f "bestvideo[height<=720][fps<=60][vcodec*=avc1]+bestaudio[acodec*=mp4a]/bestvideo[height<=720][fps<=60]+bestaudio/best[height<=720][fps<=60]/best[height<=720]/best" \
     --concurrent-fragments 4 \
+    --retries 10 \
+    --fragment-retries 10 \
+    --retry-sleep 5 \
+    --socket-timeout 60 \
+    --continue \
     --output "${video_file_base}.%(ext)s" \
     "${EXTRA_ARGS[@]}" \
     "$VIDEO_URL" || ytdlp_exit_code=$?
@@ -279,6 +289,21 @@ echo "Download - $timestamp - yt-dlp finished" | tee -a "${logs_dir}/download-${
 # Check if yt-dlp reported an error
 if [ "$ytdlp_exit_code" -ne 0 ]; then
   echo "Download - $timestamp - ERROR: yt-dlp exited with code $ytdlp_exit_code" | tee -a "${logs_dir}/download-${timestamp}.log"
+  exit 1
+fi
+
+# Early check for leftover .part files — indicates yt-dlp was interrupted despite exit 0
+part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
+if [ -n "$part_files" ]; then
+  echo "Download - $timestamp - ERROR: Found incomplete .part files — download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
+  echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
+  exit 1
+fi
+
+# Verify at least one output file exists before proceeding
+early_video_files=$(ls "${video_file_base}"*.{mp4,mkv,webm} 2>/dev/null || true)
+if [ -z "$early_video_files" ]; then
+  echo "Download - $timestamp - ERROR: yt-dlp exited 0 but no video files found — possible silent failure" | tee -a "${logs_dir}/download-${timestamp}.log"
   exit 1
 fi
 
@@ -311,19 +336,8 @@ done
 # Find all downloaded video files (chapters + split parts)
 video_files=$(ls "${video_file_base}"*.{mp4,mkv,webm} 2>/dev/null || true)
 
-# Check for partial/incomplete downloads (.part files) BEFORE checking for video files
-# This handles interrupted downloads where .part files exist but no complete video
-part_files=$(ls "${video_file_base}"*.part 2>/dev/null || true)
-if [ -n "$part_files" ]; then
-  echo "Download - $timestamp - Error: Found incomplete .part files - download was interrupted" | tee -a "${logs_dir}/download-${timestamp}.log"
-  echo "Download - $timestamp - Partial files: $part_files" | tee -a "${logs_dir}/download-${timestamp}.log"
-  exit 1
-fi
 if [ -z "$video_files" ]; then
   echo "Download - $timestamp - Error: No video files found matching ${video_file_base}*" | tee -a "${logs_dir}/download-${timestamp}.log"
-  if [ "$ytdlp_exit_code" -ne 0 ]; then
-    echo "Download - $timestamp - yt-dlp exited with code $ytdlp_exit_code" | tee -a "${logs_dir}/download-${timestamp}.log"
-  fi
   exit 1
 fi
 

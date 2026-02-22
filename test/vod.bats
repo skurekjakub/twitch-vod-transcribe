@@ -175,12 +175,16 @@ teardown() {
 }
 
 @test "vod twitchdownloader --help is routed to twitchdownloader.sh" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "$VOD" twitchdownloader --help
   assert_success
   assert_output --partial "TwitchDownloader"
 }
 
 @test "vod td --help is alias for twitchdownloader" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "$VOD" td --help
   assert_success
   assert_output --partial "TwitchDownloader"

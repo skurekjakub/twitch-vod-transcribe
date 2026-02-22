@@ -18,24 +18,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install bats-core and helpers
-        run: |
-          git clone --depth 1 https://github.com/bats-core/bats-core.git test/bats-core
-          git clone --depth 1 https://github.com/bats-core/bats-support.git test/bats-support
-          git clone --depth 1 https://github.com/bats-core/bats-assert.git test/bats-assert
-          git clone --depth 1 https://github.com/bats-core/bats-file.git test/bats-file
-
-      - name: Make scripts executable
-        run: |
-          chmod +x vod
-          chmod +x scripts/*.sh
-          chmod +x lib/*.sh
-          chmod +x test/run_tests.sh
-
       - name: Run tests
-        run: |
-          cd test
-          ./bats-core/bin/bats --verbose-run *.bats
+        run: ./run-tests.sh --verbose-run
 
   lint:
     runs-on: [satriel-vod-transcribe]

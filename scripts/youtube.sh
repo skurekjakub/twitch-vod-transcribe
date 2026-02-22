@@ -130,7 +130,7 @@ echo "========================================" | tee -a "${logs_dir}/run-${time
 echo "$VIDEO_ID - $timestamp - Fetching video metadata" | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Get video info in JSON format
-if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings "$VIDEO_URL" 2>&1); then
+if ! video_info=$(yt-dlp "${YTDLP_COOKIE_ARGS[@]}" --dump-json --no-warnings --socket-timeout 60 --retries 5 "$VIDEO_URL" 2>&1); then
   echo "Error: Failed to fetch video information" | tee -a "${logs_dir}/run-${timestamp}.log"
   echo "$video_info" | tee -a "${logs_dir}/run-${timestamp}.log"
   exit 1
@@ -182,6 +182,9 @@ yt-dlp \
   --skip-download \
   --output "${transcript_dir}/${base_name}.%(ext)s" \
   --no-warnings \
+  --retries 5 \
+  --retry-sleep 5 \
+  --socket-timeout 60 \
   "$VIDEO_URL" 2>&1 | tee -a "${logs_dir}/run-${timestamp}.log"
 
 # Find the downloaded subtitle file
@@ -233,6 +236,11 @@ if [ "$DOWNLOAD" = true ]; then
     --audio-format aac \
     --output "${audio_file_base}.%(ext)s" \
     --no-warnings \
+    --retries 10 \
+    --fragment-retries 10 \
+    --retry-sleep 5 \
+    --socket-timeout 60 \
+    --continue \
     "$VIDEO_URL"
   
   # Find the actual audio file created (could be .aac, .m4a, etc.)

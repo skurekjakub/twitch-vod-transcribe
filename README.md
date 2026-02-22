@@ -222,6 +222,23 @@ The scripts will automatically detect and use `cookies.txt` if it exists.
 - ✅ **CUDA acceleration** - GPU-powered transcription with Whisper
 - ✅ **Chat overlay** - TwitchDownloader integration for chat rendering
 - ✅ **Web interface** - Browser-based queue management at localhost:8080
+- ✅ **Network resilience** - Automatic retries, fragment retries, resume on restart
+
+## Network Resilience
+
+All `yt-dlp` download calls include:
+
+| Flag | Value | Purpose |
+|------|-------|---------|
+| `--retries` | 10 | Retry failed HTTP requests up to 10× |
+| `--fragment-retries` | 10 | Retry each HLS/DASH fragment up to 10× |
+| `--retry-sleep` | 5 | Wait 5 s between retries |
+| `--socket-timeout` | 60 | Abort stalled connections after 60 s |
+| `--continue` | — | Resume partial files instead of restarting |
+
+**Incomplete download detection:** After every `yt-dlp` call, `download.sh` immediately checks for leftover `.part` files and verifies at least one output video file exists. If either check fails the script exits non-zero — `batch-download.sh` then keeps the URL in the queue for the next run.
+
+**Queue integrity:** A URL is only moved to `urls-vods-processed` after `download.sh` exits 0 *and* an output file is confirmed on disk. Failed downloads are never marked complete.
 
 ## Help
 
