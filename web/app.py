@@ -5,8 +5,10 @@ Simple FastAPI app for managing download/transcription queues
 
 import os
 import subprocess
+import uuid
 from pathlib import Path
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
@@ -19,8 +21,43 @@ URLS_VODS = ROOT_DIR / "urls-vods"
 URLS_VODS_PROCESSED = ROOT_DIR / "urls-vods-processed"
 URLS_TXT = ROOT_DIR / "urls.txt"
 LOGS_DIR = ROOT_DIR / "logs"
+DOWNLOADS_DIR = Path(os.environ.get("DOWNLOADS_DIR", "/srv/dev-disk-by-uuid-A8964025963FF304/Downloads"))
 
 app = FastAPI(title="VOD Transcriber")
+
+# In-memory yt-dlp job store: {job_id: {...}}
+_jobs: dict = {}
+# Only 1 download runs at a time; extras queue up automatically
+_executor = ThreadPoolExecutor(max_workers=1)
+
+
+def _run_ytdlp(job_id: str, url: str):
+    """Background thread: run yt-dlp and stream output into job store."""
+    DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    _jobs[job_id]["status"] = "running"
+    try:
+        proc = subprocess.Popen(
+            ["yt-dlp", "--no-playlist", "--newline",
+             "-o", "%(uploader)s/%(title)s.%(ext)s", url],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, cwd=str(DOWNLOADS_DIR),
+        )
+        lines: list[str] = []
+        for line in proc.stdout:
+            lines.append(line.rstrip())
+            _jobs[job_id]["output"] = "\n".join(lines[-100:])
+        proc.wait()
+        _jobs[job_id].update({
+            "returncode": proc.returncode,
+            "status": "done" if proc.returncode == 0 else "failed",
+            "finished_at": datetime.now().isoformat(),
+        })
+    except Exception as exc:
+        _jobs[job_id].update({
+            "output": str(exc),
+            "status": "failed",
+            "finished_at": datetime.now().isoformat(),
+        })
 
 
 class URLItem(BaseModel):
@@ -175,6 +212,39 @@ def api_get_log_content(filename: str):
     
     lines = log_file.read_text().strip().split("\n")
     return {"filename": filename, "lines": lines[-100:]}
+
+
+# --- yt-dlp instant download queue ---
+
+@app.post("/api/ytdlp/submit")
+def ytdlp_submit(item: URLItem):
+    """Submit a URL for immediate yt-dlp download."""
+    job_id = uuid.uuid4().hex[:8]
+    _jobs[job_id] = {
+        "id": job_id,
+        "url": item.url,
+        "status": "pending",
+        "started_at": datetime.now().isoformat(),
+        "finished_at": None,
+        "output": "",
+        "returncode": None,
+    }
+    _executor.submit(_run_ytdlp, job_id, item.url)
+    return {"job_id": job_id}
+
+
+@app.get("/api/ytdlp/jobs")
+def ytdlp_jobs():
+    """Get all yt-dlp jobs, newest first."""
+    return {"jobs": list(reversed(list(_jobs.values())))}
+
+
+@app.get("/api/ytdlp/jobs/{job_id}")
+def ytdlp_job(job_id: str):
+    """Get a single yt-dlp job."""
+    if job_id not in _jobs:
+        raise HTTPException(404, "Job not found")
+    return _jobs[job_id]
 
 
 # --- HTML UI ---
@@ -352,6 +422,9 @@ def index():
         <button class="tab" onclick="showTab('transcribe')">
             Transcribe <span class="badge" id="transcribe-count">0</span>
         </button>
+        <button class="tab" onclick="showTab('ytdlp')">
+            ⚡ Quick DL <span class="badge" id="ytdlp-count">0</span>
+        </button>
     </div>
     
     <div id="download-tab" class="queue-section">
@@ -372,6 +445,14 @@ def index():
         <div class="queue-list" id="transcribe-queue"></div>
     </div>
 
+    <div id="ytdlp-tab" class="queue-section" style="display: none;">
+        <form class="add-form" onsubmit="submitYtdlp(event)">
+            <input type="text" name="url" placeholder="Paste any URL — yt-dlp starts immediately" required>
+            <button type="submit" class="btn-primary">Download Now</button>
+        </form>
+        <div class="queue-list" id="ytdlp-jobs"></div>
+    </div>
+
     <script>
         let currentTab = 'download';
         
@@ -381,6 +462,7 @@ def index():
             document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
             document.getElementById('download-tab').style.display = tab === 'download' ? 'block' : 'none';
             document.getElementById('transcribe-tab').style.display = tab === 'transcribe' ? 'block' : 'none';
+            document.getElementById('ytdlp-tab').style.display = tab === 'ytdlp' ? 'block' : 'none';
         }
         
         async function loadStatus() {
@@ -448,16 +530,52 @@ def index():
             loadStatus();
         }
         
+        async function submitYtdlp(event) {
+            event.preventDefault();
+            const form = event.target;
+            const url = form.url.value.trim();
+            await fetch('/api/ytdlp/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+            form.reset();
+            loadYtdlpJobs();
+        }
+
+        async function loadYtdlpJobs() {
+            const res = await fetch('/api/ytdlp/jobs');
+            const data = await res.json();
+            const container = document.getElementById('ytdlp-jobs');
+            document.getElementById('ytdlp-count').textContent = data.jobs.filter(j => j.status === 'running' || j.status === 'pending').length;
+            if (data.jobs.length === 0) {
+                container.innerHTML = '<div class="queue-empty">No downloads yet</div>';
+                return;
+            }
+            const icons = { pending: '⏳', running: '🔄', done: '✅', failed: '❌' };
+            container.innerHTML = data.jobs.map(job => `
+                <div class="queue-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span>${icons[job.status] || '?'} <span class="queue-url">${job.url}</span></span>
+                        <span style="color:#888; font-size:12px;">${job.started_at.slice(0,19).replace('T',' ')}</span>
+                    </div>
+                    ${job.output ? `<pre style="margin:0; font-size:11px; color:#aaa; white-space:pre-wrap; max-height:120px; overflow-y:auto; width:100%;">${job.output.split('\\n').slice(-10).join('\\n')}</pre>` : ''}
+                </div>
+            `).join('');
+        }
+
         // Initial load
         loadStatus();
         loadQueue('download');
         loadQueue('transcribe');
+        loadYtdlpJobs();
         
         // Refresh every 30s
         setInterval(() => {
             loadStatus();
             loadQueue(currentTab);
-        }, 30000);
+            loadYtdlpJobs();
+        }, 5000);
     </script>
 </body>
 </html>
