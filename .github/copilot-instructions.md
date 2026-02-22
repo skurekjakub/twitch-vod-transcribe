@@ -154,6 +154,18 @@ Features:
 - Add/remove URLs with optional prefixes
 - System status (NAS mount, GPU availability)
 - Real-time queue counts
+- **⚡ Quick DL tab**: paste any yt-dlp-compatible URL → download starts immediately
+  - Single concurrent download (extras queue up automatically via `ThreadPoolExecutor(max_workers=1)`)
+  - Live output shown in UI (last 10 lines), polling every 5s
+  - Downloads write to `DOWNLOADS_DIR` env var (default: `/srv/.../Downloads`)
+  - Job history kept in memory (lost on restart)
+
+### Satriel Deployment
+The web app runs as a Dockge stack at `http://Satriel:7073`:
+- Stack: `/opt/stacks/vod-web/compose.yaml`
+- Mounts this repo at `/app` — **no rebuild needed for code changes, just restart the container**
+- `DOWNLOADS_DIR=/downloads` → `/srv/dev-disk-by-uuid-A8964025963FF304/Downloads`
+- To restart: `cd /opt/stacks/vod-web && docker compose restart`
 
 ### Library Scripts (Direct Use)
 ```bash
