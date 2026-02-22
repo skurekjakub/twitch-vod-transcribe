@@ -31,7 +31,8 @@ Video Downloader (using yt-dlp)
 Usage: vod download <video_url> [prefix] [-- <yt-dlp args>...]
 
 Downloads video at highest available quality.
-Saves to /nas/vods/<channel>/ if NAS is mounted, otherwise videos/<channel>/
+Saves to $DOWNLOADS_DIR/<channel>/ if set, otherwise videos/<channel>/ under the project root.
+If NAS is mounted at /nas, files are also copied to /nas/vods/<channel>/.
 
 Arguments:
   video_url       URL of the video to download
@@ -170,7 +171,8 @@ title_clean=$(echo "$video_title" | \
   sed 's/-$//')
 
 # Always download locally first, then copy to NAS if mounted
-video_dir="videos/${channel_clean}"
+_downloads_base="${DOWNLOADS_DIR:-${ROOT_DIR}/videos}"
+video_dir="${_downloads_base}/${channel_clean}"
 nas_mounted=false
 nas_dir=""
 if grep -qs " /nas " /proc/mounts; then

@@ -4,6 +4,7 @@ Simple FastAPI app for managing download/transcription queues
 """
 
 import os
+import json
 import subprocess
 import uuid
 from pathlib import Path
@@ -22,11 +23,33 @@ URLS_VODS_PROCESSED = ROOT_DIR / "urls-vods-processed"
 URLS_TXT = ROOT_DIR / "urls.txt"
 LOGS_DIR = ROOT_DIR / "logs"
 DOWNLOADS_DIR = Path(os.environ.get("DOWNLOADS_DIR", "/srv/dev-disk-by-uuid-A8964025963FF304/Downloads"))
+_QUEUE_FILE = DOWNLOADS_DIR / ".ytdlp-queue.json"
 
 app = FastAPI(title="VOD Transcriber")
 
-# In-memory yt-dlp job store: {job_id: {...}}
-_jobs: dict = {}
+# ── yt-dlp job store ──────────────────────────────────────────────────────────
+# Persisted to DOWNLOADS_DIR/.ytdlp-queue.json so the queue survives restarts.
+# Successful jobs are removed from the file; failed/running ones are kept.
+
+def _load_jobs() -> dict:
+    DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    if _QUEUE_FILE.exists():
+        try:
+            return {j["id"]: j for j in json.loads(_QUEUE_FILE.read_text())}
+        except Exception:
+            pass
+    return {}
+
+
+def _save_jobs():
+    try:
+        DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+        _QUEUE_FILE.write_text(json.dumps(list(_jobs.values()), indent=2))
+    except Exception:
+        pass
+
+
+_jobs: dict = _load_jobs()
 # Only 1 download runs at a time; extras queue up automatically
 _executor = ThreadPoolExecutor(max_workers=1)
 
@@ -35,6 +58,7 @@ def _run_ytdlp(job_id: str, url: str):
     """Background thread: run yt-dlp and stream output into job store."""
     DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
     _jobs[job_id]["status"] = "running"
+    _save_jobs()
     try:
         proc = subprocess.Popen(
             ["yt-dlp", "--no-playlist", "--newline",
@@ -47,17 +71,30 @@ def _run_ytdlp(job_id: str, url: str):
             lines.append(line.rstrip())
             _jobs[job_id]["output"] = "\n".join(lines[-100:])
         proc.wait()
+        success = proc.returncode == 0
         _jobs[job_id].update({
             "returncode": proc.returncode,
-            "status": "done" if proc.returncode == 0 else "failed",
+            "status": "done" if success else "failed",
             "finished_at": datetime.now().isoformat(),
         })
+        if success:
+            # Remove from persisted queue on success
+            _jobs.pop(job_id, None)
+        _save_jobs()
     except Exception as exc:
         _jobs[job_id].update({
             "output": str(exc),
             "status": "failed",
             "finished_at": datetime.now().isoformat(),
         })
+        _save_jobs()
+
+
+# Re-queue anything that was pending/running when the process last died
+for _j in list(_jobs.values()):
+    if _j["status"] in ("pending", "running"):
+        _j["status"] = "pending"
+        _executor.submit(_run_ytdlp, _j["id"], _j["url"])
 
 
 class URLItem(BaseModel):
@@ -234,6 +271,7 @@ def ytdlp_submit(item: URLItem):
         "output": "",
         "returncode": None,
     }
+    _save_jobs()
     _executor.submit(_run_ytdlp, job_id, item.url)
     return {"job_id": job_id}
 

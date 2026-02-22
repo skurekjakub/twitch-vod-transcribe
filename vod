@@ -26,6 +26,16 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_DIR="${SCRIPT_DIR}/scripts"
 
+# Load local env overrides (sets DOWNLOADS_DIR, NAS_HOST, etc.)
+# shellcheck source=.env.local
+if [[ -f "${SCRIPT_DIR}/.env.local" ]]; then
+  # export so child scripts inherit the variables
+  set -a
+  # shellcheck disable=SC1091
+  source "${SCRIPT_DIR}/.env.local"
+  set +a
+fi
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
