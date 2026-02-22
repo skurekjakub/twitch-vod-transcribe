@@ -5,7 +5,9 @@ Simple FastAPI app for managing download/transcription queues
 
 import os
 import json
+import signal
 import subprocess
+import threading
 import uuid
 from pathlib import Path
 from datetime import datetime
@@ -253,6 +255,83 @@ def api_get_log_content(filename: str):
 
 # --- yt-dlp instant download queue ---
 
+@app.get("/health")
+def health():
+    """Container health check."""
+    return {"status": "ok"}
+
+
+@app.post("/api/restart")
+def api_restart():
+    """Restart the container by sending SIGTERM to PID 1 (after short delay)."""
+    def _kill():
+        import time
+        time.sleep(0.6)
+        os.kill(1, signal.SIGTERM)
+    threading.Thread(target=_kill, daemon=True).start()
+    return {"status": "restarting"}
+
+
+# ── Batch download process management ────────────────────────────────────────
+
+_batch_proc: subprocess.Popen | None = None
+_batch_log: list[str] = []
+_batch_lock = threading.Lock()
+
+
+def _read_batch_output(proc: subprocess.Popen):
+    for line in proc.stdout:
+        with _batch_lock:
+            _batch_log.append(line.rstrip())
+            if len(_batch_log) > 300:
+                del _batch_log[:100]
+    proc.wait()
+
+
+@app.get("/api/batch/status")
+def batch_status():
+    running = _batch_proc is not None and _batch_proc.poll() is None
+    with _batch_lock:
+        tail = list(_batch_log[-60:])
+    return {
+        "running": running,
+        "pid": _batch_proc.pid if running else None,
+        "log": tail,
+    }
+
+
+@app.post("/api/batch/start")
+def batch_start():
+    global _batch_proc, _batch_log
+    if _batch_proc is not None and _batch_proc.poll() is None:
+        return {"status": "already_running", "pid": _batch_proc.pid}
+    with _batch_lock:
+        _batch_log = []
+    _batch_proc = subprocess.Popen(
+        ["bash", str(ROOT_DIR / "scripts" / "batch-download.sh")],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, cwd=str(ROOT_DIR),
+        env={**os.environ, "DOWNLOADS_DIR": str(DOWNLOADS_DIR)},
+    )
+    threading.Thread(target=_read_batch_output, args=(_batch_proc,), daemon=True).start()
+    return {"status": "started", "pid": _batch_proc.pid}
+
+
+@app.post("/api/batch/stop")
+def batch_stop():
+    global _batch_proc
+    if _batch_proc is None or _batch_proc.poll() is not None:
+        return {"status": "not_running"}
+    _batch_proc.terminate()
+    try:
+        _batch_proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        _batch_proc.kill()
+    return {"status": "stopped"}
+
+
+# --- yt-dlp instant download queue ---
+
 @app.post("/api/ytdlp/submit")
 def ytdlp_submit(item: URLItem):
     """Submit a URL for immediate yt-dlp download."""
@@ -441,21 +520,73 @@ def index():
             font-size: 12px;
             margin-left: 8px;
         }
+        .btn-warning {
+            background: #d97706;
+            color: white;
+        }
+        .btn-warning:hover { background: #b45309; }
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-success:hover { background: #15803d; }
+        .batch-panel {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .batch-panel h3 {
+            margin: 0 0 12px 0;
+            color: #9d4edd;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .batch-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .batch-log {
+            background: #0f0f23;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #aaa;
+            max-height: 160px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-bar-left { display: flex; gap: 20px; align-items: center; }
     </style>
 </head>
 <body>
     <h1>📼 VOD Transcriber</h1>
     <p class="subtitle">Download & transcribe Twitch VODs and YouTube videos</p>
     
-    <div class="status-bar" id="status-bar">
-        <div class="status-item">
-            <span class="status-dot" id="nas-status"></span>
-            <span>NAS</span>
+    <div class="status-bar" id="status-bar" style="background:#16213e; border-radius:8px; padding:15px; margin-bottom:30px;">
+        <div class="status-bar-left">
+            <div class="status-item">
+                <span class="status-dot" id="nas-status"></span>
+                <span>NAS</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot" id="gpu-status"></span>
+                <span id="gpu-info">GPU</span>
+            </div>
         </div>
-        <div class="status-item">
-            <span class="status-dot" id="gpu-status"></span>
-            <span id="gpu-info">GPU</span>
-        </div>
+        <button class="btn-warning" onclick="restartApp()" id="restart-btn" style="padding:8px 16px; font-size:13px;">
+            🔄 Restart App
+        </button>
     </div>
     
     <div class="tabs">
@@ -471,6 +602,18 @@ def index():
     </div>
     
     <div id="download-tab" class="queue-section">
+        <div class="batch-panel">
+            <h3>⚙️ Batch Download (urls-vods)</h3>
+            <div class="batch-controls">
+                <div class="status-item">
+                    <span class="status-dot" id="batch-status-dot"></span>
+                    <span id="batch-status-text">checking…</span>
+                </div>
+                <button id="batch-btn-start" class="btn-success" onclick="batchStart()" style="display:none;">▶ Start</button>
+                <button id="batch-btn-stop" class="btn-danger" onclick="batchStop()" style="display:none;">⏹ Stop</button>
+            </div>
+            <div class="batch-log" id="batch-log" style="display:none;"></div>
+        </div>
         <form class="add-form" onsubmit="addToQueue(event, 'download')">
             <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=... or Twitch URL" required>
             <input type="text" name="prefix" placeholder="prefix (optional)">
@@ -508,6 +651,54 @@ def index():
             document.getElementById('ytdlp-tab').style.display = tab === 'ytdlp' ? 'block' : 'none';
         }
         
+        async function restartApp() {
+            const btn = document.getElementById('restart-btn');
+            btn.textContent = '⏳ Restarting…';
+            btn.disabled = true;
+            try { await fetch('/api/restart', { method: 'POST' }); } catch (_) {}
+            // Poll until app comes back up
+            const poll = setInterval(async () => {
+                try {
+                    const r = await fetch('/health');
+                    if (r.ok) {
+                        clearInterval(poll);
+                        location.reload();
+                    }
+                } catch (_) {}
+            }, 1500);
+        }
+
+        async function loadBatchStatus() {
+            const res = await fetch('/api/batch/status');
+            const data = await res.json();
+            const dot = document.getElementById('batch-status-dot');
+            const txt = document.getElementById('batch-status-text');
+            const btnStart = document.getElementById('batch-btn-start');
+            const btnStop = document.getElementById('batch-btn-stop');
+            const logEl = document.getElementById('batch-log');
+
+            dot.className = 'status-dot ' + (data.running ? 'ok' : 'error');
+            txt.textContent = data.running ? `Running (PID ${data.pid})` : 'Stopped';
+            btnStart.style.display = data.running ? 'none' : 'inline-block';
+            btnStop.style.display = data.running ? 'inline-block' : 'none';
+
+            if (data.log && data.log.length > 0) {
+                logEl.style.display = 'block';
+                logEl.textContent = data.log.join('\\n');
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+        }
+
+        async function batchStart() {
+            await fetch('/api/batch/start', { method: 'POST' });
+            loadBatchStatus();
+        }
+
+        async function batchStop() {
+            await fetch('/api/batch/stop', { method: 'POST' });
+            loadBatchStatus();
+        }
+
         async function loadStatus() {
             const res = await fetch('/api/status');
             const data = await res.json();
@@ -612,12 +803,14 @@ def index():
         loadQueue('download');
         loadQueue('transcribe');
         loadYtdlpJobs();
+        loadBatchStatus();
         
-        // Refresh every 30s
+        // Refresh every 5s
         setInterval(() => {
             loadStatus();
-            loadQueue(currentTab);
-            loadYtdlpJobs();
+            loadBatchStatus();
+            if (currentTab === 'ytdlp') loadYtdlpJobs();
+            else loadQueue(currentTab);
         }, 5000);
     </script>
 </body>
