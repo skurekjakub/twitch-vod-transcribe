@@ -219,6 +219,11 @@ def api_get_log_content(filename: str):
 @app.post("/api/ytdlp/submit")
 def ytdlp_submit(item: URLItem):
     """Submit a URL for immediate yt-dlp download."""
+    # Dedup: skip if the same URL is already pending or running
+    for job in _jobs.values():
+        if job["url"] == item.url and job["status"] in ("pending", "running"):
+            return {"job_id": job["id"], "duplicate": True}
+
     job_id = uuid.uuid4().hex[:8]
     _jobs[job_id] = {
         "id": job_id,
