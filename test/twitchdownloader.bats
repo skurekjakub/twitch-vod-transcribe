@@ -22,6 +22,8 @@ teardown() {
 # ============================================================================
 
 @test "twitchdownloader.sh --help shows help" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --help
   assert_success
   assert_output --partial "TwitchDownloader"
@@ -37,6 +39,7 @@ teardown() {
 
 @test "twitchdownloader.sh extracts VOD ID from full URL" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" "https://www.twitch.tv/videos/2588036186"
   
@@ -45,6 +48,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts raw VOD ID" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" "2588036186"
   
@@ -52,6 +56,8 @@ teardown() {
 }
 
 @test "twitchdownloader.sh rejects invalid URL format" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "${SCRIPTS_DIR}/twitchdownloader.sh" "https://youtube.com/watch?v=test"
   
   assert_failure
@@ -59,6 +65,8 @@ teardown() {
 }
 
 @test "twitchdownloader.sh rejects invalid ID format" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "${SCRIPTS_DIR}/twitchdownloader.sh" "not-a-number"
   
   assert_failure
@@ -66,6 +74,8 @@ teardown() {
 }
 
 @test "twitchdownloader.sh requires VOD input" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "${SCRIPTS_DIR}/twitchdownloader.sh"
   
   assert_failure
@@ -78,6 +88,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts --quality option" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --quality 720p60 "2588036186"
   
@@ -86,6 +97,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts -q shorthand" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" -q 720p "2588036186"
   
@@ -94,6 +106,7 @@ teardown() {
 
 @test "twitchdownloader.sh uses default quality 1080p60" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" "2588036186"
   
@@ -102,6 +115,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts --chat-width option" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --chat-width 500 "2588036186"
   
@@ -110,6 +124,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts -w shorthand for width" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" -w 400 "2588036186"
   
@@ -118,6 +133,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts --chat-height option" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --chat-height 900 "2588036186"
   
@@ -137,6 +153,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts --output-dir option" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --output-dir "/custom/path" "2588036186"
   
@@ -145,6 +162,7 @@ teardown() {
 
 @test "twitchdownloader.sh accepts -o shorthand for output" {
   create_mock "TwitchDownloaderCLI" 1 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/twitchdownloader.sh" -o "/custom" "2588036186"
   
@@ -152,6 +170,8 @@ teardown() {
 }
 
 @test "twitchdownloader.sh rejects unknown options" {
+  create_mock "TwitchDownloaderCLI" 0 ""
+  create_mock "ffmpeg" 0 ""
   run "${SCRIPTS_DIR}/twitchdownloader.sh" --unknown "2588036186"
   
   assert_failure

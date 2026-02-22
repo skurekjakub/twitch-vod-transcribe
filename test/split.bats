@@ -96,6 +96,7 @@ teardown() {
   touch "$video_file"
   
   create_mock "ffprobe" 0 "3600"  # 1 hour
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file"
   
@@ -107,6 +108,7 @@ teardown() {
   touch "$video_file"
   
   create_mock "ffprobe" 0 "3600"
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file" 3
   
@@ -119,6 +121,7 @@ teardown() {
   
   # 1 hour video with 5 hour max
   create_mock "ffprobe" 0 "3600"
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file"
   
@@ -158,6 +161,7 @@ FFMOCK
   
   # 2 hours 30 minutes 45 seconds
   create_mock "ffprobe" 0 "9045"
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file"
   
@@ -393,6 +397,7 @@ FFMOCK
   
   # Return empty/invalid duration
   create_mock "ffprobe" 0 ""
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file"
   
@@ -410,6 +415,7 @@ FFMOCK
   touch "$video_file"
   
   create_mock "ffprobe" 0 "3600"
+  create_mock "ffmpeg" 0 ""
   
   run "${SCRIPTS_DIR}/split.sh" "$video_file"
   
